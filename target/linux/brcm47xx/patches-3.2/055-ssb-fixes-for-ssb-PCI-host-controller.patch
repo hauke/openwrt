@@ -1,0 +1,77 @@
+From 94717c16190880669e14e354a134311e5d78e55b Mon Sep 17 00:00:00 2001
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Wed, 11 Jan 2012 15:27:40 +0100
+Subject: [PATCH 22/31] ssb: fixes for ssb PCI host controller
+
+A type 1 transaction never happens as we have only one pci bus running.
+In the Broadcom SDK the SSB bus is handeled as an PCI bus in software,
+there this branch is taken.
+
+Also adds a workaround for the BCM4785 found in the Broadcom SDK.
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ drivers/ssb/driver_pcicore.c |   45 +++++++++++++++++++----------------------
+ 1 files changed, 21 insertions(+), 24 deletions(-)
+
+--- a/drivers/ssb/driver_pcicore.c
++++ b/drivers/ssb/driver_pcicore.c
+@@ -78,30 +78,18 @@ static u32 get_cfgspace_addr(struct ssb_
+ 	if (pc->cardbusmode && (dev >= 1))
+ 		goto out;
+ 
+-	if (bus == 0) {
+-		/* Type 0 transaction */
+-		if (unlikely(dev >= SSB_PCI_SLOT_MAX))
+-			goto out;
+-		/* Slide the window */
+-		tmp = SSB_PCICORE_SBTOPCI_CFG0;
+-		tmp |= ((1 << (dev + 16)) & SSB_PCICORE_SBTOPCI1_MASK);
+-		pcicore_write32(pc, SSB_PCICORE_SBTOPCI1, tmp);
+-		/* Calculate the address */
+-		addr = SSB_PCI_CFG;
+-		addr |= ((1 << (dev + 16)) & ~SSB_PCICORE_SBTOPCI1_MASK);
+-		addr |= (func << 8);
+-		addr |= (off & ~3);
+-	} else {
+-		/* Type 1 transaction */
+-		pcicore_write32(pc, SSB_PCICORE_SBTOPCI1,
+-				SSB_PCICORE_SBTOPCI_CFG1);
+-		/* Calculate the address */
+-		addr = SSB_PCI_CFG;
+-		addr |= (bus << 16);
+-		addr |= (dev << 11);
+-		addr |= (func << 8);
+-		addr |= (off & ~3);
+-	}
++	/* Type 0 transaction */
++	if (unlikely(dev >= SSB_PCI_SLOT_MAX))
++		goto out;
++	/* Slide the window */
++	tmp = SSB_PCICORE_SBTOPCI_CFG0;
++	tmp |= ((1 << (dev + 16)) & SSB_PCICORE_SBTOPCI1_MASK);
++	pcicore_write32(pc, SSB_PCICORE_SBTOPCI1, tmp);
++	/* Calculate the address */
++	addr = SSB_PCI_CFG;
++	addr |= ((1 << (dev + 16)) & ~SSB_PCICORE_SBTOPCI1_MASK);
++	addr |= (func << 8);
++	addr |= (off & ~3);
+ out:
+ 	return addr;
+ }
+@@ -324,6 +312,15 @@ static void __devinit ssb_pcicore_init_h
+ 	extpci_core = pc;
+ 
+ 	ssb_dprintk(KERN_INFO PFX "PCIcore in host mode found\n");
++
++	/* Disable PCI SBReqeustTimeout for BCM4785 rev. < 2 */
++	if (pc->dev->bus->chip_id == 0x4785 && pc->dev->bus->chip_rev < 2) {
++		val = ssb_read32(pc->dev, SSB_IMCFGLO);
++		val &= ~0x00000070;
++		ssb_write32(pc->dev, SSB_IMCFGLO, val);
++		ssb_commit_settings(pc->dev->bus);
++	}
++
+ 	/* Reset devices on the external PCI bus */
+ 	val = SSB_PCICORE_CTL_RST_OE;
+ 	val |= SSB_PCICORE_CTL_CLK_OE;
