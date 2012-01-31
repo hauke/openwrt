@@ -1,0 +1,213 @@
+--- a/drivers/net/wireless/b43/dma.c
++++ b/drivers/net/wireless/b43/dma.c
+@@ -40,6 +40,9 @@
+ #include <linux/etherdevice.h>
+ #include <linux/slab.h>
+ #include <asm/div64.h>
++#ifdef CONFIG_MIPS
++#include <asm/addrspace.h>
++#endif
+ 
+ 
+ /* Required number of TX DMA slots per TX frame.
+@@ -47,6 +50,21 @@
+  * into separate slots. */
+ #define TX_SLOTS_PER_FRAME	2
+ 
++#define	D32RINGALIGN_BITS	12
++#define	D32MAXRINGSZ		(1 << D32RINGALIGN_BITS)
++#define	D32RINGALIGN		(1 << D32RINGALIGN_BITS)
++
++#define	D32MAXDD	(D32MAXRINGSZ / sizeof (struct b43_dmadesc32))
++
++/*
++ * Each descriptor ring must be 8kB aligned, and fit within a contiguous 8kB physical addresss.
++ */
++#define D64RINGALIGN_BITS	13
++#define	D64MAXRINGSZ		(1 << D64RINGALIGN_BITS)
++#define	D64RINGALIGN		(1 << D64RINGALIGN_BITS)
++
++#define	D64MAXDD	(D64MAXRINGSZ / sizeof (struct b43_dmadesc64))
++
+ static u32 b43_dma_address(struct b43_dma *dma, dma_addr_t dmaaddr,
+ 			   enum b43_addrtype addrtype)
+ {
+@@ -414,30 +432,59 @@ static inline
+ 	}
+ }
+ 
+-static int alloc_ringmemory(struct b43_dmaring *ring)
++/*
++ * Descriptor table must start at the DMA hardware dictated alignment, so
++ * allocated memory must be large enough to support this requirement.
++ */
++static void *dma_alloc_consistent(struct b43_dmaring *ring, uint size,
++				  u16 align_bits)
+ {
+-	gfp_t flags = GFP_KERNEL;
++	if (align_bits) {
++		u16 align = (1 << align_bits);
++		if (!IS_ALIGNED(PAGE_SIZE, align))
++			size += align;
++	}
++	return dma_alloc_coherent(ring->dev->dev->dma_dev, size, &(ring->dmabase), GFP_ATOMIC);
++}
+ 
+-	/* The specs call for 4K buffers for 30- and 32-bit DMA with 4K
+-	 * alignment and 8K buffers for 64-bit DMA with 8K alignment.
+-	 * In practice we could use smaller buffers for the latter, but the
+-	 * alignment is really important because of the hardware bug. If bit
+-	 * 0x00001000 is used in DMA address, some hardware (like BCM4331)
+-	 * copies that bit into B43_DMA64_RXSTATUS and we get false values from
+-	 * B43_DMA64_RXSTATDPTR. Let's just use 8K buffers even if we don't use
+-	 * more than 256 slots for ring.
+-	 */
+-	u16 ring_mem_size = (ring->type == B43_DMA_64BIT) ?
+-				B43_DMA64_RINGMEMSIZE : B43_DMA32_RINGMEMSIZE;
++static
++u8 dma_align_sizetobits(uint size)
++{
++	u8 bitpos = 0;
++	while (size >>= 1)
++		bitpos++;
++	return bitpos;
++}
+ 
+-	ring->descbase = dma_alloc_coherent(ring->dev->dev->dma_dev,
+-					    ring_mem_size, &(ring->dmabase),
+-					    flags);
++static int alloc_ringmemory(struct b43_dmaring *ring)
++{
++	u32 desc_strtaddr;
++	u16 alignbits = ring->dmadesc_align;
++	u32 alignbytes = 1 << alignbits;
++	u16 boundary = (ring->type == B43_DMA_64BIT) ?D64RINGALIGN : D32RINGALIGN;
++
++	u16 size = (ring->type == B43_DMA_64BIT) ?
++		ring->nr_slots * sizeof(struct b43_dmadesc64) : ring->nr_slots * sizeof(struct b43_dmadesc64);
++				
++	ring->descbase = dma_alloc_consistent(ring, size, alignbits);
+ 	if (!ring->descbase) {
+ 		b43err(ring->dev->wl, "DMA ringmemory allocation failed\n");
+ 		return -ENOMEM;
+ 	}
+-	memset(ring->descbase, 0, ring_mem_size);
++
++	desc_strtaddr = (u32) roundup((unsigned long)ring->descbase, alignbytes);
++
++	if (((desc_strtaddr + size - 1) & boundary) != (desc_strtaddr & boundary)) {
++		alignbits = dma_align_sizetobits(size);
++		dma_free_coherent(ring->dev->dev->dma_dev, size, ring->descbase, ring->dmabase);
++		ring->descbase = dma_alloc_consistent(ring, size, alignbits);
++		if (!ring->descbase) {
++			b43err(ring->dev->wl, "DMA ringmemory allocation failed\n");
++			return -ENOMEM;
++		}
++	}
++
++	memset(ring->descbase, 0, size);
+ 
+ 	return 0;
+ }
+@@ -855,6 +902,28 @@ static enum b43_dmatype dma_mask_to_engi
+ 	return B43_DMA_30BIT;
+ }
+ 
++static bool b43_dma_descriptor_align(struct b43_dmaring *ring)
++{
++
++	if (ring->type == B43_DMA_64BIT) {
++		u32 addrl;
++
++		/* Check to see if the descriptors need to be aligned on 4K/8K or not */
++		if (ring->tx) {
++			b43_dma_write(ring, B43_DMA64_TXRINGLO, 0xff0);
++			addrl = b43_dma_read(ring, B43_DMA64_TXRINGLO);
++			if (addrl != 0)
++				return false;
++		} else {
++			b43_dma_write(ring, B43_DMA64_RXRINGLO, 0xff0);
++			addrl = b43_dma_read(ring, B43_DMA64_RXRINGLO);
++			if (addrl != 0)
++				return false;
++		}
++	}
++	return true;
++}
++
+ /* Main initialization function. */
+ static
+ struct b43_dmaring *b43_setup_dmaring(struct b43_wldev *dev,
+@@ -870,7 +939,7 @@ struct b43_dmaring *b43_setup_dmaring(st
+ 	if (!ring)
+ 		goto out;
+ 
+-	ring->nr_slots = B43_RXRING_SLOTS;
++	ring->nr_slots = 256;
+ 	if (for_tx)
+ 		ring->nr_slots = B43_TXRING_SLOTS;
+ 
+@@ -912,6 +981,32 @@ struct b43_dmaring *b43_setup_dmaring(st
+ 	ring->last_injected_overflow = jiffies;
+ #endif
+ 
++	ring->aligndesc_4k = b43_dma_descriptor_align(ring);
++	if (ring->aligndesc_4k) {
++		if (type == B43_DMA_64BIT) {
++			ring->dmadesc_align = D64RINGALIGN_BITS;
++			if ((256 < D64MAXDD / 2) && (256 < D64MAXDD / 2)) {
++				/* for smaller dd table, HW relax the alignment requirement */
++				ring->dmadesc_align = D64RINGALIGN_BITS  - 1;
++			}
++		} else
++			ring->dmadesc_align = D32RINGALIGN_BITS;
++	} else {
++		/* The start address of descriptor table should be algined to cache line size, 
++		 * or other structure may share a cache line with it, which can lead to memory 
++		 * overlapping due to cache write-back operation. In the case of MIPS 74k, the 
++		 * cache line size is 32 bytes.
++		 */
++#ifdef CONFIG_MIPS
++		ring->dmadesc_align = 5;	/* 32 byte alignment */
++#else
++		ring->dmadesc_align = 4;	/* 16 byte alignment */
++#endif
++	}
++
++	b43info(dev->wl, "DMA descriptor align_needed %d, align %d\n",
++		ring->aligndesc_4k, ring->dmadesc_align);
++
+ 	if (for_tx) {
+ 		/* Assumption: B43_TXRING_SLOTS can be divided by TX_SLOTS_PER_FRAME */
+ 		BUILD_BUG_ON(B43_TXRING_SLOTS % TX_SLOTS_PER_FRAME != 0);
+@@ -1623,13 +1718,15 @@ static void dma_rx(struct b43_dmaring *r
+ 	len = le16_to_cpu(rxhdr->frame_len);
+ 	if (len == 0) {
+ 		int i = 0;
+-
++#ifdef CONFIG_MIPS
+ 		do {
+-			udelay(2);
++			udelay(1);
+ 			barrier();
+-			len = le16_to_cpu(rxhdr->frame_len);
+-		} while (len == 0 && i++ < 5);
++			len = le16_to_cpu(KSEG1ADDR(rxhdr->frame_len));
++		} while (len == 0 && i++ < 200);
++#endif
+ 		if (unlikely(len == 0)) {
++			b43err(ring->dev->wl, "dma_rx: frame length(%d)", len);
+ 			dmaaddr = meta->dmaaddr;
+ 			goto drop_recycle_buffer;
+ 		}
+--- a/drivers/net/wireless/b43/dma.h
++++ b/drivers/net/wireless/b43/dma.h
+@@ -256,6 +256,8 @@ struct b43_dmaring {
+ 	enum b43_dmatype type;
+ 	/* Boolean. Is this ring stopped at ieee80211 level? */
+ 	bool stopped;
++	bool aligndesc_4k;
++	u16 dmadesc_align;
+ 	/* The QOS priority assigned to this ring. Only used for TX rings.
+ 	 * This is the mac80211 "queue" value. */
+ 	u8 queue_prio;
