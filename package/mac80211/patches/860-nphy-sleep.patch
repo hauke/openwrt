@@ -1,0 +1,26 @@
+From cd6e7f84fa813c48f608f95152f020c842cc8e5a Mon Sep 17 00:00:00 2001
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sat, 18 Feb 2012 22:21:01 +0100
+Subject: [PATCH 202/202] b43: do not use msleep(1) in b43_radio_init2056_post
+
+With msleep(1) I get a Data bus error and with usleep_range(1500, 2000)
+it works. I udelay(1000) also works, but usleep_range(1000, 1500) does
+not work. The timer documentation says you should not use msleep for
+values < 20.
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ drivers/net/wireless/b43/phy_n.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+--- a/drivers/net/wireless/b43/phy_n.c
++++ b/drivers/net/wireless/b43/phy_n.c
+@@ -661,7 +661,7 @@ static void b43_radio_init2056_post(stru
+ 	b43_radio_set(dev, B2056_SYN_COM_CTRL, 0xB);
+ 	b43_radio_set(dev, B2056_SYN_COM_PU, 0x2);
+ 	b43_radio_set(dev, B2056_SYN_COM_RESET, 0x2);
+-	msleep(1);
++	udelay(1000);
+ 	b43_radio_mask(dev, B2056_SYN_COM_RESET, ~0x2);
+ 	b43_radio_mask(dev, B2056_SYN_PLL_MAST2, ~0xFC);
+ 	b43_radio_mask(dev, B2056_SYN_RCCAL_CTRL0, ~0x1);
