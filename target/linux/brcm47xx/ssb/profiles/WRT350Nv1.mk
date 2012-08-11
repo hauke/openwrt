@@ -7,7 +7,7 @@
 
 define Profile/WRT350Nv1
   NAME:=Linksys WRT350Nv1
-  PACKAGES:=kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-ssb-gige kmod-ocf-ubsec-ssb
+  PACKAGES:=kmod-b44 kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-ssb-gige kmod-ocf-ubsec-ssb kmod-tg3
 endef
 
 define Profile/WRT350Nv1/Description

@@ -1029,6 +1029,21 @@ define KernelPackage/b43/config
 
 		  If unsure, say N.
 
+
+	config PACKAGE_B43_BCMA
+		bool "Enable support bcma bus"
+		depends on !TARGET_brcm47xx || (TARGET_brcm47xx_bcma || TARGET_brcm47xx_generic)
+		default y
+		help
+		  If unsure, say Y.
+
+	config PACKAGE_B43_SSB
+		bool "Enable support ssb bus"
+		depends on !TARGET_brcm47xx || (TARGET_brcm47xx_ssb || TARGET_brcm47xx_generic)
+		default y
+		help
+		  If unsure, say Y.
+
 	endmenu
 endef
 
@@ -1041,6 +1056,7 @@ $(call KernelPackage/b43-common)
   TITLE:=Broadcom 43xx-legacy wireless support
   FILES:=$(PKG_BUILD_DIR)/drivers/net/wireless/b43legacy/b43legacy.ko
   AUTOLOAD:=$(call AutoLoad,30,b43legacy)
+  DEPENDS+= @!TARGET_brcm47xx_bcma
   MENU:=1
 endef
 
@@ -1152,8 +1168,8 @@ BUILDFLAGS:= \
 	$(if $(CONFIG_PACKAGE_B43_PHY_N),-DCONFIG_B43_PHY_N) \
 	$(if $(CONFIG_PACKAGE_B43_PHY_HT),-DCONFIG_B43_PHY_HT) \
 	$(if $(CONFIG_PACKAGE_B43_PHY_LCN),-DCONFIG_B43_PHY_LCN) \
-	-DCONFIG_B43_BCMA -DCONFIG_B43_BCMA_EXTRA \
-	-DCONFIG_B43_SSB \
+	$(if $(CONFIG_PACKAGE_B43_BCMA),-DCONFIG_B43_BCMA -DCONFIG_B43_BCMA_EXTRA) \
+	$(if $(CONFIG_PACKAGE_B43_SSB),-DCONFIG_B43_SSB) \
 	$(if $(CONFIG_PACKAGE_RT2X00_LIB_DEBUGFS),-DCONFIG_RT2X00_LIB_DEBUGFS) \
 	$(if $(CONFIG_PACKAGE_RT2X00_DEBUG),-DCONFIG_RT2X00_DEBUG) \
 	$(if $(NEED_RT2X00_LIB_HT),-DCONFIG_RT2X00_LIB_HT) \
@@ -1200,8 +1216,8 @@ MAKE_OPTS:= \
 	CONFIG_B43_PHY_N=$(if $(CONFIG_PACKAGE_B43_PHY_N),y) \
 	CONFIG_B43_PHY_HT=$(if $(CONFIG_PACKAGE_B43_PHY_HT),y) \
 	CONFIG_B43_PHY_LCN=$(if $(CONFIG_PACKAGE_B43_PHY_LCN),y) \
-	CONFIG_B43_BCMA=y \
-	CONFIG_B43_SSB=y \
+	CONFIG_B43_BCMA=$(if $(CONFIG_PACKAGE_B43_BCMA),y) \
+	CONFIG_B43_SSB=$(if $(CONFIG_PACKAGE_B43_SSB),y) \
 	CONFIG_ATH_COMMON=$(if $(CONFIG_PACKAGE_kmod-ath),m) \
 	CONFIG_ATH_DEBUG=$(if $(CONFIG_PACKAGE_ATH_DEBUG),y) \
 	CONFIG_ATH9K_PKTLOG=$(if $(CONFIG_PACKAGE_ATH_DEBUG),y) \

@@ -5,13 +5,13 @@
 # See /LICENSE for more information.
 #
 
-define Profile/Atheros-ath5k
-  NAME:=Atheros WiFi (ath5k)
-  PACKAGES:=kmod-ath5k
+define Profile/Broadcom-ath5k
+  NAME:=Broadcom SoC, Atheros WiFi (ath5k)
+  PACKAGES:=kmod-ath5k kmod-b44
 endef
 
-define Profile/Atheros-ath5k/Description
+define Profile/Broadcom-ath5k/Description
 	Package set compatible with hardware using Atheros WiFi cards
 endef
-$(eval $(call Profile,Atheros-ath5k))
+$(eval $(call Profile,Broadcom-ath5k))
 

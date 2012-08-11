@@ -10,6 +10,7 @@ ARCH:=mipsel
 BOARD:=brcm47xx
 BOARDNAME:=Broadcom BCM947xx/953xx
 FEATURES:=squashfs usb pcmcia
+SUBTARGETS=generic ssb bcma
 
 LINUX_VERSION:=3.3.8
 

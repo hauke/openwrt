@@ -5,13 +5,13 @@
 # See /LICENSE for more information.
 #
 
-define Profile/None
-  NAME:=No WiFi
+define Profile/Broadcom-none
+  NAME:=Broadcom SoC, no Wifi
   PACKAGES:=-wpad-mini
 endef
 
-define Profile/None/Description
+define Profile/Broadcom-none/Description
 	Package set without WiFi support
 endef
-$(eval $(call Profile,None))
+$(eval $(call Profile,Broadcom-none))
 
