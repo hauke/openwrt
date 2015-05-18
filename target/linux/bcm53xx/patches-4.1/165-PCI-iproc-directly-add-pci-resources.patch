@@ -1,0 +1,86 @@
+From 0a0c20fa5d56b94ca026a55a744b871154db7ded Mon Sep 17 00:00:00 2001
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sun, 24 May 2015 21:44:13 +0200
+Subject: [PATCH 1/2] PCI: iproc: directly add pci resources
+
+The resources member in the struct was pointing to a stack variable and
+is invalid after the the registration function returned. Remove this
+pointer and add it a a parameter to the function.
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ drivers/pci/host/pcie-iproc-bcma.c     | 4 +---
+ drivers/pci/host/pcie-iproc-platform.c | 4 +---
+ drivers/pci/host/pcie-iproc.c          | 4 ++--
+ drivers/pci/host/pcie-iproc.h          | 3 +--
+ 4 files changed, 5 insertions(+), 10 deletions(-)
+
+--- a/drivers/pci/host/pcie-iproc-bcma.c
++++ b/drivers/pci/host/pcie-iproc-bcma.c
+@@ -61,11 +61,9 @@ static int iproc_pcie_bcma_probe(struct
+ 	res_mem.flags = IORESOURCE_MEM;
+ 	pci_add_resource(&res, &res_mem);
+ 
+-	pcie->resources = &res;
+-
+ 	pcie->map_irq = iproc_pcie_bcma_map_irq;
+ 
+-	ret = iproc_pcie_setup(pcie);
++	ret = iproc_pcie_setup(pcie, &res);
+ 	if (ret) {
+ 		dev_err(pcie->dev, "PCIe controller setup failed\n");
+ 		return ret;
+--- a/drivers/pci/host/pcie-iproc-platform.c
++++ b/drivers/pci/host/pcie-iproc-platform.c
+@@ -69,11 +69,9 @@ static int iproc_pcie_pltfm_probe(struct
+ 		return ret;
+ 	}
+ 
+-	pcie->resources = &res;
+-
+ 	pcie->map_irq = of_irq_parse_and_map_pci;
+ 
+-	ret = iproc_pcie_setup(pcie);
++	ret = iproc_pcie_setup(pcie, &res);
+ 	if (ret) {
+ 		dev_err(pcie->dev, "PCIe controller setup failed\n");
+ 		return ret;
+--- a/drivers/pci/host/pcie-iproc.c
++++ b/drivers/pci/host/pcie-iproc.c
+@@ -183,7 +183,7 @@ static void iproc_pcie_enable(struct ipr
+ 	writel(SYS_RC_INTX_MASK, pcie->base + SYS_RC_INTX_EN);
+ }
+ 
+-int iproc_pcie_setup(struct iproc_pcie *pcie)
++int iproc_pcie_setup(struct iproc_pcie *pcie, struct list_head *res)
+ {
+ 	int ret;
+ 	struct pci_bus *bus;
+@@ -211,7 +211,7 @@ int iproc_pcie_setup(struct iproc_pcie *
+ 	pcie->sysdata.private_data = pcie;
+ 
+ 	bus = pci_create_root_bus(pcie->dev, 0, &iproc_pcie_ops,
+-				  &pcie->sysdata, pcie->resources);
++				  &pcie->sysdata, res);
+ 	if (!bus) {
+ 		dev_err(pcie->dev, "unable to create PCI root bus\n");
+ 		ret = -ENOMEM;
+--- a/drivers/pci/host/pcie-iproc.h
++++ b/drivers/pci/host/pcie-iproc.h
+@@ -29,7 +29,6 @@
+ struct iproc_pcie {
+ 	struct device *dev;
+ 	void __iomem *base;
+-	struct list_head *resources;
+ 	struct pci_sys_data sysdata;
+ 	struct pci_bus *root_bus;
+ 	struct phy *phy;
+@@ -37,7 +36,7 @@ struct iproc_pcie {
+ 	int (*map_irq)(const struct pci_dev *, u8, u8);
+ };
+ 
+-int iproc_pcie_setup(struct iproc_pcie *pcie);
++int iproc_pcie_setup(struct iproc_pcie *pcie, struct list_head *res);
+ int iproc_pcie_remove(struct iproc_pcie *pcie);
+ 
+ #endif /* _PCIE_IPROC_H */
