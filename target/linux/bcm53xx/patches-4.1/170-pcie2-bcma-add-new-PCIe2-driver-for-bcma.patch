@@ -41,19 +41,19 @@ Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 
 --- a/arch/arm/mach-bcm/Kconfig
 +++ b/arch/arm/mach-bcm/Kconfig
-@@ -86,6 +86,7 @@ config ARCH_BCM_5301X
- 	select HAVE_ARM_TWD if SMP
- 	select ARM_GLOBAL_TIMER
- 	select CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
+@@ -38,6 +38,7 @@ config ARCH_BCM_CYGNUS
+ config ARCH_BCM_5301X
+ 	bool "Broadcom BCM470X / BCM5301X ARM SoC" if ARCH_MULTI_V7
+ 	select ARCH_BCM_IPROC
 +	select PCI_DOMAINS if PCI
  	help
  	  Support for Broadcom BCM470X and BCM5301X SoCs with ARM CPU cores.
  
 --- a/drivers/pci/host/Kconfig
 +++ b/drivers/pci/host/Kconfig
-@@ -91,4 +91,11 @@ config PCI_XGENE
- 	  There are 5 internal PCIe ports available. Each port is GEN3 capable
- 	  and have varied lanes from x1 to x8.
+@@ -125,4 +125,11 @@ config PCIE_IPROC_PLATFORM
+ 	  Say Y here if you want to use the Broadcom iProc PCIe controller
+ 	  through the generic platform bus interface
  
 +config PCI_BCM5301X
 +	bool "BCM5301X PCIe2 host controller"
@@ -65,14 +65,14 @@ Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
  endmenu
 --- a/drivers/pci/host/Makefile
 +++ b/drivers/pci/host/Makefile
-@@ -11,3 +11,4 @@ obj-$(CONFIG_PCIE_SPEAR13XX) += pcie-spe
- obj-$(CONFIG_PCI_KEYSTONE) += pci-keystone-dw.o pci-keystone.o
- obj-$(CONFIG_PCIE_XILINX) += pcie-xilinx.o
- obj-$(CONFIG_PCI_XGENE) += pci-xgene.o
+@@ -15,3 +15,4 @@ obj-$(CONFIG_PCI_LAYERSCAPE) += pci-laye
+ obj-$(CONFIG_PCI_VERSATILE) += pci-versatile.o
+ obj-$(CONFIG_PCIE_IPROC) += pcie-iproc.o
+ obj-$(CONFIG_PCIE_IPROC_PLATFORM) += pcie-iproc-platform.o
 +obj-$(CONFIG_PCI_BCM5301X) += pci-host-bcm5301x.o
 --- /dev/null
 +++ b/drivers/pci/host/pci-host-bcm5301x.c
-@@ -0,0 +1,460 @@
+@@ -0,0 +1,459 @@
 +/*
 + * Northstar PCI-Express driver
 + * Only supports Root-Complex (RC) mode
@@ -485,7 +485,6 @@ Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 +{
 +	struct hw_pci hw = {
 +		.nr_controllers = 1,
-+		.domain		= bdev->core_unit,
 +		.private_data	= (void **)&bdev,
 +		.setup		= bcma_pcie2_setup,
 +		.map_irq	= bcma_pcie2_map_irq,
@@ -508,7 +507,7 @@ Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
 +
 +static const struct bcma_device_id bcma_pcie2_table[] = {
 +	BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_NS_PCIEG2, BCMA_ANY_REV, BCMA_ANY_CLASS),
-+	BCMA_CORETABLE_END
++	{},
 +};
 +MODULE_DEVICE_TABLE(bcma, bcma_pcie2_table);
 +

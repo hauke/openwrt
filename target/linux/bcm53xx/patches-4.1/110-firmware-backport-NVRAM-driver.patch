@@ -18,9 +18,9 @@ Signed-off-by: Rafał Miłecki <zajec5@gmail.com>
 
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -2166,6 +2166,8 @@ source "net/Kconfig"
+@@ -2105,6 +2105,8 @@ source "drivers/Kconfig"
  
- source "drivers/Kconfig"
+ source "drivers/firmware/Kconfig"
  
 +source "drivers/firmware/Kconfig"
 +
@@ -29,9 +29,9 @@ Signed-off-by: Rafał Miłecki <zajec5@gmail.com>
  source "arch/arm/Kconfig.debug"
 --- a/drivers/firmware/Kconfig
 +++ b/drivers/firmware/Kconfig
-@@ -132,6 +132,7 @@ config ISCSI_IBFT
- 	  detect iSCSI boot parameters dynamically during system boot, say Y.
- 	  Otherwise, say N.
+@@ -136,6 +136,7 @@ config QCOM_SCM
+ 	bool
+ 	depends on ARM || ARM64
  
 +source "drivers/firmware/broadcom/Kconfig"
  source "drivers/firmware/google/Kconfig"
@@ -39,44 +39,11 @@ Signed-off-by: Rafał Miłecki <zajec5@gmail.com>
  
 --- a/drivers/firmware/Makefile
 +++ b/drivers/firmware/Makefile
-@@ -12,6 +12,7 @@ obj-$(CONFIG_ISCSI_IBFT_FIND)	+= iscsi_i
- obj-$(CONFIG_ISCSI_IBFT)	+= iscsi_ibft.o
- obj-$(CONFIG_FIRMWARE_MEMMAP)	+= memmap.o
+@@ -14,6 +14,7 @@ obj-$(CONFIG_FIRMWARE_MEMMAP)	+= memmap.
+ obj-$(CONFIG_QCOM_SCM)		+= qcom_scm.o
+ CFLAGS_qcom_scm.o :=$(call as-instr,.arch_extension sec,-DREQUIRES_SEC=1)
  
 +obj-y				+= broadcom/
  obj-$(CONFIG_GOOGLE_FIRMWARE)	+= google/
  obj-$(CONFIG_EFI)		+= efi/
  obj-$(CONFIG_UEFI_CPER)		+= efi/
---- a/drivers/net/ethernet/broadcom/b44.c
-+++ b/drivers/net/ethernet/broadcom/b44.c
-@@ -400,7 +400,7 @@ static void b44_set_flow_ctrl(struct b44
- }
- 
- #ifdef CONFIG_BCM47XX
--#include <bcm47xx_nvram.h>
-+#include <linux/bcm47xx_nvram.h>
- static void b44_wap54g10_workaround(struct b44 *bp)
- {
- 	char buf[20];
---- a/drivers/net/ethernet/broadcom/bgmac.c
-+++ b/drivers/net/ethernet/broadcom/bgmac.c
-@@ -18,7 +18,7 @@
- #include <linux/interrupt.h>
- #include <linux/dma-mapping.h>
- #include <linux/platform_data/b53.h>
--#include <bcm47xx_nvram.h>
-+#include <linux/bcm47xx_nvram.h>
- 
- static const struct bcma_device_id bgmac_bcma_tbl[] = {
- 	BCMA_CORE(BCMA_MANUF_BCM, BCMA_CORE_4706_MAC_GBIT, BCMA_ANY_REV, BCMA_ANY_CLASS),
---- a/drivers/ssb/driver_chipcommon_pmu.c
-+++ b/drivers/ssb/driver_chipcommon_pmu.c
-@@ -14,7 +14,7 @@
- #include <linux/delay.h>
- #include <linux/export.h>
- #ifdef CONFIG_BCM47XX
--#include <bcm47xx_nvram.h>
-+#include <linux/bcm47xx_nvram.h>
- #endif
- 
- #include "ssb_private.h"

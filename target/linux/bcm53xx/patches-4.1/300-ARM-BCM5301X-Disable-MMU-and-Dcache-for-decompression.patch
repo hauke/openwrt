@@ -20,7 +20,7 @@ Signed-off-by: Rafał Miłecki <zajec5@gmail.com>
 
 --- a/arch/arm/boot/compressed/Makefile
 +++ b/arch/arm/boot/compressed/Makefile
-@@ -46,6 +46,11 @@ ifeq ($(CONFIG_ARCH_ACORN),y)
+@@ -31,6 +31,11 @@ ifeq ($(CONFIG_ARCH_ACORN),y)
  OBJS		+= ll_char_wr.o font.o
  endif
  

@@ -24,8 +24,8 @@ V2: Change code after receiving Florian's comments:
  create mode 100644 arch/arm/mach-bcm/bcm5301x_headsmp.S
  create mode 100644 arch/arm/mach-bcm/bcm5301x_smp.c
 
---- a/Documentation/devicetree/bindings/arm/bcm4708.txt
-+++ b/Documentation/devicetree/bindings/arm/bcm4708.txt
+--- a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.txt
++++ b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.txt
 @@ -6,3 +6,27 @@ Boards with the BCM4708 SoC shall have t
  Required root node property:
  
@@ -56,7 +56,7 @@ V2: Change code after receiving Florian's comments:
 +	};
 --- a/Documentation/devicetree/bindings/arm/cpus.txt
 +++ b/Documentation/devicetree/bindings/arm/cpus.txt
-@@ -188,6 +188,7 @@ nodes to be present and contain the prop
+@@ -189,6 +189,7 @@ nodes to be present and contain the prop
  			  can be one of:
  			    "allwinner,sun6i-a31"
  			    "arm,psci"
@@ -93,7 +93,7 @@ V2: Change code after receiving Florian's comments:
  };
 --- a/arch/arm/mach-bcm/Makefile
 +++ b/arch/arm/mach-bcm/Makefile
-@@ -33,6 +33,9 @@ obj-$(CONFIG_ARCH_BCM2835)	+= board_bcm2
+@@ -36,6 +36,9 @@ obj-$(CONFIG_ARCH_BCM2835)	+= board_bcm2
  
  # BCM5301X
  obj-$(CONFIG_ARCH_BCM_5301X)	+= bcm_5301x.o
