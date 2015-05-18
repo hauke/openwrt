@@ -1,0 +1,57 @@
+From b5aa3993c2bbd3074db0e562091ff60a7e7181d8 Mon Sep 17 00:00:00 2001
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Thu, 14 May 2015 00:48:57 +0200
+Subject: [PATCH v4] ARM: l2c: add options to overwrite prefetching behavior
+
+These options make it possible to overwrites the data and instruction
+prefetching behavior of the arm pl310 cache controller.
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ Documentation/devicetree/bindings/arm/l2cc.txt |  5 +++++
+ arch/arm/mm/cache-l2x0.c                       | 20 ++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
+
+--- a/Documentation/devicetree/bindings/arm/l2cc.txt
++++ b/Documentation/devicetree/bindings/arm/l2cc.txt
+@@ -73,6 +73,11 @@ Optional properties:
+   "write through no write allocate" (for writes).
+   On systems where this may cause DMA buffer corruption, this property must be
+   specified to indicate that such transforms are precluded.
++- prefetch-data : Data prefetch. Value: <0> (forcibly disable), <1>
++  (forcibly enable), property absent (retain settings set by firmware)
++- prefetch-instr : Instruction prefetch. Value: <0> (forcibly disable),
++  <1> (forcibly enable), property absent (retain settings set by
++  firmware)
+ 
+ Example:
+ 
+--- a/arch/arm/mm/cache-l2x0.c
++++ b/arch/arm/mm/cache-l2x0.c
+@@ -1206,6 +1206,26 @@ static void __init l2c310_of_parse(const
+ 		pr_err("L2C-310 OF arm,prefetch-offset property value is missing\n");
+ 	}
+ 
++	ret = of_property_read_u32(np, "prefetch-data", &val);
++	if (ret == 0) {
++		if (val)
++			prefetch |= L310_PREFETCH_CTRL_DATA_PREFETCH;
++		else
++			prefetch &= ~L310_PREFETCH_CTRL_DATA_PREFETCH;
++	} else if (ret != -EINVAL) {
++		pr_err("L2C-310 OF prefetch-data property value is missing\n");
++	}
++
++	ret = of_property_read_u32(np, "prefetch-instr", &val);
++	if (ret == 0) {
++		if (val)
++			prefetch |= L310_PREFETCH_CTRL_INSTR_PREFETCH;
++		else
++			prefetch &= ~L310_PREFETCH_CTRL_INSTR_PREFETCH;
++	} else if (ret != -EINVAL) {
++		pr_err("L2C-310 OF prefetch-instr property value is missing\n");
++	}
++
+ 	l2x0_saved_regs.prefetch_ctrl = prefetch;
+ }
+ 
