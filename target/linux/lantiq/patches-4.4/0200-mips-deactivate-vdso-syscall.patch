@@ -1,0 +1,20 @@
+# When using the vdso clock_gettime() it looks like that the clock is
+# sometimes not going forward when the process sleeps and the clock also
+# sleeps. This problem only happens with the vdso clock and not with the
+# normal syscall clock.
+# 
+# I wrote a small test program which calls the syscall and the vdso
+# version. In the first call they are showing the same time, but after I
+# sleeped for 1 second, they are off by one second. This problem occurs
+# not 100% reliable but I see it pretty often. Only the CLOCK_REALTIME and
+# CLOCK_MONOTONIC seam to be affected CLOCK_REALTIME_COARSE is not affected.
+
+--- a/arch/mips/vdso/Makefile
++++ b/arch/mips/vdso/Makefile
+@@ -1,5 +1,5 @@
+ # Objects to go into the VDSO.
+-obj-vdso-y := elf.o gettimeofday.o sigreturn.o
++obj-vdso-y := elf.o sigreturn.o
+ 
+ # Common compiler flags between ABIs.
+ ccflags-vdso := \
