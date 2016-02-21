@@ -84,23 +84,5 @@ define Package/bzip2/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bzip2-shared $(1)/usr/bin/bzip2
 endef
 
-HOST_CFLAGS += \
-	$(FPIC) \
-	$(HOST_LDFLAGS)
-
-HOST_MAKE_FLAGS+= \
-	CFLAGS="$(HOST_CFLAGS)" \
-	all
-
-HOST_CONFIGURE_ARGS+= \
-	--prefix=$(STAGING_DIR)/host
-
-define Host/Install
-	$(INSTALL_DIR) $(STAGING_DIR)/host/bin/
-	$(MAKE) -C $(HOST_BUILD_DIR) PREFIX=$(STAGING_DIR)/host/ install
-endef
-
-$(eval $(call HostBuild))
-
 $(eval $(call BuildPackage,libbz2))
 $(eval $(call BuildPackage,bzip2))
