@@ -1,0 +1,58 @@
+From 59aed7af0f5a56301be2dd545024f8970ed095cf Mon Sep 17 00:00:00 2001
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sun, 21 Feb 2016 13:43:18 +0100
+Subject: [PATCH] MIPS: vdso: flush the vdso data page to update it on all
+ processes
+
+Without flushing the vdso data page the vdso call is working on dated
+or unsynced data. This resulted in problems where the clock_gettime
+vdso call returned a time 6 seconds later after a 3 sounds sleep,
+while the syscall reported a time 3 sounds later like expected. This
+happened very often and I got these ping results for example:
+
+root@OpenWrt:/# ping 192.168.1.255
+PING 192.168.1.255 (192.168.1.255): 56 data bytes
+64 bytes from 192.168.1.3: seq=0 ttl=64 time=0.688 ms
+64 bytes from 192.168.1.3: seq=1 ttl=64 time=4294172.045 ms
+64 bytes from 192.168.1.3: seq=2 ttl=64 time=4293968.105 ms
+64 bytes from 192.168.1.3: seq=3 ttl=64 time=4294055.920 ms
+64 bytes from 192.168.1.3: seq=4 ttl=64 time=4294671.913 ms
+
+The flush is now done like it is done on the arm architecture code.
+
+This was tested on a Lantiq/Intel VRX288 (MIPS BE 34Kc V5.6 CPU with
+two VPEs)
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: <stable@vger.kernel.org> # v4.4+
+---
+ arch/mips/kernel/vdso.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -20,6 +20,8 @@
+ #include <linux/timekeeper_internal.h>
+ 
+ #include <asm/abi.h>
++#include <asm/cacheflush.h>
++#include <asm/page.h>
+ #include <asm/vdso.h>
+ 
+ /* Kernel-provided data used by the VDSO. */
+@@ -85,6 +87,7 @@ void update_vsyscall(struct timekeeper *
+ 	}
+ 
+ 	vdso_data_write_end(&vdso_data);
++	flush_dcache_page(virt_to_page(&vdso_data));
+ }
+ 
+ void update_vsyscall_tz(void)
+@@ -93,6 +96,7 @@ void update_vsyscall_tz(void)
+ 		vdso_data.tz_minuteswest = sys_tz.tz_minuteswest;
+ 		vdso_data.tz_dsttime = sys_tz.tz_dsttime;
+ 	}
++	flush_dcache_page(virt_to_page(&vdso_data));
+ }
+ 
+ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
