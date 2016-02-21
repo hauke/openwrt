@@ -1,0 +1,63 @@
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH 6/6] MIPS: Expose current_cpu_data.options through debugfs
+
+Debugging a missing features in cpu-features-override.h, or a runtime feature
+set/clear in the vendor specific cpu_probe() function can be a little tedious,
+ease that by providing a debugfs entry representing the
+current_cpu_data.options bitmask.
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+
+--- a/arch/mips/kernel/cpu-probe.c
++++ b/arch/mips/kernel/cpu-probe.c
+@@ -17,6 +17,7 @@
+ #include <linux/smp.h>
+ #include <linux/stddef.h>
+ #include <linux/export.h>
++#include <linux/debugfs.h>
+ 
+ #include <asm/bugs.h>
+ #include <asm/cpu.h>
+@@ -1557,3 +1558,42 @@ void cpu_report(void)
+ 	if (cpu_has_msa)
+ 		pr_info("MSA revision is: %08x\n", c->msa_id);
+ }
++
++#ifdef CONFIG_DEBUG_FS
++extern struct dentry *mips_debugfs_dir;
++static int __init debugfs_cpu_options(void)
++{
++	struct dentry *d;
++
++	if (!mips_debugfs_dir)
++		return -ENODEV;
++
++	d = debugfs_create_x64("cpu_options", S_IRUGO,
++			       mips_debugfs_dir, &current_cpu_data.options);
++	if (!d)
++		return -ENOMEM;
++
++	d = debugfs_create_x8("icache_flags", S_IRUGO,
++			       mips_debugfs_dir, &current_cpu_data.icache.flags);
++	if (!d)
++		return -ENOMEM;
++
++	d = debugfs_create_x8("dcache_flags", S_IRUGO,
++			       mips_debugfs_dir, &current_cpu_data.dcache.flags);
++	if (!d)
++		return -ENOMEM;
++
++	d = debugfs_create_ulong("cpu_ases", S_IRUGO,
++			       mips_debugfs_dir, &current_cpu_data.ases);
++	if (!d)
++		return -ENOMEM;
++
++	d = debugfs_create_x32("cpu_isa_level", S_IRUGO,
++			       mips_debugfs_dir, &current_cpu_data.isa_level);
++	if (!d)
++		return -ENOMEM;
++
++	return 0;
++}
++__initcall(debugfs_cpu_options);
++#endif
