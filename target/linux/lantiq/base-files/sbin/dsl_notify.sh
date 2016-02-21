@@ -28,6 +28,18 @@ if [ -n "$led" ]; then
 	esac
 fi
 
+case "$DSL_TC_LAYER_STATUS" in
+  "ATM")
+	grep -q "ltq_ptm_vr9 " /proc/modules && rmmod "ltq_ptm_vr9"
+	grep -q "ltq_atm_vr9 " /proc/modules || insmod "ltq_atm_vr9"
+	;;
+  "EFM")
+	grep -q "ltq_atm_vr9 " /proc/modules && rmmod "ltq_atm_vr9"
+	grep -q "ltq_ptm_vr9 " /proc/modules || insmod "ltq_ptm_vr9"
+	;;
+  *)
+esac
+
 local interfaces=`ubus list network.interface.\* | cut -d"." -f3`
 local ifc
 for ifc in $interfaces; do

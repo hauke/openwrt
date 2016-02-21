@@ -320,32 +320,15 @@ ucidef_add_atm_bridge() {
 	json_select ..
 }
 
-ucidef_add_adsl_modem() {
+ucidef_add_dsl_modem() {
 	local annex="$1"
-	local firmware="$2"
+	local mode="$2"
 
 	json_select_object dsl
 		json_select_object modem
-			json_add_string type "adsl"
+			json_add_string type "dsl"
+			json_add_string mode "$mode"
 			json_add_string annex "$annex"
-			json_add_string firmware "$firmware"
-		json_select ..
-	json_select ..
-}
-
-ucidef_add_vdsl_modem() {
-	local annex="$1"
-	local firmware="$2"
-	local tone="$3"
-	local xfer_mode="$4"
-
-	json_select_object dsl
-		json_select_object modem
-			json_add_string type "vdsl"
-			json_add_string annex "$annex"
-			json_add_string firmware "$firmware"
-			json_add_string tone "$tone"
-			json_add_string xfer_mode "$xfer_mode"
 		json_select ..
 	json_select ..
 }

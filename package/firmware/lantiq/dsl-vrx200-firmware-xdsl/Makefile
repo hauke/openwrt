@@ -57,7 +57,7 @@ define Package/dsl-vrx200-firmware-xdsl/install
 	$(INSTALL_DIR) $(1)/lib/firmware/
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/LICENSE $(1)/lib/firmware/xcpe_574306_571801.LICENSE
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/xcpe_574306_571801.bin $(1)/lib/firmware/
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/xcpe_574306_571801_to_573306_571C02.bspatch $(1)/lib/firmware/
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/xcpe_574306_571801_to_573306_571C02.bspatch $(1)/lib/firmware/lantiq-vrx200-a-to-b.bspatch
 	ln -s xcpe_574306_571801.bin $(1)/lib/firmware/lantiq-vrx200-a.bin
 endef
 
