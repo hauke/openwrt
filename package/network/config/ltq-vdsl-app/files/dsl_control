@@ -15,7 +15,7 @@ EXTRA_HELP="	status  Get DSL status information
 # ITU-T G.997.1 (06/2012) - Section 7.3.1.1.1 (xTU transmission system enabling (XTSE))
 # ITU-T G.997.1 Amendment 2 (04/2013) - Section 2.1 - (Vectoring mode enable (VECTORMODE_ENABLE))
 #
-# G.992.1 Annex A
+# G.992.1 Annex A / ANSI T1.413
 # G.992.3 Annex A / L-US1 / L_US-2 / M
 # G.992.5 Annex A / M
 # G.993.2 Annex A/B/C
