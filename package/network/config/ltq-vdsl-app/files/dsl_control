@@ -92,29 +92,31 @@ start_service() {
 
 	case "${mode}" in
 	vdsl)
+		# In most cases ptm is used on top of vdsl
 		[ -z "${xfer_mode}" ] && xfer_mode=ptm
 		mode_num=2
 		case "${annex}" in
-		a)
+		a|l|m)
 			[ -z "${xtse}" ] && xtse="05_00_04_00_4C_01_04_0F"
 			;;
-		b)
-			[ -z "${xtse}" ] && xtse="10_00_10_00_00_04_00_0F"
+		b|j)
+			[ -z "${xtse}" ] && xtse="10_00_10_40_00_04_01_0F"
 			;;
 		*)
 			;;
 		esac
 		;;
 	adsl)
+		# In most cases atm is used on top of adsl
 		[ -z "${xfer_mode}" ] && xfer_mode=atm
 		mode_num=1
 
 		case "${annex}" in
-		a)
+		a|l|m)
 			[ -z "${xtse}" ] && xtse="05_00_04_00_4C_01_04_00"
 			;;
-		b)
-			[ -z "${xtse}" ] && xtse="10_00_10_00_00_04_00_00"
+		b|j)
+			[ -z "${xtse}" ] && xtse="10_00_10_40_00_04_01_00"
 			;;
 		*)
 			;;
@@ -144,7 +146,7 @@ start_service() {
 	if [ -z "${firmware}" ]; then
 		if grep -qE "system type.*: (VR9|xRX200)" /proc/cpuinfo; then
 			case "${annex}" in
-			a)
+			a|l|m)
 				if [ -f "/lib/firmware/lantiq-vrx200-a.bin" ]; then
 					firmware=/lib/firmware/lantiq-vrx200-a.bin
 				elif [ -f "/tmp/lantiq-vrx200-a.bin" ]; then
@@ -159,7 +161,7 @@ start_service() {
 					return 1
 				fi
 				;;
-			b)
+			b|j)
 				if [ -f "/lib/firmware/lantiq-vrx200-b.bin" ]; then
 					firmware=/lib/firmware/lantiq-vrx200-b.bin
 				elif [ -f "/tmp/lantiq-vrx200-b.bin" ]; then
