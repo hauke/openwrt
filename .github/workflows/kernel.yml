@@ -61,8 +61,10 @@ jobs:
          target: ${{fromJson(needs.determine_targets.outputs.target)}}
 
     steps:
-      - name: Checkout
+      - name: Checkout master directory
         uses: actions/checkout@v3
+        with:
+          path: openwrt
 
       - name: Initialization environment
         run: |
