@@ -1,0 +1,31 @@
+name: Build lantiq target
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/target-lantiq.yaml'
+      - 'target/linux/lantiq/**'
+      - 'package/kernel/lantiq/**'
+      - 'package/boot/uboot-lantiq/**'
+  push:
+    paths:
+      - '.github/workflows/target-lantiq.yaml'
+      - 'target/linux/lantiq/**'
+      - 'package/kernel/lantiq/**'
+      - 'package/boot/uboot-lantiq/**'
+
+jobs:
+  build_target:
+    strategy:
+      matrix:
+        subtarget: [ase, xrx200, xway, xway_legacy]
+    uses: ./.github/workflows/target-build.yaml
+    with:
+      target: "lantiq"
+      subtarget: ${{ matrix.subtarget }}
+
+  check_kernel:
+    uses: ./.github/workflows/target-check-patch.yaml
+    with:
+      target: "lantiq"
+      subtarget: ase
