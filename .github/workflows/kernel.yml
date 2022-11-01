@@ -54,50 +54,26 @@ jobs:
   build:
     name: Build Kernel with external toolchain
     needs: determine_targets
-    runs-on: ubuntu-latest
     strategy:
        fail-fast: False
        matrix:
          target: ${{fromJson(needs.determine_targets.outputs.target)}}
-
-    steps:
-      - name: Initialization environment
-        run: |
-          TARGET=$(echo ${{ matrix.target }} | cut -d "/" -f 1)
-          SUBTARGET=$(echo ${{ matrix.target }} | cut -d "/" -f 2)
-          echo "TARGET=$TARGET" >> "$GITHUB_ENV"
-          echo "SUBTARGET=$SUBTARGET" >> "$GITHUB_ENV"
-
-      - name: kernel build
-        uses: ./.github/workflows/target-build.yaml
-        with:
-          target: ${{ env.TARGET }}
-          subtarget: ${{ env.SUBTARGET }}
-          build_all_kmods: true
-          include_feeds: true
+    uses: ./.github/workflows/target-build.yaml
+    with:
+      target: ${{ matrix.target }}
+      build_all_kmods: true
+      include_feeds: true
 
   check-patch:
     name: Check Kernel patches
     needs: determine_targets
-    runs-on: ubuntu-latest
     strategy:
        fail-fast: False
        matrix:
          target: ${{fromJson(needs.determine_targets.outputs.target)}}
-
-    steps:
-      - name: Initialization environment
-        run: |
-          TARGET=$(echo ${{ matrix.target }} | cut -d "/" -f 1)
-          SUBTARGET=$(echo ${{ matrix.target }} | cut -d "/" -f 2)
-          echo "TARGET=$TARGET" >> "$GITHUB_ENV"
-          echo "SUBTARGET=$SUBTARGET" >> "$GITHUB_ENV"
-
-      - name: kernel build
-        uses: ./.github/workflows/target-build.yaml
-        with:
-          target: ${{ env.TARGET }}
-          subtarget: ${{ env.SUBTARGET }}
-          build_all_kmods: true
-          include_feeds: true
+    uses: ./.github/workflows/target-build.yaml
+    with:
+      target: ${{ matrix.target }}
+      build_all_kmods: true
+      include_feeds: true
 

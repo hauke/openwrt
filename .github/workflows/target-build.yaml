@@ -6,9 +6,6 @@ on:
       target:
         required: true
         type: string
-      subtarget:
-        required: true
-        type: string
       testing:
         type: boolean
       include_feeds:
@@ -97,6 +94,13 @@ jobs:
         run: |
           chown -R buildbot:buildbot openwrt
 
+      - name: Initialization environment
+        run: |
+          TARGET=$(echo ${{ inputs.target }} | cut -d "/" -f 1)
+          SUBTARGET=$(echo ${{ inputs.target }} | cut -d "/" -f 2)
+          echo "TARGET=$TARGET" >> "$GITHUB_ENV"
+          echo "SUBTARGET=$SUBTARGET" >> "$GITHUB_ENV"
+
       - name: Update & Install feeds
         if: ${{ inputs.include_feeds == true }}
         shell: su buildbot -c "sh -e {0}"
@@ -108,7 +112,7 @@ jobs:
       - name: Parse toolchain file
         working-directory: openwrt
         run: |
-          TOOLCHAIN_STRING="$(curl "https://downloads.cdn.openwrt.org/snapshots/targets/${{ inputs.target }}/${{ inputs.subtarget }}/sha256sums" \
+          TOOLCHAIN_STRING="$(curl "https://downloads.cdn.openwrt.org/snapshots/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/sha256sums" \
             | grep ".*openwrt-toolchain.*tar.xz")"
           TOOLCHAIN_FILE=$(echo "$TOOLCHAIN_STRING" | sed -n -e 's/.*\(openwrt-toolchain.*\).tar.xz/\1/p')
           TOOLCHAIN_SHA256=$(echo "$TOOLCHAIN_STRING" | cut -d ' ' -f 1)
@@ -127,16 +131,16 @@ jobs:
         uses: actions/cache@v3
         with:
           path: openwrt/.ccache
-          key: ccache-kernel-${{ inputs.target }}/${{ inputs.subtarget }}-${{ needs.setup_build.outputs.ccache_hash }}
+          key: ccache-kernel-${{ env.TARGET }}/${{ env.SUBTARGET }}-${{ needs.setup_build.outputs.ccache_hash }}
           restore-keys: |
-            ccache-kernel-${{ inputs.target }}/${{ inputs.subtarget }}-
+            ccache-kernel-${{ env.TARGET }}/${{ env.SUBTARGET }}-
 
       - name: Download external toolchain
         if: ${{ steps.cache-external-toolchain.outputs.cache-hit != 'true' }}
         shell: su buildbot -c "sh -e {0}"
         working-directory: openwrt
         run: |
-          wget -O - https://downloads.cdn.openwrt.org/snapshots/targets/${{ inputs.target }}/${{ inputs.subtarget }}/${TOOLCHAIN_FILE}.tar.xz \
+          wget -O - https://downloads.cdn.openwrt.org/snapshots/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${TOOLCHAIN_FILE}.tar.xz \
             | tar --xz -xf -
 
       - name: Extract prebuilt tools
@@ -185,7 +189,7 @@ jobs:
           ./scripts/ext-toolchain.sh \
             --toolchain ${{ env.TOOLCHAIN_FILE }}/toolchain-* \
             --overwrite-config \
-            --config ${{ inputs.target }}/${{ inputs.subtarget }}
+            --config ${{ env.TARGET }}/${{ env.SUBTARGET }}
 
       - name: Show configuration
         shell: su buildbot -c "sh -e {0}"
@@ -222,5 +226,5 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ inputs.target }}-${{ inputs.subtarget }}-logs
+          name: ${{ env.TARGET }}-${{ env.SUBTARGET }}-logs
           path: "openwrt/logs"

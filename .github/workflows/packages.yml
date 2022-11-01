@@ -28,16 +28,11 @@ jobs:
       fail-fast: False
       matrix:
         include:
-          - name: malta-be
-            target: malta
-            subtarget: be
-          - name: x86-64
-            target: x86
-            subtarget: 64
+          - target: malta/be
+          - target: x86/64
     uses: ./.github/workflows/target-build.yaml
     with:
       target: ${{ matrix.target }}
-      subtarget: ${{ matrix.subtarget }}
       build_all_kmods: true
       build_all_modules: true
       build_full: true

@@ -23,8 +23,7 @@ jobs:
         testing: [false, true]
     uses: ./.github/workflows/target-build.yaml
     with:
-      target: "lantiq"
-      subtarget: ${{ matrix.subtarget }}
+      target: "lantiq/${{ matrix.subtarget }}"
       testing: ${{ matrix.testing }}
 
 
@@ -36,6 +35,5 @@ jobs:
         testing: [false, true]
     uses: ./.github/workflows/target-check-patch.yaml
     with:
-      target: "lantiq"
-      subtarget: ase
+      target: "lantiq/${{ matrix.subtarget }}"
       testing: ${{ matrix.testing }}
