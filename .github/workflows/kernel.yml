@@ -73,16 +73,18 @@ jobs:
           echo "TARGET=$TARGET" >> "$GITHUB_ENV"
           echo "SUBTARGET=$SUBTARGET" >> "$GITHUB_ENV"
 
-      - name: Call check patch
-        uses: ./.github/workflows/target-check-patch.yaml
-        with:
-          target: ${{ env.TARGET }}
-          subtarget: ${{ env.SUBTARGET }}
-
-      - name: Call check patch
+      - name: kernel build
         uses: ./.github/workflows/target-build.yaml
         with:
           target: ${{ env.TARGET }}
           subtarget: ${{ env.SUBTARGET }}
           build_all_kmods: true
           include_feeds: true
+
+      - name: Call check patch
+        uses: ./.github/workflows/target-check-patch.yaml
+        with:
+          target: ${{ env.TARGET }}
+          subtarget: ${{ env.SUBTARGET }}
+
+
