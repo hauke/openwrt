@@ -34,8 +34,6 @@ jobs:
     name: Check Kernel patches
     needs: setup_build
     runs-on: ubuntu-latest
-    strategy:
-       fail-fast: False
 
     container: ghcr.io/${{ needs.setup_build.outputs.owner_lc }}/tools:latest
 

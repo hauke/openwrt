@@ -17,6 +17,7 @@ on:
 jobs:
   build_target:
     strategy:
+      fail-fast: False
       matrix:
         subtarget: [ase, xrx200, xway, xway_legacy]
         testing: [false, true]
@@ -29,6 +30,7 @@ jobs:
 
   check_kernel:
     strategy:
+      fail-fast: False
       matrix:
         subtarget: [ase]
         testing: [false, true]
