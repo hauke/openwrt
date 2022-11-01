@@ -23,8 +23,6 @@ permissions:
 
 jobs:
   build:
-    name: Build all core packages
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: False
       matrix:
