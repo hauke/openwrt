@@ -85,7 +85,7 @@ jobs:
         run: ./scripts/ext-tools.sh --tools /tools.tar
 
       - name: Create configuration (normal)
-        if: ${{ inputs.testing == 'false' }}
+        if: ${{ inputs.testing == false }}
         shell: su buildbot -c "sh -e {0}"
         working-directory: openwrt
         run: |
@@ -99,7 +99,7 @@ jobs:
             --config ${{ inputs.target }}/${{ inputs.subtarget }}
 
       - name: Create configuration (testing)
-        if: ${{ inputs.testing == 'true' }}
+        if: ${{ inputs.testing == true }}
         shell: su buildbot -c "sh -e {0}"
         working-directory: openwrt
         run: |
