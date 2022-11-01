@@ -9,6 +9,8 @@ on:
       subtarget:
         required: true
         type: string
+      testing:
+        type: boolean
 
 permissions:
   contents: read
@@ -82,13 +84,29 @@ jobs:
         working-directory: openwrt
         run: ./scripts/ext-tools.sh --tools /tools.tar
 
-      - name: Create configuration
+      - name: Create configuration (normal)
+        if: ${{ inputs.testing == 'false' }}
         shell: su buildbot -c "sh -e {0}"
         working-directory: openwrt
         run: |
           echo CONFIG_TARGET_MULTI_PROFILE=y >> .config
           echo CONFIG_TARGET_PER_DEVICE_ROOTFS=y >> .config
           echo CONFIG_TARGET_ALL_PROFILES=y >> .config
+
+          ./scripts/ext-toolchain.sh \
+            --toolchain ${{ env.TOOLCHAIN_FILE }}/toolchain-* \
+            --overwrite-config \
+            --config ${{ inputs.target }}/${{ inputs.subtarget }}
+
+      - name: Create configuration (testing)
+        if: ${{ inputs.testing == 'true' }}
+        shell: su buildbot -c "sh -e {0}"
+        working-directory: openwrt
+        run: |
+          echo CONFIG_TARGET_MULTI_PROFILE=y >> .config
+          echo CONFIG_TARGET_PER_DEVICE_ROOTFS=y >> .config
+          echo CONFIG_TARGET_ALL_PROFILES=y >> .config
+          echo CONFIG_TESTING_KERNEL=y >> .config
 
           ./scripts/ext-toolchain.sh \
             --toolchain ${{ env.TOOLCHAIN_FILE }}/toolchain-* \

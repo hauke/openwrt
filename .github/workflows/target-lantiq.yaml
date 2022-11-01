@@ -19,13 +19,20 @@ jobs:
     strategy:
       matrix:
         subtarget: [ase, xrx200, xway, xway_legacy]
+        testing: [false, true]
     uses: ./.github/workflows/target-build.yaml
     with:
       target: "lantiq"
       subtarget: ${{ matrix.subtarget }}
+      testing: ${{ matrix.testing }}
 
   check_kernel:
+    strategy:
+      matrix:
+        subtarget: [ase]
+        testing: [false, true]
     uses: ./.github/workflows/target-check-patch.yaml
     with:
       target: "lantiq"
       subtarget: ase
+      testing: ${{ matrix.testing }}

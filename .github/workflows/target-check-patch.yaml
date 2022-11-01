@@ -9,6 +9,8 @@ on:
       subtarget:
         required: true
         type: string
+      testing:
+        type: boolean
 
 permissions:
   contents: read
@@ -56,7 +58,8 @@ jobs:
         working-directory: openwrt
         run: ./scripts/ext-tools.sh --tools /tools.tar
 
-      - name: Setup Config
+      - name: Setup Config (normal)
+        if: ${{ inputs.testing == 'false' }}
         shell: su buildbot -c "sh -e {0}"
         working-directory: openwrt
         run: |
@@ -64,6 +67,22 @@ jobs:
           echo CONFIG_DEVEL=y >> .config
           echo CONFIG_AUTOREMOVE=y >> .config
           echo CONFIG_CCACHE=y >> .config
+
+          echo "CONFIG_TARGET_${{ inputs.target }}=y" >> .config
+          echo "CONFIG_TARGET_${{ inputs.target }}_${{ inputs.subtarget }}=y" >> .config
+
+          make defconfig
+
+      - name: Setup Config (testing)
+        if: ${{ inputs.testing == 'true' }}
+        shell: su buildbot -c "sh -e {0}"
+        working-directory: openwrt
+        run: |
+          echo CONFIG_ALL_KMODS=y >> .config
+          echo CONFIG_DEVEL=y >> .config
+          echo CONFIG_AUTOREMOVE=y >> .config
+          echo CONFIG_CCACHE=y >> .config
+          echo CONFIG_TESTING_KERNEL=y >> .config
 
           echo "CONFIG_TARGET_${{ inputs.target }}=y" >> .config
           echo "CONFIG_TARGET_${{ inputs.target }}_${{ inputs.subtarget }}=y" >> .config
