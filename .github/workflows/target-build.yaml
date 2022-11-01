@@ -11,6 +11,16 @@ on:
         type: string
       testing:
         type: boolean
+      include_feeds:
+        type: boolean
+      build_full:
+        type: boolean
+      build_all_modules:
+        type: boolean
+      build_all_kmods:
+        type: boolean
+      build_all_boards:
+        type: boolean
 
 permissions:
   contents: read
@@ -21,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       owner_lc: ${{ steps.lower_owner.outputs.owner_lc }}
+      ccache_hash: ${{ steps.ccache_hash.outputs.ccache_hash }}
 
     steps:
       - name: Set lower case owner name
@@ -30,8 +41,15 @@ jobs:
             | tr '[:upper:]' '[:lower:]')
           echo "owner_lc=$OWNER_LC" >> $GITHUB_OUTPUT
 
+      - name: Generate ccache hash
+        id: ccache_hash
+        run: |
+          CCACHE_HASH=$(md5sum include/kernel-* | awk '{ print $1 }' \
+           | md5sum | awk '{ print $1 }')
+          echo "ccache_hash=$CCACHE_HASH" >> $GITHUB_OUTPUT
+
   build:
-    name: Build all core packages
+    name: Build with external toolchain
     needs: setup_build
     runs-on: ubuntu-latest
 
@@ -47,9 +65,45 @@ jobs:
         with:
           path: openwrt
 
+      - name: Checkout packages feed
+        if: ${{ inputs.include_feeds == true }}
+        uses: actions/checkout@v3
+        with:
+          repository: openwrt/packages
+          path: openwrt/feeds/packages
+
+      - name: Checkout luci feed
+        if: ${{ inputs.include_feeds == true }}
+        uses: actions/checkout@v3
+        with:
+          repository: openwrt/luci
+          path: openwrt/feeds/luci
+
+      - name: Checkout routing feed
+        if: ${{ inputs.include_feeds == true }}
+        uses: actions/checkout@v3
+        with:
+          repository: openwrt/routing
+          path: openwrt/feeds/routing
+
+      - name: Checkout telephony feed
+        if: ${{ inputs.include_feeds == true }}
+        uses: actions/checkout@v3
+        with:
+          repository: openwrt/telephony
+          path: openwrt/feeds/telephony
+
       - name: Fix permission
         run: |
           chown -R buildbot:buildbot openwrt
+
+      - name: Update & Install feeds
+        if: ${{ inputs.include_feeds == true }}
+        shell: su buildbot -c "sh -e {0}"
+        working-directory: openwrt
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
 
       - name: Parse toolchain file
         working-directory: openwrt
@@ -69,6 +123,14 @@ jobs:
           path: openwrt/${{ env.TOOLCHAIN_FILE }}
           key: ${{ env.TOOLCHAIN_FILE }}-${{ env.TOOLCHAIN_SHA256 }}
 
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: openwrt/.ccache
+          key: ccache-kernel-${{ inputs.target }}/${{ inputs.subtarget }}-${{ needs.setup_build.outputs.ccache_hash }}
+          restore-keys: |
+            ccache-kernel-${{ inputs.target }}/${{ inputs.subtarget }}-
+
       - name: Download external toolchain
         if: ${{ steps.cache-external-toolchain.outputs.cache-hit != 'true' }}
         shell: su buildbot -c "sh -e {0}"
@@ -82,21 +144,43 @@ jobs:
         working-directory: openwrt
         run: ./scripts/ext-tools.sh --tools /tools.tar
 
-      - name: Create kernel testing configuration
+      - name: Configure testing kernel
         if: ${{ inputs.testing == true }}
         shell: su buildbot -c "sh -e {0}"
         working-directory: openwrt
         run: |
           echo CONFIG_TESTING_KERNEL=y >> .config
 
-      - name: Create configuration
+      - name: Configure all kernel modules
+        if: ${{ inputs.build_all_kmods == true }}
         shell: su buildbot -c "sh -e {0}"
         working-directory: openwrt
         run: |
-          echo CONFIG_AUTOREMOVE=y >> .config
+          echo CONFIG_ALL_KMODS=y >> .config
+
+      - name: Configure all modules
+        if: ${{ inputs.build_all_modules == true }}
+        shell: su buildbot -c "sh -e {0}"
+        working-directory: openwrt
+        run: |
+          echo CONFIG_ALL=y >> .config
+
+      - name: Configure all boards
+        if: ${{ inputs.build_all_boards == true }}
+        shell: su buildbot -c "sh -e {0}"
+        working-directory: openwrt
+        run: |
           echo CONFIG_TARGET_MULTI_PROFILE=y >> .config
           echo CONFIG_TARGET_PER_DEVICE_ROOTFS=y >> .config
           echo CONFIG_TARGET_ALL_PROFILES=y >> .config
+
+      - name: Configure external toolchain
+        shell: su buildbot -c "sh -e {0}"
+        working-directory: openwrt
+        run: |
+          echo CONFIG_DEVEL=y >> .config
+          echo CONFIG_AUTOREMOVE=y >> .config
+          echo CONFIG_CCACHE=y >> .config
 
           ./scripts/ext-toolchain.sh \
             --toolchain ${{ env.TOOLCHAIN_FILE }}/toolchain-* \
@@ -123,7 +207,13 @@ jobs:
         working-directory: openwrt
         run: make target/compile -j$(nproc) BUILD_LOG=1 || ret=$? .github/workflows/scripts/show_build_failures.sh
 
+      - name: Build Kernel Kmods
+        shell: su buildbot -c "sh -e {0}"
+        working-directory: openwrt
+        run: make package/linux/compile -j$(nproc) BUILD_LOG=1 || ret=$? .github/workflows/scripts/show_build_failures.sh
+
       - name: Build everything
+        if: ${{ inputs.build_full == true }}
         shell: su buildbot -c "sh -e {0}"
         working-directory: openwrt
         run: make -j$(nproc) BUILD_LOG=1 || ret=$? .github/workflows/scripts/show_build_failures.sh
