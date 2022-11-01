@@ -35,11 +35,6 @@ jobs:
           - name: x86-64
             target: x86
             subtarget: 64
-
-    permissions:
-      contents: read
-      packages: read
-
     uses: ./.github/workflows/target-build.yaml
     with:
       target: ${{ matrix.target }}
@@ -47,3 +42,4 @@ jobs:
       build_all_kmods: true
       build_all_modules: true
       build_full: true
+
