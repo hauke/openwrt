@@ -71,7 +71,7 @@ jobs:
        fail-fast: False
        matrix:
          target: ${{fromJson(needs.determine_targets.outputs.target)}}
-    uses: ./.github/workflows/target-build.yaml
+    uses: ./.github/workflows/target-check-patch.yaml
     with:
       target: ${{ matrix.target }}
       build_all_kmods: true
