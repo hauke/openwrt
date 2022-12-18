@@ -25,7 +25,10 @@ template_toolchain_ext = """
       target: ${target}
       subtarget: $${{ matrix.subtarget }}
       testing: $${{ matrix.testing }}
+      build_toolchain: true
       build_kernel: true
+      build_all_kmods: true
+      build_all_modules: true
       build_full: true
       build_all_boards: true
 """
@@ -48,6 +51,8 @@ template_toolchain_int = """
       testing: $${{ matrix.testing }}
       build_toolchain: true
       build_kernel: true
+      build_all_kmods: true
+      build_all_modules: true
       build_full: true
       build_all_boards: true
 """
