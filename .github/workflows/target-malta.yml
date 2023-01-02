@@ -28,7 +28,6 @@ jobs:
     with:
       target: "malta/${{ matrix.subtarget }}"
       testing: ${{ matrix.testing }}
-      build_kernel: true
       build_full: true
       build_all_boards: true
 
@@ -46,7 +45,6 @@ jobs:
       target: "malta/${{ matrix.subtarget }}"
       testing: ${{ matrix.testing }}
       build_toolchain: true
-      build_kernel: true
       build_full: true
       build_all_boards: true
 

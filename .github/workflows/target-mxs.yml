@@ -25,12 +25,11 @@ jobs:
       fail-fast: False
       matrix:
         subtarget: [generic]
-        testing: [false, true]
+        testing: [false]
     uses: ./.github/workflows/build.yml
     with:
       target: "mxs/${{ matrix.subtarget }}"
       testing: ${{ matrix.testing }}
-      build_kernel: true
       build_full: true
       build_all_boards: true
 
@@ -43,7 +42,7 @@ jobs:
       fail-fast: False
       matrix:
         subtarget: [generic]
-        testing: [false, true]
+        testing: [false]
     uses: ./.github/workflows/check-kernel-patches.yml
     with:
       target: "mxs/${{ matrix.subtarget }}"

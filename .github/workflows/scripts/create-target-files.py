@@ -23,7 +23,6 @@ template_toolchain_ext = """
     with:
       target: "${target}/$${{ matrix.subtarget }}"
       testing: $${{ matrix.testing }}
-      build_kernel: true
       build_full: true
       build_all_boards: true
 """
@@ -43,7 +42,6 @@ template_toolchain_int = """
       target: "${target}/$${{ matrix.subtarget }}"
       testing: $${{ matrix.testing }}
       build_toolchain: true
-      build_kernel: true
       build_full: true
       build_all_boards: true
 """

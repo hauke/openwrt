@@ -26,13 +26,12 @@ jobs:
     strategy:
       fail-fast: False
       matrix:
-        subtarget: [filogic, mt7622, mt7623, mt7629]
+        subtarget: [mt7622, mt7623, mt7629]
         testing: [false]
     uses: ./.github/workflows/build.yml
     with:
       target: "mediatek/${{ matrix.subtarget }}"
       testing: ${{ matrix.testing }}
-      build_kernel: true
       build_full: true
       build_all_boards: true
 
@@ -44,7 +43,7 @@ jobs:
     strategy:
       fail-fast: False
       matrix:
-        subtarget: [filogic]
+        subtarget: [mt7622]
         testing: [false]
     uses: ./.github/workflows/check-kernel-patches.yml
     with:
