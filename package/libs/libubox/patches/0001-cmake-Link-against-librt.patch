@@ -1,0 +1,38 @@
+From 413a39c58c16cb007d29ba267c99b402c9e288d0 Mon Sep 17 00:00:00 2001
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Tue, 28 Nov 2023 21:26:35 +0100
+Subject: [PATCH] cmake: Link against librt
+
+Fix the following linking error:
+/usr/bin/ld: libubox.so: undefined reference to `shm_unlink'
+/usr/bin/ld: libubox.so: undefined reference to `shm_open'
+
+When linking against older glibc version we have to link the librt in.
+
+Fixes: d4c3066e7c5e ("udebug: add udebug library code")
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ CMakeLists.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1a6ff58..945c408 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -35,6 +35,13 @@ IF(NOT HAVE_GETTIME)
+ 		TARGET_LINK_LIBRARIES(ubox rt)
+ 	ENDIF()
+ ENDIF()
++CHECK_FUNCTION_EXISTS(shm_open HAVE_SHM_OPEN)
++IF(NOT HAVE_SHM_OPEN)
++	CHECK_LIBRARY_EXISTS(rt shm_open "" NEED_SHM_OPEN)
++	IF(NEED_SHM_OPEN)
++		TARGET_LINK_LIBRARIES(ubox rt)
++	ENDIF()
++ENDIF()
+ 
+ FILE(GLOB headers *.h)
+ LIST(FILTER headers EXCLUDE REGEX "-priv.h$" )
+-- 
+2.39.2
+
