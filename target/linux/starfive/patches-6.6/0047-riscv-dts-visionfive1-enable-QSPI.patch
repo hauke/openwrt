@@ -1,0 +1,20 @@
+From bbfb7e0b235d5da7390c04d7295eb749fe3b4769 Mon Sep 17 00:00:00 2001
+From: Zoltan HERPAI <wigyori@uid0.hu>
+Date: Fri, 11 Aug 2023 11:28:27 +0200
+Subject: riscv: dts: visionfive1: enable QSPI
+
+Signed-off-by: Zoltan HERPAI <wigyori@uid0.hu>
+---
+ .../riscv/boot/dts/starfive/jh7100-starfive-visionfive-v1.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/arch/riscv/boot/dts/starfive/jh7100-starfive-visionfive-v1.dts
++++ b/arch/riscv/boot/dts/starfive/jh7100-starfive-visionfive-v1.dts
+@@ -37,3 +37,7 @@
+ 		reg = <0>;
+ 	};
+ };
++
++&qspi {
++	status = "okay";
++};
