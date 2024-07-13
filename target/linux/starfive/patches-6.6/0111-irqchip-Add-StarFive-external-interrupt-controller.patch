@@ -1,4 +1,4 @@
-From 20b8e54baf6f89d7cba1910b4bcdae7bca2b7e8c Mon Sep 17 00:00:00 2001
+From 25662b92e8c19638379c3941c59dc4754800d225 Mon Sep 17 00:00:00 2001
 From: Changhuang Liang <changhuang.liang@starfivetech.com>
 Date: Sun, 25 Feb 2024 21:50:25 -0800
 Subject: [PATCH 111/125] irqchip: Add StarFive external interrupt controller

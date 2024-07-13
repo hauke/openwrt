@@ -1,4 +1,4 @@
-From b1cd7f4a5fb86a3f74456d5bb8e4027cd15407d8 Mon Sep 17 00:00:00 2001
+From 57d03434b39137a512e7a4a705c5f0eafc081fac Mon Sep 17 00:00:00 2001
 From: Changhuang Liang <changhuang.liang@starfivetech.com>
 Date: Tue, 12 Mar 2024 02:45:20 +0000
 Subject: [PATCH 170/177] media: staging: media: starfive: Clean pad selection

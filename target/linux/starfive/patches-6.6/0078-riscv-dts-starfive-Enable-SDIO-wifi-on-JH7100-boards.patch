@@ -1,7 +1,7 @@
-From 78c20c24b7f2bb8401015b5d791e8389711d1386 Mon Sep 17 00:00:00 2001
+From 4b81354aa232f2e6dfb1cd5561bd6472ccc3edcb Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Date: Thu, 30 Nov 2023 16:19:32 +0100
-Subject: [PATCH 79/89] riscv: dts: starfive: Enable SDIO wifi on JH7100 boards
+Subject: [PATCH 78/88] riscv: dts: starfive: Enable SDIO wifi on JH7100 boards
 
 Add pinctrl and MMC controller nodes for the Broadcom wifi controller
 on the BeagleV Starlight and StarFive VisionFive V1 boards.

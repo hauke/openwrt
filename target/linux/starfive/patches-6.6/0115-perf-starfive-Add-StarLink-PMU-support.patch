@@ -1,4 +1,4 @@
-From 5d20f9d6042aed6a18d7410f7297f962b679f79e Mon Sep 17 00:00:00 2001
+From 8dfcfc0390198dd98517c4dc583bb78ff9693c5c Mon Sep 17 00:00:00 2001
 From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
 Date: Thu, 29 Feb 2024 15:27:17 +0800
 Subject: [PATCH 115/125] perf: starfive: Add StarLink PMU support

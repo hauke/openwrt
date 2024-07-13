@@ -1,4 +1,4 @@
-From d86a637de5494e6e44cd704da1a540c2aa315445 Mon Sep 17 00:00:00 2001
+From 26b2a82d3e4ea3cea82dac919e7b59083feb8157 Mon Sep 17 00:00:00 2001
 From: Jisheng Zhang <jszhang@kernel.org>
 Date: Mon, 29 Apr 2024 08:13:14 +0800
 Subject: [PATCH 166/177] riscv: dts: starfive: visionfive 2: add tf cd-gpios

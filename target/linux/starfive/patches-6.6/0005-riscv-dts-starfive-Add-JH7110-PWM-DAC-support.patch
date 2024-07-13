@@ -1,7 +1,7 @@
 From cafd246b683461d602763788413e8f06c39eab3b Mon Sep 17 00:00:00 2001
 From: Hal Feng <hal.feng@starfivetech.com>
 Date: Mon, 14 Aug 2023 16:06:18 +0800
-Subject: [PATCH 05/26] riscv: dts: starfive: Add JH7110 PWM-DAC support
+Subject: [PATCH 05/23] riscv: dts: starfive: Add JH7110 PWM-DAC support
 
 Add PWM-DAC support for StarFive JH7110 SoC.
 

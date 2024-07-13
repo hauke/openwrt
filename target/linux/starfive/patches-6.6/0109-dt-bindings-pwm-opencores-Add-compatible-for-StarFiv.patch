@@ -1,4 +1,4 @@
-From a37e37189bbc6d06b02e0ef50db7d492989b0548 Mon Sep 17 00:00:00 2001
+From ec7f9a17d16ca4b9975117337c41282c61f0a884 Mon Sep 17 00:00:00 2001
 From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
 Date: Mon, 26 Feb 2024 11:39:45 +0800
 Subject: [PATCH 109/125] dt-bindings: pwm: opencores: Add compatible for

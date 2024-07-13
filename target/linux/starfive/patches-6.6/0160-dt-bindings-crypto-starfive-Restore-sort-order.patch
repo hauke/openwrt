@@ -1,4 +1,4 @@
-From bde4afb875c1d01c4f63345df60014e4972199d3 Mon Sep 17 00:00:00 2001
+From 77986d8da5ea20f7847c4ded227fe64877aedd9b Mon Sep 17 00:00:00 2001
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 Date: Tue, 16 Apr 2024 17:51:49 +0200
 Subject: [PATCH 160/177] dt-bindings: crypto: starfive: Restore sort order

@@ -1,7 +1,7 @@
 From 99a27ec3126a6afb1711a1c17f68ad63b412652f Mon Sep 17 00:00:00 2001
 From: William Qiu <william.qiu@starfivetech.com>
 Date: Fri, 22 Sep 2023 14:28:34 +0800
-Subject: [PATCH 16/26] riscv: dts: starfive: add assigned-clock* to limit
+Subject: [PATCH 16/23] riscv: dts: starfive: add assigned-clock* to limit
  frquency
 
 In JH7110 SoC, we need to go by-pass mode, so we need add the

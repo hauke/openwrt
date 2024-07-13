@@ -1,7 +1,7 @@
-From b2239603e85a8b9e560b3fab4c2fabe101e53e27 Mon Sep 17 00:00:00 2001
+From 119e39b1da32a6a03f3f7679d46bcdf787b10be3 Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Date: Thu, 30 Nov 2023 16:19:28 +0100
-Subject: [PATCH 75/89] riscv: dts: starfive: Add JH7100 cache controller
+Subject: [PATCH 74/88] riscv: dts: starfive: Add JH7100 cache controller
 
 The StarFive JH7100 SoC also features the SiFive L2 cache controller,
 so add the device tree nodes for it.

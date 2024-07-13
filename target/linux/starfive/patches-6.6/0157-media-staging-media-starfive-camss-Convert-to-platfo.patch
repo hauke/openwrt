@@ -1,4 +1,4 @@
-From e20e167679b6ee3159df6c92f349dbcb34547919 Mon Sep 17 00:00:00 2001
+From a8cff9b7d914bdc66065eb0dff97882e6931076c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 Date: Fri, 8 Mar 2024 09:51:16 +0100
 Subject: [PATCH 157/177] media: staging: media: starfive: camss: Convert to

@@ -1,7 +1,7 @@
-From 9aaec0f51bb3969273e09abe9a6302fa0411407e Mon Sep 17 00:00:00 2001
+From 023153eb58e3a91975161bb2a831d9a2954ee168 Mon Sep 17 00:00:00 2001
 From: Jia Jie Ho <jiajie.ho@starfivetech.com>
 Date: Wed, 15 Nov 2023 01:12:14 +0800
-Subject: [PATCH 64/89] crypto: starfive - RSA poll csr for done status
+Subject: [PATCH 64/88] crypto: starfive - RSA poll csr for done status
 
 Hardware could not clear irq status without resetting the entire module.
 Driver receives irq immediately when mask bit is cleared causing

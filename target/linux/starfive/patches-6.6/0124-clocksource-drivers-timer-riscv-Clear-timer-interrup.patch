@@ -1,4 +1,4 @@
-From e4ce618be47c62dd4daa215bac1f9933ac43e3aa Mon Sep 17 00:00:00 2001
+From acf50d8a27db12d876a19a477fb96c8b7b1eb25e Mon Sep 17 00:00:00 2001
 From: Ley Foon Tan <leyfoon.tan@starfivetech.com>
 Date: Thu, 7 Mar 2024 01:23:30 +0800
 Subject: [PATCH 124/125] clocksource/drivers/timer-riscv: Clear timer
@@ -23,7 +23,7 @@ Link: https://lore.kernel.org/r/20240306172330.255844-1-leyfoon.tan@starfivetech
 
 --- a/drivers/clocksource/timer-riscv.c
 +++ b/drivers/clocksource/timer-riscv.c
-@@ -97,6 +97,9 @@ static int riscv_timer_starting_cpu(unsi
+@@ -108,6 +108,9 @@ static int riscv_timer_starting_cpu(unsi
  {
  	struct clock_event_device *ce = per_cpu_ptr(&riscv_clock_event, cpu);
  

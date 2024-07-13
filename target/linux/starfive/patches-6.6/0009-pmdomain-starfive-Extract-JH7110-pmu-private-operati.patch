@@ -1,7 +1,7 @@
 From d9aab4df2b5e6a52c3029b1041112559c486d00d Mon Sep 17 00:00:00 2001
 From: Changhuang Liang <changhuang.liang@starfivetech.com>
 Date: Wed, 13 Sep 2023 14:54:27 +0100
-Subject: [PATCH 09/26] pmdomain: starfive: Extract JH7110 pmu private
+Subject: [PATCH 09/23] pmdomain: starfive: Extract JH7110 pmu private
  operations
 
 Move JH7110 private operation into private data of compatible. Convenient

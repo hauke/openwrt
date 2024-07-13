@@ -1,7 +1,7 @@
-From 74b15e50d048a78a90d0314052a9730ed4daf4b6 Mon Sep 17 00:00:00 2001
+From 70d66b986f352bec8edbc7cdef8f7564911801ef Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Date: Fri, 15 Dec 2023 20:09:09 +0100
-Subject: [PATCH 81/89] riscv: errata: Make ERRATA_STARFIVE_JH7100 depend on
+Subject: [PATCH 80/88] riscv: errata: Make ERRATA_STARFIVE_JH7100 depend on
  !DMA_DIRECT_REMAP
 
 Similar to the Renesas RZ/Five[1] the JH7100 SoC needs the non-portable

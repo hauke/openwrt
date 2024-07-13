@@ -1,4 +1,4 @@
-From d451ded25ae93e31ff359ec1f92581d3abd4aeae Mon Sep 17 00:00:00 2001
+From c519b45aaa83ea5c80aebf88e2c79e3c0afd52c5 Mon Sep 17 00:00:00 2001
 From: Jisheng Zhang <jszhang@kernel.org>
 Date: Mon, 29 Apr 2024 08:13:12 +0800
 Subject: [PATCH 164/177] riscv: dts: starfive: visionfive 2: update sound and

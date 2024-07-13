@@ -1,7 +1,7 @@
-From 8d8720f9522dcfd725b62cf0645353fa196376ea Mon Sep 17 00:00:00 2001
+From af2a0573522acce42a0b67d8021b1c70fccee396 Mon Sep 17 00:00:00 2001
 From: Geert Uytterhoeven <geert@linux-m68k.org>
 Date: Thu, 30 Nov 2023 16:19:26 +0100
-Subject: [PATCH 73/89] riscv: dts: starfive: Group tuples in interrupt
+Subject: [PATCH 72/88] riscv: dts: starfive: Group tuples in interrupt
  properties
 
 To improve human readability and enable automatic validation, the tuples

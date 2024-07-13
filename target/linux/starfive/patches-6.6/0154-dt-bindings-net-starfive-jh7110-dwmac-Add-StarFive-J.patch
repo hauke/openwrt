@@ -1,4 +1,4 @@
-From 9d805d3f52d4e9d06940d40854280c620f503e1e Mon Sep 17 00:00:00 2001
+From 4d60fd125761c18c21e19c6612c963f2e84a5337 Mon Sep 17 00:00:00 2001
 From: Tan Chun Hau <chunhau.tan@starfivetech.com>
 Date: Wed, 3 Apr 2024 03:05:49 -0700
 Subject: [PATCH 154/177] dt-bindings: net: starfive,jh7110-dwmac: Add StarFive

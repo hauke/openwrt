@@ -1,7 +1,7 @@
-From bbc583448bcfb146a8a213a163f11b45b541830f Mon Sep 17 00:00:00 2001
+From 65fd6f0917f9cc57eb970a4d2a8c7df3080ec790 Mon Sep 17 00:00:00 2001
 From: Jack Zhu <jack.zhu@starfivetech.com>
 Date: Wed, 25 Oct 2023 11:14:15 +0800
-Subject: [PATCH 52/89] media: admin-guide: Add starfive_camss.rst for Starfive
+Subject: [PATCH 52/88] media: admin-guide: Add starfive_camss.rst for Starfive
  Camera Subsystem
 
 Add starfive_camss.rst file that documents the Starfive Camera

@@ -1,7 +1,7 @@
 From 81a23ad750e40b9395a451fde8cd480b87fd93e3 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Date: Mon, 11 Sep 2023 23:50:19 +0000
-Subject: [PATCH 12/26] ASoC: starfive: convert not to use asoc_xxx()
+Subject: [PATCH 12/23] ASoC: starfive: convert not to use asoc_xxx()
 
 ASoC is now unified asoc_xxx() into snd_soc_xxx().
 This patch convert asoc_xxx() to snd_soc_xxx().

@@ -1,4 +1,4 @@
-From 28c3a433a12061a6b5a259b474718e1586f6afa6 Mon Sep 17 00:00:00 2001
+From 054a8ff7eb3e8ab5b6f2cfe56bb1d9c4ca599581 Mon Sep 17 00:00:00 2001
 From: Jisheng Zhang <jszhang@kernel.org>
 Date: Mon, 29 Apr 2024 08:13:13 +0800
 Subject: [PATCH 165/177] riscv: dts: starfive: visionfive 2: use cpus label

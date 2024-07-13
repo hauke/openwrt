@@ -1,7 +1,7 @@
-From df514d07e23c8855c453b53856e4c828513f31dd Mon Sep 17 00:00:00 2001
+From cda57da97e0671024a6d838613a71867c47bbaf5 Mon Sep 17 00:00:00 2001
 From: Jack Zhu <jack.zhu@starfivetech.com>
 Date: Wed, 25 Oct 2023 11:14:22 +0800
-Subject: [PATCH 59/89] media: staging: media: starfive: camss: Add TODO file
+Subject: [PATCH 59/88] media: staging: media: starfive: camss: Add TODO file
 
 Add a TODO.txt file to explain what needs to be done to get them
 out of staging.

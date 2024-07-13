@@ -1,4 +1,4 @@
-From 7262432bee564dd0406e4db445012c6ac4646232 Mon Sep 17 00:00:00 2001
+From f5d043d4f388b5777e7702e4838390c4b3ffe186 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 Date: Wed, 6 Mar 2024 11:38:57 +0100
 Subject: [PATCH 123/125] clk: starfive: jh7110-vout: Convert to platform

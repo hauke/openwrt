@@ -1,4 +1,4 @@
-From 2b779268720d94c07e30c3c08fb016b4e6ebf868 Mon Sep 17 00:00:00 2001
+From b381d4829c57f9546ac0d384d938580788f1f912 Mon Sep 17 00:00:00 2001
 From: Jia Jie Ho <jiajie.ho@starfivetech.com>
 Date: Mon, 29 Apr 2024 14:06:39 +0800
 Subject: [PATCH 174/177] crypto: starfive - Do not free stack buffer

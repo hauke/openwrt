@@ -1,7 +1,7 @@
-From c859180706dbe0467f753c18cc6efb7040ba5f65 Mon Sep 17 00:00:00 2001
+From ab7af7290f3584322d7fcb45890dd4546e9607c0 Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Date: Wed, 20 Dec 2023 01:24:39 +0200
-Subject: [PATCH 87/89] clk: starfive: Add flags argument to JH71X0__MUX macro
+Subject: [PATCH 86/88] clk: starfive: Add flags argument to JH71X0__MUX macro
 
 This flag is needed to add the CLK_SET_RATE_PARENT flag on the gmac_tx
 clock on the JH7100, which in turn is needed by the dwmac-starfive

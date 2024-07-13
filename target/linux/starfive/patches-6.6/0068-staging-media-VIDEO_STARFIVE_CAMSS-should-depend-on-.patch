@@ -1,7 +1,7 @@
-From a5263b33ae88f850d718f70124521f30ad6454b0 Mon Sep 17 00:00:00 2001
+From 96db1d4782fed6048978ea180e601cb9004f2bc1 Mon Sep 17 00:00:00 2001
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 Date: Tue, 28 Nov 2023 19:31:53 +0100
-Subject: [PATCH 68/89] staging: media: VIDEO_STARFIVE_CAMSS should depend on
+Subject: [PATCH 68/88] staging: media: VIDEO_STARFIVE_CAMSS should depend on
  ARCH_STARFIVE
 
 The StarFive Camera Subsystem is only present on the StarFive JH7110

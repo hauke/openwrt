@@ -1,4 +1,4 @@
-From a65c621a6106e56aa60d77b2176cab3c19108620 Mon Sep 17 00:00:00 2001
+From 534f2f3be6d54ff341f2f9e31a0e2ca1065e6a9f Mon Sep 17 00:00:00 2001
 From: Changhuang Liang <changhuang.liang@starfivetech.com>
 Date: Sun, 25 Feb 2024 21:50:24 -0800
 Subject: [PATCH 110/125] dt-bindings: interrupt-controller: Add

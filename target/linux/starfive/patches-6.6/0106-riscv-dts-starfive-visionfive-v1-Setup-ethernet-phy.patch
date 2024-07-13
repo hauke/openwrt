@@ -1,4 +1,4 @@
-From 4af51c773047642294c96ecef9b97b911bd1d36e Mon Sep 17 00:00:00 2001
+From 28d54a60d41048b64e9b3e9fdc22c365fe3b855a Mon Sep 17 00:00:00 2001
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 Date: Wed, 20 Dec 2023 23:17:41 +0200
 Subject: [PATCH 106/125] riscv: dts: starfive: visionfive-v1: Setup ethernet

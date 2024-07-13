@@ -1,7 +1,7 @@
-From d0317ee09e8e682babc08cf1e82e543b342df12c Mon Sep 17 00:00:00 2001
+From 6c762bb334bc4059b4774ae0bc2aa3f2727330ff Mon Sep 17 00:00:00 2001
 From: Jack Zhu <jack.zhu@starfivetech.com>
 Date: Wed, 25 Oct 2023 11:14:21 +0800
-Subject: [PATCH 58/89] media: staging: media: starfive: camss: Register
+Subject: [PATCH 58/88] media: staging: media: starfive: camss: Register
  devices
 
 Register ISP sub-device and video devices for StarFive Camera

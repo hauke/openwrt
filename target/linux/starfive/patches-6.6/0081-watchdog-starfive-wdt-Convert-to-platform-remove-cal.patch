@@ -1,7 +1,7 @@
-From 8795c187347de22006952b8d5558a30d197c91c2 Mon Sep 17 00:00:00 2001
+From 4ec388f98ccf0e9d16dce3d290e37ac7a55b84fe Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 Date: Mon, 6 Nov 2023 16:48:12 +0100
-Subject: [PATCH 82/89] watchdog: starfive-wdt: Convert to platform remove
+Subject: [PATCH 81/88] watchdog: starfive-wdt: Convert to platform remove
  callback returning void
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8

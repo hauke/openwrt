@@ -1,7 +1,7 @@
-From fcc5f8df74c0897beccf18fe274db3820930fafc Mon Sep 17 00:00:00 2001
+From 5e36271d9108f56cd0939702d169b250035f28b1 Mon Sep 17 00:00:00 2001
 From: Jack Zhu <jack.zhu@starfivetech.com>
 Date: Wed, 25 Oct 2023 11:14:14 +0800
-Subject: [PATCH 51/89] media: dt-bindings: Add JH7110 Camera Subsystem
+Subject: [PATCH 51/88] media: dt-bindings: Add JH7110 Camera Subsystem
 
 Add the bindings documentation for Starfive JH7110 Camera Subsystem
 which is used for handing image sensor data.

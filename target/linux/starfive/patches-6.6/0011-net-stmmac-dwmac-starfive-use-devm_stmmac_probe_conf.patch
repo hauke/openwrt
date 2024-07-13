@@ -1,7 +1,7 @@
 From 57b9387d9d2be44eb915d6b9df5bb8eb23fa3cd8 Mon Sep 17 00:00:00 2001
 From: Jisheng Zhang <jszhang@kernel.org>
 Date: Sat, 16 Sep 2023 15:58:21 +0800
-Subject: [PATCH 11/26] net: stmmac: dwmac-starfive: use
+Subject: [PATCH 11/23] net: stmmac: dwmac-starfive: use
  devm_stmmac_probe_config_dt()
 
 Simplify the driver's probe() function by using the devres

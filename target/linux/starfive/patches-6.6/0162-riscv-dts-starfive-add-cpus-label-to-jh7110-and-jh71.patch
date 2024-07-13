@@ -1,4 +1,4 @@
-From e6016d30f888e02aa5e1c499815d9d933753dcf3 Mon Sep 17 00:00:00 2001
+From fa6a790c84d2b40a464c06fd3f5634b2ed8a1110 Mon Sep 17 00:00:00 2001
 From: Jisheng Zhang <jszhang@kernel.org>
 Date: Mon, 29 Apr 2024 08:13:10 +0800
 Subject: [PATCH 162/177] riscv: dts: starfive: add 'cpus' label to jh7110 and

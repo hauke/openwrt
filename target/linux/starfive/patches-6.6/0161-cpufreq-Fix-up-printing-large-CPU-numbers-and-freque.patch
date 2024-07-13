@@ -1,4 +1,4 @@
-From 29be5fdb42b160437a3b72051c24d5143caffc07 Mon Sep 17 00:00:00 2001
+From fad5919a74fcb8cf5bc1beb29deccffa5b8bb0b8 Mon Sep 17 00:00:00 2001
 From: Joshua Yeong <joshua.yeong@starfivetech.com>
 Date: Thu, 25 Apr 2024 19:00:17 +0800
 Subject: [PATCH 161/177] cpufreq: Fix up printing large CPU numbers and

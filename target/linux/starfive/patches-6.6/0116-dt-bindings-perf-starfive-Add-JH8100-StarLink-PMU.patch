@@ -1,4 +1,4 @@
-From f161c58b5e57fefcb6d0266d7a2346caf1481d50 Mon Sep 17 00:00:00 2001
+From a7cf20944f7dda29926fa05bb14c35143cb4de30 Mon Sep 17 00:00:00 2001
 From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
 Date: Thu, 29 Feb 2024 15:27:18 +0800
 Subject: [PATCH 116/125] dt-bindings: perf: starfive: Add JH8100 StarLink PMU

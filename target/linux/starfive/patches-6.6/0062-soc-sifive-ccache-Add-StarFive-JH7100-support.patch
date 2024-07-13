@@ -1,7 +1,7 @@
-From 4f0811d4a7eea883ba9b37403a8d4935f31b0c52 Mon Sep 17 00:00:00 2001
+From e855535aa56406b974b3f5392e4457a4eb967e27 Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <kernel@esmil.dk>
 Date: Tue, 31 Oct 2023 15:14:44 +0100
-Subject: [PATCH 62/89] soc: sifive: ccache: Add StarFive JH7100 support
+Subject: [PATCH 62/88] soc: sifive: ccache: Add StarFive JH7100 support
 
 This adds support for the StarFive JH7100 SoC which also features this
 SiFive cache controller.

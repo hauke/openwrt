@@ -1,7 +1,7 @@
 From e8796be0e594e04e497e9d5639c540d58ff8452f Mon Sep 17 00:00:00 2001
 From: Conor Dooley <conor.dooley@microchip.com>
 Date: Mon, 9 Oct 2023 10:37:47 +0100
-Subject: [PATCH 19/26] riscv: dts: starfive: convert isa detection to new
+Subject: [PATCH 19/23] riscv: dts: starfive: convert isa detection to new
  properties
 
 Convert the jh7100 and jh7110 devicetrees to use the new properties

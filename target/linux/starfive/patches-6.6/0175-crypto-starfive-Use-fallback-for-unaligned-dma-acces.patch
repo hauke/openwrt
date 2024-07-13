@@ -1,4 +1,4 @@
-From 498ab179d11676f5539e6b55bf5874236a84955f Mon Sep 17 00:00:00 2001
+From f17dafeb4b0d7dd8ecd9ddbbb51f5139d816d7d2 Mon Sep 17 00:00:00 2001
 From: Jia Jie Ho <jiajie.ho@starfivetech.com>
 Date: Mon, 29 Apr 2024 14:06:40 +0800
 Subject: [PATCH 175/177] crypto: starfive - Use fallback for unaligned dma

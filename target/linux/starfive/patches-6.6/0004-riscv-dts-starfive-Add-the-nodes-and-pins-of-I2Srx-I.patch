@@ -1,7 +1,7 @@
 From 92fe4c1bf4d281c3955daf5bb2128550963dfae9 Mon Sep 17 00:00:00 2001
 From: Xingyu Wu <xingyu.wu@starfivetech.com>
 Date: Mon, 21 Aug 2023 22:41:51 +0800
-Subject: [PATCH 04/26] riscv: dts: starfive: Add the nodes and pins of
+Subject: [PATCH 04/23] riscv: dts: starfive: Add the nodes and pins of
  I2Srx/I2Stx0/I2Stx1
 
 Add I2Srx/I2Stx0/I2Stx1 nodes and pins configuration for the

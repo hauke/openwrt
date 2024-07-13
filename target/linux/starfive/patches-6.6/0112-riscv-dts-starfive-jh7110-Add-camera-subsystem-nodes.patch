@@ -1,4 +1,4 @@
-From e30db8c307aab43c6e60140f44070c6ae927870f Mon Sep 17 00:00:00 2001
+From cc3273b91452f20c53faa7796ba72d5c3d13dc11 Mon Sep 17 00:00:00 2001
 From: Changhuang Liang <changhuang.liang@starfivetech.com>
 Date: Sun, 18 Feb 2024 19:27:41 -0800
 Subject: [PATCH 112/125] riscv: dts: starfive: jh7110: Add camera subsystem

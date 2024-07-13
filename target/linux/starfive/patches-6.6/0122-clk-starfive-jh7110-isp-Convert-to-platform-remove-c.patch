@@ -1,4 +1,4 @@
-From 0a634484c766192fab729f100f0939095793acbd Mon Sep 17 00:00:00 2001
+From 53dbc913d3dd07160e945e0590a8d794c7df1e75 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 Date: Wed, 6 Mar 2024 11:38:56 +0100
 Subject: [PATCH 122/125] clk: starfive: jh7110-isp: Convert to platform remove

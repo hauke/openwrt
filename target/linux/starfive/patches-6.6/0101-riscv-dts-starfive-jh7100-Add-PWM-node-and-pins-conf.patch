@@ -1,4 +1,4 @@
-From 4b21b15d9268502f5aeae64ea431c122f5ea5967 Mon Sep 17 00:00:00 2001
+From 39737edda0bd175b42f5f88ee9982a1401d81f4d Mon Sep 17 00:00:00 2001
 From: William Qiu <william.qiu@starfivetech.com>
 Date: Fri, 22 Dec 2023 17:45:47 +0800
 Subject: [PATCH 101/125] riscv: dts: starfive: jh7100: Add PWM node and pins

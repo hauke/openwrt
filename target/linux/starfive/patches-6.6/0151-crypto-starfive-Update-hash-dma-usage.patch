@@ -1,4 +1,4 @@
-From a1fd1637eae0532a5053e3efe6045538554d7697 Mon Sep 17 00:00:00 2001
+From 9413e0e35217c6017cfa6b82274a85ea4f461255 Mon Sep 17 00:00:00 2001
 From: Jia Jie Ho <jiajie.ho@starfivetech.com>
 Date: Tue, 5 Mar 2024 15:10:01 +0800
 Subject: [PATCH 151/177] crypto: starfive - Update hash dma usage

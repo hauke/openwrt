@@ -1,7 +1,7 @@
-From 67f75a1cef1d3e62aaa99e7b938a9c3d074f32a6 Mon Sep 17 00:00:00 2001
+From cab5947aa7aa5a589f73b2d4b8287b4a94cd6f84 Mon Sep 17 00:00:00 2001
 From: Randy Dunlap <rdunlap@infradead.org>
 Date: Wed, 6 Dec 2023 10:13:17 -0800
-Subject: [PATCH 70/89] usb: cdns3: starfive: don't misuse /** comment
+Subject: [PATCH 70/88] usb: cdns3: starfive: don't misuse /** comment
 
 Use a common C comment "/*" instead of "/**" to prevent a warning
 from scripts/kernel-doc.

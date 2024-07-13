@@ -1,7 +1,7 @@
-From 2f6eeb9b48a5d47b4942de54ff3d7aa9b1bd62ba Mon Sep 17 00:00:00 2001
+From f0033b727b326d5935a6a1be4b7243fd04510d43 Mon Sep 17 00:00:00 2001
 From: Jack Zhu <jack.zhu@starfivetech.com>
 Date: Wed, 25 Oct 2023 11:14:17 +0800
-Subject: [PATCH 54/89] media: staging: media: starfive: camss: Add video
+Subject: [PATCH 54/88] media: staging: media: starfive: camss: Add video
  driver
 
 Add video driver for StarFive Camera Subsystem.

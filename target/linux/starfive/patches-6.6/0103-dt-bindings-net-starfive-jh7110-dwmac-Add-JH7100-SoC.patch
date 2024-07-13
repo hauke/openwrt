@@ -1,4 +1,4 @@
-From defa45a07a9dc486102683456d3c6d57154b2ca9 Mon Sep 17 00:00:00 2001
+From cd88909e66251562c313e0a5aba930ef44941c48 Mon Sep 17 00:00:00 2001
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 Date: Fri, 26 Jan 2024 21:21:25 +0200
 Subject: [PATCH 103/125] dt-bindings: net: starfive,jh7110-dwmac: Add JH7100

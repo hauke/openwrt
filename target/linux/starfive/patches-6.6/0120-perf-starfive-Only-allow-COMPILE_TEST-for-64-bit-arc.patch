@@ -1,4 +1,4 @@
-From a0b9ebbfa568f3af2aae72d0cf7df5678ee0b2e3 Mon Sep 17 00:00:00 2001
+From 50054bf440e2cf0552d5f40c979b3f96db2b983c Mon Sep 17 00:00:00 2001
 From: Will Deacon <will@kernel.org>
 Date: Tue, 5 Mar 2024 10:56:49 +0000
 Subject: [PATCH 120/125] perf: starfive: Only allow COMPILE_TEST for 64-bit

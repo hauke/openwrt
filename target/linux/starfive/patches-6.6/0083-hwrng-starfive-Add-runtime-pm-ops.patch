@@ -1,7 +1,7 @@
-From 6219a848b41487876716001d6bb96dec2bcba770 Mon Sep 17 00:00:00 2001
+From a7d037d49f16e73e4c6128448f7bf5f76750e14b Mon Sep 17 00:00:00 2001
 From: Jia Jie Ho <jiajie.ho@starfivetech.com>
 Date: Tue, 12 Dec 2023 11:25:27 +0800
-Subject: [PATCH 84/89] hwrng: starfive - Add runtime pm ops
+Subject: [PATCH 83/88] hwrng: starfive - Add runtime pm ops
 
 Define SET_RUNTIME_PM_OPS for StarFive TRNG driver.
 

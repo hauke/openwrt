@@ -1,7 +1,7 @@
-From d5e27c63214d6845e0b5dc329a3e4cb74c0a8bf4 Mon Sep 17 00:00:00 2001
+From 0ed507dba2570ae76c12a78bc8456a9b17b5906e Mon Sep 17 00:00:00 2001
 From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
 Date: Fri, 3 Nov 2023 16:24:41 +0800
-Subject: [PATCH 50/89] perf vendor events riscv: Add StarFive Dubhe-80 JSON
+Subject: [PATCH 50/88] perf vendor events riscv: Add StarFive Dubhe-80 JSON
  file
 
 StarFive's Dubhe-80 supports raw event id 0x00 - 0x22.  The raw events

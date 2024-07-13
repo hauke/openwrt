@@ -1,4 +1,4 @@
-From 63c8b186726a5b9aad528d48ff5ad7557f0841f9 Mon Sep 17 00:00:00 2001
+From 6f569572cc5711692cd4ed4e0c12b21e7c3ae287 Mon Sep 17 00:00:00 2001
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Date: Tue, 5 Mar 2024 17:00:46 +0100
 Subject: [PATCH 121/125] riscv: dts: starfive: jh7100: fix root clock names

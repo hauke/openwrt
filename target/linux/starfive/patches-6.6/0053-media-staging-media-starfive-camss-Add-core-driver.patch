@@ -1,7 +1,7 @@
-From 5ef00dcffd3faea85c905adb0d79652dbefa3814 Mon Sep 17 00:00:00 2001
+From 6f1a5062f5c21b393edeb49dc61fa7b441b13367 Mon Sep 17 00:00:00 2001
 From: Jack Zhu <jack.zhu@starfivetech.com>
 Date: Wed, 25 Oct 2023 11:14:16 +0800
-Subject: [PATCH 53/89] media: staging: media: starfive: camss: Add core driver
+Subject: [PATCH 53/88] media: staging: media: starfive: camss: Add core driver
 
 Add core driver for StarFive Camera Subsystem. The code parses
 the device platform resources and registers related devices.

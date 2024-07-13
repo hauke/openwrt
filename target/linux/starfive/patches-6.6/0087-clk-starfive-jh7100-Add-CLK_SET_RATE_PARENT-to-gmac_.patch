@@ -1,7 +1,7 @@
-From ccbc85e14a16202c21e75572b54886b191bd6ddc Mon Sep 17 00:00:00 2001
+From 134bcd88b3243ae0c0fb5c4d3015f877dd56412c Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Date: Wed, 20 Dec 2023 01:24:40 +0200
-Subject: [PATCH 88/89] clk: starfive: jh7100: Add CLK_SET_RATE_PARENT to
+Subject: [PATCH 87/88] clk: starfive: jh7100: Add CLK_SET_RATE_PARENT to
  gmac_tx
 
 This is needed by the dwmac-starfive ethernet driver to set the clock

@@ -1,4 +1,4 @@
-From baf44d1f4142134349898d7d3580b30b5af0f212 Mon Sep 17 00:00:00 2001
+From 2254aebf714ebfe811915cb98079dbd327002db2 Mon Sep 17 00:00:00 2001
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 Date: Wed, 20 Dec 2023 23:17:39 +0200
 Subject: [PATCH 104/125] riscv: dts: starfive: jh7100: Add sysmain and gmac DT

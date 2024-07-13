@@ -1,7 +1,7 @@
-From f2853ad86bd98c5b7068e2d503f7e2a6ee431f4b Mon Sep 17 00:00:00 2001
+From aaec72b23f436cd70d65fc4d1489ff9e90e262da Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Date: Tue, 31 Oct 2023 15:14:43 +0100
-Subject: [PATCH 61/89] dt-bindings: cache: sifive,ccache0: Add StarFive JH7100
+Subject: [PATCH 61/88] dt-bindings: cache: sifive,ccache0: Add StarFive JH7100
  compatible
 
 This cache controller is also used on the StarFive JH7100 SoC.

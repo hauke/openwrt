@@ -1,4 +1,4 @@
-From dc176a1250ccd7a2f3bd4a9b0161e71d89a2ad07 Mon Sep 17 00:00:00 2001
+From 4daa7863a387d291c9b0f2a4abb7bb2911ea09e8 Mon Sep 17 00:00:00 2001
 From: Tan Chun Hau <chunhau.tan@starfivetech.com>
 Date: Tue, 26 Mar 2024 19:51:25 -0700
 Subject: [PATCH 155/177] dt-bindings: dma: snps,dw-axi-dmac: Add JH8100

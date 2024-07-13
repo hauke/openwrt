@@ -1,7 +1,7 @@
-From bf3ceb240883a68b6975e2c922748b2171887b05 Mon Sep 17 00:00:00 2001
+From 394edc3de1cb4ebb0de7538d8f6b7d62b1e107f1 Mon Sep 17 00:00:00 2001
 From: Joshua Yeong <joshua.yeong@starfivetech.com>
 Date: Tue, 14 Nov 2023 16:55:25 +0800
-Subject: [PATCH 60/89] i3c: Add fallback method for GETMXDS CCC
+Subject: [PATCH 60/88] i3c: Add fallback method for GETMXDS CCC
 
 Some I3C hardware will report error when an incorrect length is received from
 device. GETMXDS CCC are available in 2 formats: without turnaround time (format

@@ -1,4 +1,4 @@
-From 26605e7bd728a8f997705bd167bd9c2c7cebb063 Mon Sep 17 00:00:00 2001
+From 9f26b4d62f1d941857690107e50db8bac3575749 Mon Sep 17 00:00:00 2001
 From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
 Date: Fri, 19 Jan 2024 09:33:26 +0800
 Subject: [PATCH 119/125] i2c: cadence: Add system suspend and resume PM

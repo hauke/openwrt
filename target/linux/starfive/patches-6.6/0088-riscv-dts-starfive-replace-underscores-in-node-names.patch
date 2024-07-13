@@ -1,7 +1,7 @@
-From 14fc7025682346505c425df2b60233d3e1796523 Mon Sep 17 00:00:00 2001
+From 7ac54eafbe651aa1a481e72050aaac8238d8447b Mon Sep 17 00:00:00 2001
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Date: Tue, 13 Feb 2024 15:46:38 +0100
-Subject: [PATCH 89/89] riscv: dts: starfive: replace underscores in node names
+Subject: [PATCH 88/88] riscv: dts: starfive: replace underscores in node names
 
 Underscores should not be used in node names (dtc with W=2 warns about
 them), so replace them with hyphens.

@@ -1,7 +1,7 @@
-From 71b7219f607c0fc236b76754e0a94d6f7336488b Mon Sep 17 00:00:00 2001
+From 148515c220c9ad2dff8c2ce037892ca8d3c0a2e0 Mon Sep 17 00:00:00 2001
 From: Jia Jie Ho <jiajie.ho@starfivetech.com>
 Date: Wed, 15 Nov 2023 01:12:13 +0800
-Subject: [PATCH 63/89] crypto: starfive - Update driver dependencies
+Subject: [PATCH 63/88] crypto: starfive - Update driver dependencies
 
 Change AMBA_PL08X to required dependency as the hash ops depends on it
 for data transfer.

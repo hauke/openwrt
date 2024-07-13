@@ -1,4 +1,4 @@
-From 857eb2d2fad0b3c24533a5e4e670987291449ae8 Mon Sep 17 00:00:00 2001
+From 6cd2adcc084e56a392956d8c16c682f266d8cea1 Mon Sep 17 00:00:00 2001
 From: Conor Dooley <conor.dooley@microchip.com>
 Date: Mon, 18 Mar 2024 15:35:04 +0000
 Subject: [PATCH 125/125] perf: starfive: fix 64-bit only COMPILE_TEST

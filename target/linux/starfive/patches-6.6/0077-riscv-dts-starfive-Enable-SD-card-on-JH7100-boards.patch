@@ -1,7 +1,7 @@
-From 41f30aa4515cc4bbc68ae67b0fc7722355f81eb4 Mon Sep 17 00:00:00 2001
+From a4b0bd3b72a3a3fdacd5bf865865d757a54f2bff Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Date: Thu, 30 Nov 2023 16:19:31 +0100
-Subject: [PATCH 78/89] riscv: dts: starfive: Enable SD-card on JH7100 boards
+Subject: [PATCH 77/88] riscv: dts: starfive: Enable SD-card on JH7100 boards
 
 Add pinctrl and MMC device tree nodes for the SD-card on the
 BeagleV Starlight and StarFive VisionFive V1 boards.

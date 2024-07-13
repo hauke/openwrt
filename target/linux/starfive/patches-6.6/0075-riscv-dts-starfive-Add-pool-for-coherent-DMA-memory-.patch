@@ -1,7 +1,7 @@
-From 57c2404cea8bd30f1b9965f4d3958b8098acd7aa Mon Sep 17 00:00:00 2001
+From 351e095190dd898f21efcfd6b931713b0e3d14c1 Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Date: Thu, 30 Nov 2023 16:19:29 +0100
-Subject: [PATCH 76/89] riscv: dts: starfive: Add pool for coherent DMA memory
+Subject: [PATCH 75/88] riscv: dts: starfive: Add pool for coherent DMA memory
  on JH7100 boards
 
 The StarFive JH7100 SoC has non-coherent device DMAs, but most drivers

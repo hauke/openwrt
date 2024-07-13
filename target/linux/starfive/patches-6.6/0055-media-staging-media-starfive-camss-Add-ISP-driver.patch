@@ -1,7 +1,7 @@
-From 398dc6641596252ed3f261ad84e3d7fc54d6e6ce Mon Sep 17 00:00:00 2001
+From a18ad1a982c33475986f04bb306f017542daab0b Mon Sep 17 00:00:00 2001
 From: Jack Zhu <jack.zhu@starfivetech.com>
 Date: Wed, 25 Oct 2023 11:14:18 +0800
-Subject: [PATCH 55/89] media: staging: media: starfive: camss: Add ISP driver
+Subject: [PATCH 55/88] media: staging: media: starfive: camss: Add ISP driver
 
 Add ISP driver for StarFive Camera Subsystem.
 

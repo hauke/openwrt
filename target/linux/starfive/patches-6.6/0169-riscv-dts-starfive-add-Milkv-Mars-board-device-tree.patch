@@ -1,4 +1,4 @@
-From fddf5c971238d55918e1b72145765936fe266c71 Mon Sep 17 00:00:00 2001
+From 346077c93d98b890d75fe53ca580159353618ba3 Mon Sep 17 00:00:00 2001
 From: Jisheng Zhang <jszhang@kernel.org>
 Date: Mon, 29 Apr 2024 08:13:17 +0800
 Subject: [PATCH 169/177] riscv: dts: starfive: add Milkv Mars board device

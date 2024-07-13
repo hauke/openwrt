@@ -1,4 +1,4 @@
-From 23e74b8d63037286c03fe51ece60607386aca1ee Mon Sep 17 00:00:00 2001
+From 3cfa8cae212ef74c7fd5432ae3c613ca252fce0d Mon Sep 17 00:00:00 2001
 From: Hannah Peuckmann <hannah.peuckmann@canonical.com>
 Date: Mon, 15 Apr 2024 14:50:33 +0200
 Subject: [PATCH 159/177] riscv: dts: starfive: visionfive 2: Remove

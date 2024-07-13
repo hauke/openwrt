@@ -1,7 +1,7 @@
-From 6f78b71fbc69c2d6d0a3967db5cddb4a13f4b44d Mon Sep 17 00:00:00 2001
+From f1166822ed1f358bed175b467c0bc42a0f0bf4b0 Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Date: Thu, 30 Nov 2023 16:19:25 +0100
-Subject: [PATCH 72/89] riscv: errata: Add StarFive JH7100 errata
+Subject: [PATCH 71/88] riscv: errata: Add StarFive JH7100 errata
 
 This not really an errata, but since the JH7100 was made before
 the standard Zicbom extension it needs the DMA_GLOBAL_POOL and

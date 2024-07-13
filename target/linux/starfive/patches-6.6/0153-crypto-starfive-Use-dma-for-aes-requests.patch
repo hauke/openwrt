@@ -1,4 +1,4 @@
-From 109d22ebd097c7aa361ffda68888c429a302bce0 Mon Sep 17 00:00:00 2001
+From 5a3aaa2236c7b76a3775caafc643036da3e45c26 Mon Sep 17 00:00:00 2001
 From: Jia Jie Ho <jiajie.ho@starfivetech.com>
 Date: Tue, 5 Mar 2024 15:10:03 +0800
 Subject: [PATCH 153/177] crypto: starfive - Use dma for aes requests

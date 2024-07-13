@@ -1,7 +1,7 @@
-From d16cfb30e0b8cf63b992de4a3838a0ea8afecd3c Mon Sep 17 00:00:00 2001
+From d5d7a804f689887a6cd4be119dddabc3c897da06 Mon Sep 17 00:00:00 2001
 From: Jack Zhu <jack.zhu@starfivetech.com>
 Date: Wed, 25 Oct 2023 11:14:19 +0800
-Subject: [PATCH 56/89] media: staging: media: starfive: camss: Add capture
+Subject: [PATCH 56/88] media: staging: media: starfive: camss: Add capture
  driver
 
 Add capture driver for StarFive Camera Subsystem. It contains two video

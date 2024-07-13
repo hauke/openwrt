@@ -1,7 +1,7 @@
-From b12f23a2c5a8213b61718805870657445a407468 Mon Sep 17 00:00:00 2001
+From 5bc33d6621b663df417bdfca024ee3f98ddbb8c3 Mon Sep 17 00:00:00 2001
 From: Joshua Yeong <joshua.yeong@starfivetech.com>
 Date: Thu, 16 Nov 2023 18:53:12 +0800
-Subject: [PATCH 86/89] clocksource/timer-riscv: Add riscv_clock_shutdown
+Subject: [PATCH 85/88] clocksource/timer-riscv: Add riscv_clock_shutdown
  callback
 
 Add clocksource detach/shutdown callback to disable RISC-V timer interrupt when
@@ -17,7 +17,7 @@ Link: https://lore.kernel.org/r/20231116105312.4800-1-joshua.yeong@starfivetech.
 
 --- a/drivers/clocksource/timer-riscv.c
 +++ b/drivers/clocksource/timer-riscv.c
-@@ -50,12 +50,19 @@ static int riscv_clock_next_event(unsign
+@@ -61,12 +61,19 @@ static int riscv_clock_next_event(unsign
  	return 0;
  }
  

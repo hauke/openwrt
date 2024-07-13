@@ -1,4 +1,4 @@
-From c9740c4f6aa036b047033b75ef5c67eda746b32e Mon Sep 17 00:00:00 2001
+From 036ac8f675de21db56ae517d58c77775b6042d38 Mon Sep 17 00:00:00 2001
 From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
 Date: Thu, 29 Feb 2024 15:27:20 +0800
 Subject: [PATCH 118/125] MAINTAINERS: Add entry for StarFive StarLink PMU

@@ -1,4 +1,4 @@
-From d5578940f23e9d6b335c92e19a9dbfd57f2a1edf Mon Sep 17 00:00:00 2001
+From 2f7f96271a5e4a040ac2d4629eeca668e6c0b257 Mon Sep 17 00:00:00 2001
 From: Jisheng Zhang <jszhang@kernel.org>
 Date: Mon, 29 Apr 2024 08:13:11 +0800
 Subject: [PATCH 163/177] dt-bindings: riscv: starfive: add Milkv Mars board

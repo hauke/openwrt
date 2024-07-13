@@ -1,4 +1,4 @@
-From ec3729cbbef707da2baac7790c14e2bf63ed1072 Mon Sep 17 00:00:00 2001
+From c6d5483a925906119919599b6ac602f431288e70 Mon Sep 17 00:00:00 2001
 From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
 Date: Tue, 30 Jan 2024 13:51:18 +0800
 Subject: [PATCH 113/125] watchdog: starfive: check watchdog status before

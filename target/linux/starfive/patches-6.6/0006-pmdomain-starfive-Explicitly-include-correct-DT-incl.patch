@@ -1,7 +1,7 @@
 From ca98d16c4e8befd40fae7b65239362546cff11e9 Mon Sep 17 00:00:00 2001
 From: Rob Herring <robh@kernel.org>
 Date: Wed, 13 Sep 2023 14:54:24 +0100
-Subject: [PATCH 06/26] pmdomain: starfive: Explicitly include correct DT
+Subject: [PATCH 06/23] pmdomain: starfive: Explicitly include correct DT
  includes
 
 The DT of_device.h and of_platform.h date back to the separate

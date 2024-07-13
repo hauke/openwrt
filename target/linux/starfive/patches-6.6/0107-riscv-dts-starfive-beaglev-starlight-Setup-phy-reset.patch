@@ -1,4 +1,4 @@
-From f20c12932a03dc4d3f5f8bae102d761e7fbeeb02 Mon Sep 17 00:00:00 2001
+From bb6402beb9819439c7488405a04209f00cc029ef Mon Sep 17 00:00:00 2001
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 Date: Wed, 20 Dec 2023 23:17:42 +0200
 Subject: [PATCH 107/125] riscv: dts: starfive: beaglev-starlight: Setup phy

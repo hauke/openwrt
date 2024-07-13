@@ -1,7 +1,7 @@
 From ad576b2f2a4cb09bd4f20037f74832c1734a147d Mon Sep 17 00:00:00 2001
 From: Hal Feng <hal.feng@starfivetech.com>
 Date: Thu, 28 Sep 2023 15:52:49 +0800
-Subject: [PATCH 22/26] MAINTAINERS: Add Hal as one of the maintainers of
+Subject: [PATCH 22/23] MAINTAINERS: Add Hal as one of the maintainers of
  SFCTEMP HWMON DRIVER
 
 As he is the submitter of this driver, add his mail so he can

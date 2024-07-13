@@ -1,7 +1,7 @@
-From de9c13e32003559c75e0f19839a4dd28b5e8fc58 Mon Sep 17 00:00:00 2001
+From f8672625740119fc8cb8e1a54f71670587605ef3 Mon Sep 17 00:00:00 2001
 From: Jack Zhu <jack.zhu@starfivetech.com>
 Date: Wed, 25 Oct 2023 11:14:20 +0800
-Subject: [PATCH 57/89] media: staging: media: starfive: camss: Add interrupt
+Subject: [PATCH 57/88] media: staging: media: starfive: camss: Add interrupt
  handling
 
 Parse interrupt resources and register interrupt handlers.

@@ -1,7 +1,7 @@
-From 8a76d9b776a4b6264cd4418e48d554d9ba7160f5 Mon Sep 17 00:00:00 2001
+From 087b358b04cb2b032faec39393b853d7d95b4ed5 Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <kernel@esmil.dk>
 Date: Thu, 30 Nov 2023 16:19:27 +0100
-Subject: [PATCH 74/89] riscv: dts: starfive: Mark the JH7100 as having
+Subject: [PATCH 73/88] riscv: dts: starfive: Mark the JH7100 as having
  non-coherent DMAs
 
 The StarFive JH7100 SoC has non-coherent device DMAs, so mark the

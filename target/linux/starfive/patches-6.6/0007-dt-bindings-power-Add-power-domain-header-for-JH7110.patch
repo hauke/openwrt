@@ -1,7 +1,7 @@
 From 992cecba010b65d92021a5dc3b1d92a3091a1722 Mon Sep 17 00:00:00 2001
 From: Changhuang Liang <changhuang.liang@starfivetech.com>
 Date: Wed, 13 Sep 2023 14:54:25 +0100
-Subject: [PATCH 07/26] dt-bindings: power: Add power-domain header for JH7110
+Subject: [PATCH 07/23] dt-bindings: power: Add power-domain header for JH7110
 
 Add power-domain header for JH7110 SoC, it can use to operate dphy
 power.

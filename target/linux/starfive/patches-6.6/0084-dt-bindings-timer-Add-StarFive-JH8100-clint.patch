@@ -1,7 +1,7 @@
-From fe2c7b268bff065fbf0b0192b5f3b5d6258547f0 Mon Sep 17 00:00:00 2001
+From 023f67d3a78349fd09ab2ba376b835a7f2ee710c Mon Sep 17 00:00:00 2001
 From: Sia Jee Heng <jeeheng.sia@starfivetech.com>
 Date: Fri, 1 Dec 2023 20:14:07 +0800
-Subject: [PATCH 85/89] dt-bindings: timer: Add StarFive JH8100 clint
+Subject: [PATCH 84/88] dt-bindings: timer: Add StarFive JH8100 clint
 
 Add compatible string for the StarFive JH8100 clint.
 

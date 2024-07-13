@@ -1,7 +1,7 @@
-From 0327298385484990bf0c99ca0134b10b25bd0f77 Mon Sep 17 00:00:00 2001
+From 1e43c0c79f1528963e755208cfae6f3329e545ae Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Date: Thu, 30 Nov 2023 16:19:30 +0100
-Subject: [PATCH 77/89] riscv: dts: starfive: Add JH7100 MMC nodes
+Subject: [PATCH 76/88] riscv: dts: starfive: Add JH7100 MMC nodes
 
 Add device tree nodes for the Synopsis MMC controllers on the
 StarFive JH7100 SoC.

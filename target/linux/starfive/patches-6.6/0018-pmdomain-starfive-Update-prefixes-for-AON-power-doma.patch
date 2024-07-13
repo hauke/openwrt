@@ -1,7 +1,7 @@
 From 76be65436ebe497544b2c884922a8913dcc34391 Mon Sep 17 00:00:00 2001
 From: Changhuang Liang <changhuang.liang@starfivetech.com>
 Date: Wed, 27 Sep 2023 06:07:34 -0700
-Subject: [PATCH 18/26] pmdomain: starfive: Update prefixes for AON power
+Subject: [PATCH 18/23] pmdomain: starfive: Update prefixes for AON power
  domain
 
 Use "JH7110_AON_PD_" prefix for AON power doamin for JH7110 SoC.

@@ -1,4 +1,4 @@
-From 368a9b8a23e7b9930be30fa4aa328988ebb2ef2a Mon Sep 17 00:00:00 2001
+From 8600ba6d7e2a5fe12f4eb502053c0e299b1cb9d8 Mon Sep 17 00:00:00 2001
 From: Changhuang Liang <changhuang.liang@starfivetech.com>
 Date: Mon, 11 Mar 2024 05:03:09 -0700
 Subject: [PATCH 158/177] staging: media: starfive: Remove links when

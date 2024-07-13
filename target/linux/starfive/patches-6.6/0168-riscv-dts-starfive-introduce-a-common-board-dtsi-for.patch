@@ -1,4 +1,4 @@
-From d0e59e97c7315da10d3228e881eceee7d1d011a5 Mon Sep 17 00:00:00 2001
+From d02bdbc66dd8d2591e8c2ed14af9f4052cd356b7 Mon Sep 17 00:00:00 2001
 From: Jisheng Zhang <jszhang@kernel.org>
 Date: Mon, 29 Apr 2024 08:13:16 +0800
 Subject: [PATCH 168/177] riscv: dts: starfive: introduce a common board dtsi

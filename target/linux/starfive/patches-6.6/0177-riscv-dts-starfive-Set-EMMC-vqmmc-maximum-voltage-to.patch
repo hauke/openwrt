@@ -1,4 +1,4 @@
-From a8dc6c17ab56fe204d406a91065596067f99ce61 Mon Sep 17 00:00:00 2001
+From 117d795253fc0e71aafe41da422f5fd4a421546d Mon Sep 17 00:00:00 2001
 From: Shengyu Qu <wiagn233@outlook.com>
 Date: Wed, 12 Jun 2024 18:33:31 +0800
 Subject: [PATCH 177/177] riscv: dts: starfive: Set EMMC vqmmc maximum voltage

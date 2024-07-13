@@ -1,4 +1,4 @@
-From c9f135b514b247d872e4a46d9879cf98f54085b4 Mon Sep 17 00:00:00 2001
+From 435e1541eef5570d9e52f13f34cbfaed23b26fc7 Mon Sep 17 00:00:00 2001
 From: Jia Jie Ho <jiajie.ho@starfivetech.com>
 Date: Tue, 5 Mar 2024 15:10:00 +0800
 Subject: [PATCH 150/177] dt-bindings: crypto: starfive: Add jh8100 support

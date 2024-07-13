@@ -1,4 +1,4 @@
-From e0831e335d0e535a11758925812837f28b864d80 Mon Sep 17 00:00:00 2001
+From c3bf800f973dd9631b46f72c8d5e62b05dbd195d Mon Sep 17 00:00:00 2001
 From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
 Date: Tue, 23 Apr 2024 10:48:06 +0800
 Subject: [PATCH 171/177] i2c: cadence: Add RISCV architecture support
