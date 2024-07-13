@@ -1,0 +1,26 @@
+From d5578940f23e9d6b335c92e19a9dbfd57f2a1edf Mon Sep 17 00:00:00 2001
+From: Jisheng Zhang <jszhang@kernel.org>
+Date: Mon, 29 Apr 2024 08:13:11 +0800
+Subject: [PATCH 163/177] dt-bindings: riscv: starfive: add Milkv Mars board
+
+Add device tree bindings for the Milkv Mars board which is
+equipped with StarFive JH7110 SoC.
+
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/riscv/starfive.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/Documentation/devicetree/bindings/riscv/starfive.yaml
++++ b/Documentation/devicetree/bindings/riscv/starfive.yaml
+@@ -26,6 +26,7 @@ properties:
+ 
+       - items:
+           - enum:
++              - milkv,mars
+               - starfive,visionfive-2-v1.2a
+               - starfive,visionfive-2-v1.3b
+           - const: starfive,jh7110

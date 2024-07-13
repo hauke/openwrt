@@ -1,0 +1,40 @@
+From bf3ceb240883a68b6975e2c922748b2171887b05 Mon Sep 17 00:00:00 2001
+From: Joshua Yeong <joshua.yeong@starfivetech.com>
+Date: Tue, 14 Nov 2023 16:55:25 +0800
+Subject: [PATCH 60/89] i3c: Add fallback method for GETMXDS CCC
+
+Some I3C hardware will report error when an incorrect length is received from
+device. GETMXDS CCC are available in 2 formats: without turnaround time (format
+1) and with turnaround time (format 2). There is no mechanics to determine which
+format is supported by device. So in case sending GETMXDS CCC format 2 resulted
+in a failure, try sending GETMXDS CCC format 1 instead.
+
+Signed-off-by: Joshua Yeong <joshua.yeong@starfivetech.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Link: https://lore.kernel.org/r/20231114085525.6271-2-joshua.yeong@starfivetech.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/i3c/master.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -1099,8 +1099,16 @@ static int i3c_master_getmxds_locked(str
+ 
+ 	i3c_ccc_cmd_init(&cmd, true, I3C_CCC_GETMXDS, &dest, 1);
+ 	ret = i3c_master_send_ccc_cmd_locked(master, &cmd);
+-	if (ret)
+-		goto out;
++	if (ret) {
++		/*
++		 * Retry when the device does not support max read turnaround
++		 * while expecting shorter length from this CCC command.
++		 */
++		dest->payload.len -= 3;
++		ret = i3c_master_send_ccc_cmd_locked(master, &cmd);
++		if (ret)
++			goto out;
++	}
+ 
+ 	if (dest.payload.len != 2 && dest.payload.len != 5) {
+ 		ret = -EIO;

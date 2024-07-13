@@ -1,0 +1,38 @@
+From f20c12932a03dc4d3f5f8bae102d761e7fbeeb02 Mon Sep 17 00:00:00 2001
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Wed, 20 Dec 2023 23:17:42 +0200
+Subject: [PATCH 107/125] riscv: dts: starfive: beaglev-starlight: Setup phy
+ reset gpio
+
+The BeagleV Starlight SBC uses a Microchip KSZ9031RNXCA PHY supporting
+RGMII-ID which doesn't require any particular setup, other than defining
+a reset gpio, as opposed to VisionFive V1 for which the RX internal
+delay had to be adjusted.
+
+Co-developed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ .../boot/dts/starfive/jh7100-beaglev-starlight.dts    | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+--- a/arch/riscv/boot/dts/starfive/jh7100-beaglev-starlight.dts
++++ b/arch/riscv/boot/dts/starfive/jh7100-beaglev-starlight.dts
+@@ -11,3 +11,14 @@
+ 	model = "BeagleV Starlight Beta";
+ 	compatible = "beagle,beaglev-starlight-jh7100-r0", "starfive,jh7100";
+ };
++
++&gmac {
++	phy-handle = <&phy>;
++};
++
++&mdio {
++	phy: ethernet-phy@7 {
++		reg = <7>;
++		reset-gpios = <&gpio 63 GPIO_ACTIVE_LOW>;
++	};
++};

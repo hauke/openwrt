@@ -1,0 +1,39 @@
+From b12f23a2c5a8213b61718805870657445a407468 Mon Sep 17 00:00:00 2001
+From: Joshua Yeong <joshua.yeong@starfivetech.com>
+Date: Thu, 16 Nov 2023 18:53:12 +0800
+Subject: [PATCH 86/89] clocksource/timer-riscv: Add riscv_clock_shutdown
+ callback
+
+Add clocksource detach/shutdown callback to disable RISC-V timer interrupt when
+switching out riscv timer as clock source
+
+Signed-off-by: Joshua Yeong <joshua.yeong@starfivetech.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20231116105312.4800-1-joshua.yeong@starfivetech.com
+---
+ drivers/clocksource/timer-riscv.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+--- a/drivers/clocksource/timer-riscv.c
++++ b/drivers/clocksource/timer-riscv.c
+@@ -50,12 +50,19 @@ static int riscv_clock_next_event(unsign
+ 	return 0;
+ }
+ 
++static int riscv_clock_shutdown(struct clock_event_device *evt)
++{
++	riscv_clock_event_stop();
++	return 0;
++}
++
+ static unsigned int riscv_clock_event_irq;
+ static DEFINE_PER_CPU(struct clock_event_device, riscv_clock_event) = {
+ 	.name			= "riscv_timer_clockevent",
+ 	.features		= CLOCK_EVT_FEAT_ONESHOT,
+ 	.rating			= 100,
+ 	.set_next_event		= riscv_clock_next_event,
++	.set_state_shutdown	= riscv_clock_shutdown,
+ };
+ 
+ /*

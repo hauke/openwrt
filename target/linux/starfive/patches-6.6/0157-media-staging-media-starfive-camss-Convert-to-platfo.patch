@@ -1,0 +1,58 @@
+From e20e167679b6ee3159df6c92f349dbcb34547919 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Date: Fri, 8 Mar 2024 09:51:16 +0100
+Subject: [PATCH 157/177] media: staging: media: starfive: camss: Convert to
+ platform remove callback returning void
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
+
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
+
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+---
+ drivers/staging/media/starfive/camss/stf-camss.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+--- a/drivers/staging/media/starfive/camss/stf-camss.c
++++ b/drivers/staging/media/starfive/camss/stf-camss.c
+@@ -355,7 +355,7 @@ err_cleanup_notifier:
+  *
+  * Always returns 0.
+  */
+-static int stfcamss_remove(struct platform_device *pdev)
++static void stfcamss_remove(struct platform_device *pdev)
+ {
+ 	struct stfcamss *stfcamss = platform_get_drvdata(pdev);
+ 
+@@ -364,8 +364,6 @@ static int stfcamss_remove(struct platfo
+ 	media_device_cleanup(&stfcamss->media_dev);
+ 	v4l2_async_nf_cleanup(&stfcamss->notifier);
+ 	pm_runtime_disable(&pdev->dev);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id stfcamss_of_match[] = {
+@@ -420,7 +418,7 @@ static const struct dev_pm_ops stfcamss_
+ 
+ static struct platform_driver stfcamss_driver = {
+ 	.probe = stfcamss_probe,
+-	.remove = stfcamss_remove,
++	.remove_new = stfcamss_remove,
+ 	.driver = {
+ 		.name = "starfive-camss",
+ 		.pm = &stfcamss_pm_ops,

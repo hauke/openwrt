@@ -1,0 +1,86 @@
+From 14fc7025682346505c425df2b60233d3e1796523 Mon Sep 17 00:00:00 2001
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Date: Tue, 13 Feb 2024 15:46:38 +0100
+Subject: [PATCH 89/89] riscv: dts: starfive: replace underscores in node names
+
+Underscores should not be used in node names (dtc with W=2 warns about
+them), so replace them with hyphens.
+
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ arch/riscv/boot/dts/starfive/jh7100.dtsi | 12 ++++++------
+ arch/riscv/boot/dts/starfive/jh7110.dtsi |  4 ++--
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+--- a/arch/riscv/boot/dts/starfive/jh7100.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7100.dtsi
+@@ -96,14 +96,14 @@
+ 			thermal-sensors = <&sfctemp>;
+ 
+ 			trips {
+-				cpu_alert0 {
++				cpu-alert0 {
+ 					/* milliCelsius */
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit {
++				cpu-crit {
+ 					/* milliCelsius */
+ 					temperature = <90000>;
+ 					hysteresis = <2000>;
+@@ -113,28 +113,28 @@
+ 		};
+ 	};
+ 
+-	osc_sys: osc_sys {
++	osc_sys: osc-sys {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		/* This value must be overridden by the board */
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	osc_aud: osc_aud {
++	osc_aud: osc-aud {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		/* This value must be overridden by the board */
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	gmac_rmii_ref: gmac_rmii_ref {
++	gmac_rmii_ref: gmac-rmii-ref {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		/* Should be overridden by the board when needed */
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	gmac_gr_mii_rxclk: gmac_gr_mii_rxclk {
++	gmac_gr_mii_rxclk: gmac-gr-mii-rxclk {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		/* Should be overridden by the board when needed */
+--- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+@@ -237,14 +237,14 @@
+ 			};
+ 
+ 			trips {
+-				cpu_alert0: cpu_alert0 {
++				cpu_alert0: cpu-alert0 {
+ 					/* milliCelsius */
+ 					temperature = <85000>;
+ 					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit {
++				cpu-crit {
+ 					/* milliCelsius */
+ 					temperature = <100000>;
+ 					hysteresis = <2000>;

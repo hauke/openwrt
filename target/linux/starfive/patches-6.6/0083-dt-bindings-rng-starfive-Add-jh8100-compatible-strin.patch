@@ -1,0 +1,30 @@
+From 94cbc79c61b05c3c28cea9287e2e0fee2f09f8fb Mon Sep 17 00:00:00 2001
+From: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Date: Tue, 12 Dec 2023 11:25:26 +0800
+Subject: [PATCH 83/89] dt-bindings: rng: starfive: Add jh8100 compatible
+ string
+
+Add compatible string for StarFive JH8100 trng.
+
+Signed-off-by: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ .../devicetree/bindings/rng/starfive,jh7110-trng.yaml       | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/Documentation/devicetree/bindings/rng/starfive,jh7110-trng.yaml
++++ b/Documentation/devicetree/bindings/rng/starfive,jh7110-trng.yaml
+@@ -11,7 +11,11 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    const: starfive,jh7110-trng
++    oneOf:
++      - items:
++          - const: starfive,jh8100-trng
++          - const: starfive,jh7110-trng
++      - const: starfive,jh7110-trng
+ 
+   reg:
+     maxItems: 1

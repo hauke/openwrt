@@ -1,0 +1,33 @@
+From 67f75a1cef1d3e62aaa99e7b938a9c3d074f32a6 Mon Sep 17 00:00:00 2001
+From: Randy Dunlap <rdunlap@infradead.org>
+Date: Wed, 6 Dec 2023 10:13:17 -0800
+Subject: [PATCH 70/89] usb: cdns3: starfive: don't misuse /** comment
+
+Use a common C comment "/*" instead of "/**" to prevent a warning
+from scripts/kernel-doc.
+
+cdns3-starfive.c:23: warning: expecting prototype for cdns3(). Prototype was for USB_STRAP_HOST() instead
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Minda Chen <minda.chen@starfivetech.com>
+Cc: Peter Chen <peter.chen@kernel.org>
+Cc: Pawel Laszczak <pawell@cadence.com>
+Cc: Roger Quadros <rogerq@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:  <linux-usb@vger.kernel.org>
+Acked-by: Peter Chen <peter.chen@kernel.org>
+Link: https://lore.kernel.org/r/20231206181317.27515-1-rdunlap@infradead.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/usb/cdns3/cdns3-starfive.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/usb/cdns3/cdns3-starfive.c
++++ b/drivers/usb/cdns3/cdns3-starfive.c
+@@ -1,5 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
+-/**
++/*
+  * cdns3-starfive.c - StarFive specific Glue layer for Cadence USB Controller
+  *
+  * Copyright (C) 2023 StarFive Technology Co., Ltd.

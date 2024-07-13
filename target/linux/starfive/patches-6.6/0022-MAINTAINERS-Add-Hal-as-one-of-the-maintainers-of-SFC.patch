@@ -1,0 +1,27 @@
+From ad576b2f2a4cb09bd4f20037f74832c1734a147d Mon Sep 17 00:00:00 2001
+From: Hal Feng <hal.feng@starfivetech.com>
+Date: Thu, 28 Sep 2023 15:52:49 +0800
+Subject: [PATCH 22/26] MAINTAINERS: Add Hal as one of the maintainers of
+ SFCTEMP HWMON DRIVER
+
+As he is the submitter of this driver, add his mail so he can
+maintain the driver and easily reply in the mailing list.
+
+Acked-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+Link: https://lore.kernel.org/r/20230928075249.109459-1-hal.feng@starfivetech.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19409,6 +19409,7 @@ F:	drivers/net/ethernet/sfc/
+ 
+ SFCTEMP HWMON DRIVER
+ M:	Emil Renner Berthing <kernel@esmil.dk>
++M:	Hal Feng <hal.feng@starfivetech.com>
+ L:	linux-hwmon@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/hwmon/starfive,jh71x0-temp.yaml

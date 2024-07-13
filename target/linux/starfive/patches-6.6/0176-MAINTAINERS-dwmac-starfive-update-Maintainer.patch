@@ -1,0 +1,25 @@
+From 1aa0f5c9cb3c4968915a46c9bb6039da4a2ffd43 Mon Sep 17 00:00:00 2001
+From: Minda Chen <minda.chen@starfivetech.com>
+Date: Tue, 28 May 2024 09:51:20 +0800
+Subject: [PATCH 176/177] MAINTAINERS: dwmac: starfive: update Maintainer
+
+Update the maintainer of starfive dwmac driver.
+
+Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
+Acked-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20459,7 +20459,7 @@ F:	arch/riscv/boot/dts/starfive/
+ 
+ STARFIVE DWMAC GLUE LAYER
+ M:	Emil Renner Berthing <kernel@esmil.dk>
+-M:	Samin Guo <samin.guo@starfivetech.com>
++M:	Minda Chen <minda.chen@starfivetech.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
+ F:	drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c

@@ -1,0 +1,45 @@
+From f2853ad86bd98c5b7068e2d503f7e2a6ee431f4b Mon Sep 17 00:00:00 2001
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Date: Tue, 31 Oct 2023 15:14:43 +0100
+Subject: [PATCH 61/89] dt-bindings: cache: sifive,ccache0: Add StarFive JH7100
+ compatible
+
+This cache controller is also used on the StarFive JH7100 SoC.
+Unfortunately it needs a quirk to work properly, so add dedicated
+compatible string to be able to match it.
+
+Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/cache/sifive,ccache0.yaml | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/Documentation/devicetree/bindings/cache/sifive,ccache0.yaml
++++ b/Documentation/devicetree/bindings/cache/sifive,ccache0.yaml
+@@ -38,7 +38,9 @@ properties:
+               - sifive,fu740-c000-ccache
+           - const: cache
+       - items:
+-          - const: starfive,jh7110-ccache
++          - enum:
++              - starfive,jh7100-ccache
++              - starfive,jh7110-ccache
+           - const: sifive,ccache0
+           - const: cache
+       - items:
+@@ -88,6 +90,7 @@ allOf:
+           contains:
+             enum:
+               - sifive,fu740-c000-ccache
++              - starfive,jh7100-ccache
+               - starfive,jh7110-ccache
+               - microchip,mpfs-ccache
+ 
+@@ -111,6 +114,7 @@ allOf:
+           contains:
+             enum:
+               - sifive,fu740-c000-ccache
++              - starfive,jh7100-ccache
+               - starfive,jh7110-ccache
+ 
+     then:

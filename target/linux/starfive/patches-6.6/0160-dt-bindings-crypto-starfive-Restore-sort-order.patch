@@ -1,0 +1,28 @@
+From bde4afb875c1d01c4f63345df60014e4972199d3 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Tue, 16 Apr 2024 17:51:49 +0200
+Subject: [PATCH 160/177] dt-bindings: crypto: starfive: Restore sort order
+
+Restore alphabetical sort order of the list of supported compatible
+values.
+
+Fixes: 2ccf7a5d9c50f3ea ("dt-bindings: crypto: starfive: Add jh8100 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ .../devicetree/bindings/crypto/starfive,jh7110-crypto.yaml      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/Documentation/devicetree/bindings/crypto/starfive,jh7110-crypto.yaml
++++ b/Documentation/devicetree/bindings/crypto/starfive,jh7110-crypto.yaml
+@@ -13,8 +13,8 @@ maintainers:
+ properties:
+   compatible:
+     enum:
+-      - starfive,jh8100-crypto
+       - starfive,jh7110-crypto
++      - starfive,jh8100-crypto
+ 
+   reg:
+     maxItems: 1

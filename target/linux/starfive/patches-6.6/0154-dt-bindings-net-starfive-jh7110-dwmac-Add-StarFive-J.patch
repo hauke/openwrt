@@ -1,0 +1,76 @@
+From 9d805d3f52d4e9d06940d40854280c620f503e1e Mon Sep 17 00:00:00 2001
+From: Tan Chun Hau <chunhau.tan@starfivetech.com>
+Date: Wed, 3 Apr 2024 03:05:49 -0700
+Subject: [PATCH 154/177] dt-bindings: net: starfive,jh7110-dwmac: Add StarFive
+ JH8100 support
+
+Add StarFive JH8100 dwmac support.
+The JH8100 dwmac shares the same driver code as the JH7110 dwmac
+and has only one reset signal.
+
+Please refer to below:
+
+  JH8100: reset-names = "stmmaceth";
+  JH7110: reset-names = "stmmaceth", "ahb";
+  JH7100: reset-names = "ahb";
+
+Example usage of JH8100 in the device tree:
+
+gmac0: ethernet@16030000 {
+        compatible = "starfive,jh8100-dwmac",
+                     "starfive,jh7110-dwmac",
+                     "snps,dwmac-5.20";
+        ...
+};
+
+Signed-off-by: Tan Chun Hau <chunhau.tan@starfivetech.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/20240403100549.78719-2-chunhau.tan@starfivetech.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+---
+ .../bindings/net/starfive,jh7110-dwmac.yaml   | 28 +++++++++++++++----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
+
+--- a/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
+@@ -30,6 +30,10 @@ properties:
+       - items:
+           - const: starfive,jh7110-dwmac
+           - const: snps,dwmac-5.20
++      - items:
++          - const: starfive,jh8100-dwmac
++          - const: starfive,jh7110-dwmac
++          - const: snps,dwmac-5.20
+ 
+   reg:
+     maxItems: 1
+@@ -116,11 +120,25 @@ allOf:
+           minItems: 3
+           maxItems: 3
+ 
+-        resets:
+-          minItems: 2
++      if:
++        properties:
++          compatible:
++            contains:
++              const: starfive,jh8100-dwmac
++      then:
++        properties:
++          resets:
++            maxItems: 1
++
++          reset-names:
++            const: stmmaceth
++      else:
++        properties:
++          resets:
++            minItems: 2
+ 
+-        reset-names:
+-          minItems: 2
++          reset-names:
++            minItems: 2
+ 
+ unevaluatedProperties: false
+ 

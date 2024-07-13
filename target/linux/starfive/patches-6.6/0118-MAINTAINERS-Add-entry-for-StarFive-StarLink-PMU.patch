@@ -1,0 +1,31 @@
+From c9740c4f6aa036b047033b75ef5c67eda746b32e Mon Sep 17 00:00:00 2001
+From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Date: Thu, 29 Feb 2024 15:27:20 +0800
+Subject: [PATCH 118/125] MAINTAINERS: Add entry for StarFive StarLink PMU
+
+Add maintainer entry for StarFive StarLink PMU driver, and mark it as
+"Maintained"
+
+Signed-off-by: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Link: https://lore.kernel.org/r/20240229072720.3987876-5-jisheng.teoh@starfivetech.com
+Signed-off-by: Will Deacon <will@kernel.org>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20550,6 +20550,13 @@ T:	git https://git.kernel.org/pub/scm/li
+ F:	Documentation/devicetree/bindings/soc/starfive/
+ F:	drivers/soc/starfive/
+ 
++STARFIVE STARLINK PMU DRIVER
++M:	Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
++S:	Maintained
++F:	Documentation/admin-guide/perf/starfive_starlink_pmu.rst
++F:	Documentation/devicetree/bindings/perf/starfive,jh8100-starlink-pmu.yaml
++F:	drivers/perf/starfive_starlink_pmu.c
++
+ STARFIVE TRNG DRIVER
+ M:	Jia Jie Ho <jiajie.ho@starfivetech.com>
+ S:	Supported

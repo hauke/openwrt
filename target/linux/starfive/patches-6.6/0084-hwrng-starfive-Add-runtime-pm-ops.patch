@@ -1,0 +1,30 @@
+From 6219a848b41487876716001d6bb96dec2bcba770 Mon Sep 17 00:00:00 2001
+From: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Date: Tue, 12 Dec 2023 11:25:27 +0800
+Subject: [PATCH 84/89] hwrng: starfive - Add runtime pm ops
+
+Define SET_RUNTIME_PM_OPS for StarFive TRNG driver.
+
+Signed-off-by: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ drivers/char/hw_random/jh7110-trng.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+--- a/drivers/char/hw_random/jh7110-trng.c
++++ b/drivers/char/hw_random/jh7110-trng.c
+@@ -369,8 +369,12 @@ static int __maybe_unused starfive_trng_
+ 	return 0;
+ }
+ 
+-static DEFINE_SIMPLE_DEV_PM_OPS(starfive_trng_pm_ops, starfive_trng_suspend,
+-				starfive_trng_resume);
++static const struct dev_pm_ops starfive_trng_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(starfive_trng_suspend,
++				starfive_trng_resume)
++	SET_RUNTIME_PM_OPS(starfive_trng_suspend,
++			   starfive_trng_resume, NULL)
++};
+ 
+ static const struct of_device_id trng_dt_ids[] __maybe_unused = {
+ 	{ .compatible = "starfive,jh7110-trng" },

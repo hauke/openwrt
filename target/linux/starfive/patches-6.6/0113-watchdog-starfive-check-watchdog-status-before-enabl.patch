@@ -1,0 +1,35 @@
+From ec3729cbbef707da2baac7790c14e2bf63ed1072 Mon Sep 17 00:00:00 2001
+From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Date: Tue, 30 Jan 2024 13:51:18 +0800
+Subject: [PATCH 113/125] watchdog: starfive: check watchdog status before
+ enabling in system resume
+
+System resume will start and enable watchdog regardless of whether the
+watchdog is enabled/disabled during a system suspend.
+Add a check to the watchdog status and only start and enable the
+watchdog if the watchdog status is running/active.
+
+Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
+Signed-off-by: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20240130055118.1917086-1-jisheng.teoh@starfivetech.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+---
+ drivers/watchdog/starfive-wdt.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/watchdog/starfive-wdt.c
++++ b/drivers/watchdog/starfive-wdt.c
+@@ -559,7 +559,10 @@ static int starfive_wdt_resume(struct de
+ 	starfive_wdt_set_reload_count(wdt, wdt->reload);
+ 	starfive_wdt_lock(wdt);
+ 
+-	return starfive_wdt_start(wdt);
++	if (watchdog_active(&wdt->wdd))
++		return starfive_wdt_start(wdt);
++
++	return 0;
+ }
+ 
+ static int starfive_wdt_runtime_suspend(struct device *dev)

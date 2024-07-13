@@ -1,0 +1,66 @@
+From 26605e7bd728a8f997705bd167bd9c2c7cebb063 Mon Sep 17 00:00:00 2001
+From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Date: Fri, 19 Jan 2024 09:33:26 +0800
+Subject: [PATCH 119/125] i2c: cadence: Add system suspend and resume PM
+ support
+
+Enable device system suspend and resume PM support, and mark the device
+state as suspended during system suspend to reject any data transfer.
+
+Signed-off-by: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
+---
+ drivers/i2c/busses/i2c-cadence.c | 33 ++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+--- a/drivers/i2c/busses/i2c-cadence.c
++++ b/drivers/i2c/busses/i2c-cadence.c
+@@ -1177,6 +1177,18 @@ static int __maybe_unused cdns_i2c_runti
+ 	return 0;
+ }
+ 
++static int __maybe_unused cdns_i2c_suspend(struct device *dev)
++{
++	struct cdns_i2c *xi2c = dev_get_drvdata(dev);
++
++	i2c_mark_adapter_suspended(&xi2c->adap);
++
++	if (!pm_runtime_status_suspended(dev))
++		return cdns_i2c_runtime_suspend(dev);
++
++	return 0;
++}
++
+ /**
+  * cdns_i2c_init -  Controller initialisation
+  * @id:		Device private data structure
+@@ -1220,7 +1232,28 @@ static int __maybe_unused cdns_i2c_runti
+ 	return 0;
+ }
+ 
++static int __maybe_unused cdns_i2c_resume(struct device *dev)
++{
++	struct cdns_i2c *xi2c = dev_get_drvdata(dev);
++	int err;
++
++	err = cdns_i2c_runtime_resume(dev);
++	if (err)
++		return err;
++
++	if (pm_runtime_status_suspended(dev)) {
++		err = cdns_i2c_runtime_suspend(dev);
++		if (err)
++			return err;
++	}
++
++	i2c_mark_adapter_resumed(&xi2c->adap);
++
++	return 0;
++}
++
+ static const struct dev_pm_ops cdns_i2c_dev_pm_ops = {
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(cdns_i2c_suspend, cdns_i2c_resume)
+ 	SET_RUNTIME_PM_OPS(cdns_i2c_runtime_suspend,
+ 			   cdns_i2c_runtime_resume, NULL)
+ };

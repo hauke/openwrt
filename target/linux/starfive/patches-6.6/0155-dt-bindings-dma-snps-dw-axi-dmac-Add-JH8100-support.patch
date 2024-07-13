@@ -1,0 +1,31 @@
+From dc176a1250ccd7a2f3bd4a9b0161e71d89a2ad07 Mon Sep 17 00:00:00 2001
+From: Tan Chun Hau <chunhau.tan@starfivetech.com>
+Date: Tue, 26 Mar 2024 19:51:25 -0700
+Subject: [PATCH 155/177] dt-bindings: dma: snps,dw-axi-dmac: Add JH8100
+ support
+
+Add support for StarFive JH8100 SoC in Sysnopsys Designware AXI DMA
+controller.
+
+Both JH8100 and JH7110 require reset operation in device probe.
+However, JH8100 doesn't need to apply different configuration on
+CH_CFG registers.
+
+Signed-off-by: Tan Chun Hau <chunhau.tan@starfivetech.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Link: https://lore.kernel.org/r/20240327025126.229475-2-chunhau.tan@starfivetech.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
++++ b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
+@@ -21,6 +21,7 @@ properties:
+       - snps,axi-dma-1.01a
+       - intel,kmb-axi-dma
+       - starfive,jh7110-axi-dma
++      - starfive,jh8100-axi-dma
+ 
+   reg:
+     minItems: 1

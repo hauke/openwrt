@@ -1,0 +1,29 @@
+From a5263b33ae88f850d718f70124521f30ad6454b0 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Tue, 28 Nov 2023 19:31:53 +0100
+Subject: [PATCH 68/89] staging: media: VIDEO_STARFIVE_CAMSS should depend on
+ ARCH_STARFIVE
+
+The StarFive Camera Subsystem is only present on the StarFive JH7110
+SoC.  Hence add a dependency on ARCH_STARFIVE, to prevent asking the
+user about this driver when configuring a kernel without StarFive SoC
+support.
+
+Fixes: bba185d141b1 ("media: staging: media: starfive: camss: Add core driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+---
+ drivers/staging/media/starfive/camss/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/staging/media/starfive/camss/Kconfig
++++ b/drivers/staging/media/starfive/camss/Kconfig
+@@ -5,6 +5,7 @@ config VIDEO_STARFIVE_CAMSS
+ 	depends on VIDEO_DEV && OF
+ 	depends on HAS_DMA
+ 	depends on PM
++	depends on ARCH_STARFIVE || COMPILE_TEST
+ 	select MEDIA_CONTROLLER
+ 	select VIDEO_V4L2_SUBDEV_API
+ 	select VIDEOBUF2_DMA_CONTIG

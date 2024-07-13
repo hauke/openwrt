@@ -1,0 +1,38 @@
+From e6016d30f888e02aa5e1c499815d9d933753dcf3 Mon Sep 17 00:00:00 2001
+From: Jisheng Zhang <jszhang@kernel.org>
+Date: Mon, 29 Apr 2024 08:13:10 +0800
+Subject: [PATCH 162/177] riscv: dts: starfive: add 'cpus' label to jh7110 and
+ jh7100 soc dtsi
+
+Add the 'cpus' label so that we can reference it in board dts files.
+
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ arch/riscv/boot/dts/starfive/jh7100.dtsi | 2 +-
+ arch/riscv/boot/dts/starfive/jh7110.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- a/arch/riscv/boot/dts/starfive/jh7100.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7100.dtsi
+@@ -13,7 +13,7 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+ 
+-	cpus {
++	cpus: cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+--- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+@@ -15,7 +15,7 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+ 
+-	cpus {
++	cpus: cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 

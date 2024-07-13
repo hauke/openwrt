@@ -1,0 +1,31 @@
+From 368a9b8a23e7b9930be30fa4aa328988ebb2ef2a Mon Sep 17 00:00:00 2001
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+Date: Mon, 11 Mar 2024 05:03:09 -0700
+Subject: [PATCH 158/177] staging: media: starfive: Remove links when
+ unregistering devices
+
+Need to remove links when unregistering devices.
+
+Fixes: ac7da4a73b10 ("media: staging: media: starfive: camss: Register devices")
+
+Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+---
+ drivers/staging/media/starfive/camss/stf-camss.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+--- a/drivers/staging/media/starfive/camss/stf-camss.c
++++ b/drivers/staging/media/starfive/camss/stf-camss.c
+@@ -162,6 +162,12 @@ err_isp_unregister:
+ 
+ static void stfcamss_unregister_devs(struct stfcamss *stfcamss)
+ {
++	struct stf_capture *cap_yuv = &stfcamss->captures[STF_CAPTURE_YUV];
++	struct stf_isp_dev *isp_dev = &stfcamss->isp_dev;
++
++	media_entity_remove_links(&isp_dev->subdev.entity);
++	media_entity_remove_links(&cap_yuv->video.vdev.entity);
++
+ 	stf_isp_unregister(&stfcamss->isp_dev);
+ 	stf_capture_unregister(stfcamss);
+ }

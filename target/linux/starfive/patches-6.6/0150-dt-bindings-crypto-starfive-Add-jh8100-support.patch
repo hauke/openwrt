@@ -1,0 +1,68 @@
+From c9f135b514b247d872e4a46d9879cf98f54085b4 Mon Sep 17 00:00:00 2001
+From: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Date: Tue, 5 Mar 2024 15:10:00 +0800
+Subject: [PATCH 150/177] dt-bindings: crypto: starfive: Add jh8100 support
+
+Add compatible string and additional interrupt for StarFive JH8100
+crypto engine.
+
+Signed-off-by: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ .../crypto/starfive,jh7110-crypto.yaml        | 30 +++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
+
+--- a/Documentation/devicetree/bindings/crypto/starfive,jh7110-crypto.yaml
++++ b/Documentation/devicetree/bindings/crypto/starfive,jh7110-crypto.yaml
+@@ -12,7 +12,9 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    const: starfive,jh7110-crypto
++    enum:
++      - starfive,jh8100-crypto
++      - starfive,jh7110-crypto
+ 
+   reg:
+     maxItems: 1
+@@ -28,7 +30,10 @@ properties:
+       - const: ahb
+ 
+   interrupts:
+-    maxItems: 1
++    minItems: 1
++    items:
++      - description: SHA2 module irq
++      - description: SM3 module irq
+ 
+   resets:
+     maxItems: 1
+@@ -54,6 +59,27 @@ required:
+ 
+ additionalProperties: false
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          const: starfive,jh7110-crypto
++
++    then:
++      properties:
++        interrupts:
++          maxItems: 1
++
++  - if:
++      properties:
++        compatible:
++          const: starfive,jh8100-crypto
++
++    then:
++      properties:
++        interrupts:
++          minItems: 2
++
+ examples:
+   - |
+     crypto: crypto@16000000 {

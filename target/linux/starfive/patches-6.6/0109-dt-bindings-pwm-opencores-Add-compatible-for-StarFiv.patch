@@ -1,0 +1,30 @@
+From a37e37189bbc6d06b02e0ef50db7d492989b0548 Mon Sep 17 00:00:00 2001
+From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Date: Mon, 26 Feb 2024 11:39:45 +0800
+Subject: [PATCH 109/125] dt-bindings: pwm: opencores: Add compatible for
+ StarFive JH8100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+StarFive JH8100 uses the same OpenCores PWM controller as JH7110.
+Mark JH8100 as compatible to the OpenCores PWM controller.
+
+Signed-off-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
+Signed-off-by: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/pwm/opencores,pwm.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/Documentation/devicetree/bindings/pwm/opencores,pwm.yaml
++++ b/Documentation/devicetree/bindings/pwm/opencores,pwm.yaml
+@@ -23,6 +23,7 @@ properties:
+       - enum:
+           - starfive,jh7100-pwm
+           - starfive,jh7110-pwm
++          - starfive,jh8100-pwm
+       - const: opencores,pwm-v1
+ 
+   reg:

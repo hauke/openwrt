@@ -1,0 +1,38 @@
+From 29be5fdb42b160437a3b72051c24d5143caffc07 Mon Sep 17 00:00:00 2001
+From: Joshua Yeong <joshua.yeong@starfivetech.com>
+Date: Thu, 25 Apr 2024 19:00:17 +0800
+Subject: [PATCH 161/177] cpufreq: Fix up printing large CPU numbers and
+ frequency values
+
+A negative CPU number or frequency value may be printed if they are
+really large (which is unlikely, though).
+
+Signed-off-by: Joshua Yeong <joshua.yeong@starfivetech.com>
+Reviewed-by: Thorsten Blum <thorsten.blum@toblux.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+[ rjw: Subject and changelog edits. ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpufreq/freq_table.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/cpufreq/freq_table.c
++++ b/drivers/cpufreq/freq_table.c
+@@ -194,7 +194,7 @@ int cpufreq_table_index_unsorted(struct
+ 	}
+ 	if (optimal.driver_data > i) {
+ 		if (suboptimal.driver_data > i) {
+-			WARN(1, "Invalid frequency table: %d\n", policy->cpu);
++			WARN(1, "Invalid frequency table: %u\n", policy->cpu);
+ 			return 0;
+ 		}
+ 
+@@ -254,7 +254,7 @@ static ssize_t show_available_freqs(stru
+ 		if (show_boost ^ (pos->flags & CPUFREQ_BOOST_FREQ))
+ 			continue;
+ 
+-		count += sprintf(&buf[count], "%d ", pos->frequency);
++		count += sprintf(&buf[count], "%u ", pos->frequency);
+ 	}
+ 	count += sprintf(&buf[count], "\n");
+ 

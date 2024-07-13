@@ -1,0 +1,26 @@
+From fe2c7b268bff065fbf0b0192b5f3b5d6258547f0 Mon Sep 17 00:00:00 2001
+From: Sia Jee Heng <jeeheng.sia@starfivetech.com>
+Date: Fri, 1 Dec 2023 20:14:07 +0800
+Subject: [PATCH 85/89] dt-bindings: timer: Add StarFive JH8100 clint
+
+Add compatible string for the StarFive JH8100 clint.
+
+Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
+Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20231201121410.95298-4-jeeheng.sia@starfivetech.com
+---
+ Documentation/devicetree/bindings/timer/sifive,clint.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
++++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+@@ -33,6 +33,7 @@ properties:
+               - sifive,fu540-c000-clint # SiFive FU540
+               - starfive,jh7100-clint   # StarFive JH7100
+               - starfive,jh7110-clint   # StarFive JH7110
++              - starfive,jh8100-clint   # StarFive JH8100
+           - const: sifive,clint0        # SiFive CLINT v0 IP block
+       - items:
+           - enum:

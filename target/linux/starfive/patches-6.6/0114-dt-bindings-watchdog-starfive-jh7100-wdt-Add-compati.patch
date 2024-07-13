@@ -1,0 +1,86 @@
+From 0415f59c05e0d41eff577739980324fdf0651a38 Mon Sep 17 00:00:00 2001
+From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Date: Thu, 21 Dec 2023 16:43:57 +0800
+Subject: [PATCH 114/125] dt-bindings: watchdog: starfive,jh7100-wdt: Add
+ compatible for JH8100
+
+Add "starfive,jh8100-wdt" compatible string for StarFive's JH8100
+watchdog.
+Since JH8100 watchdog only has 1 reset signal, update binding
+document to support one reset for "starfive,jh8100-wdt" compatible.
+
+Signed-off-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
+Signed-off-by: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/20231221084358.3458713-2-jisheng.teoh@starfivetech.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+---
+ .../watchdog/starfive,jh7100-wdt.yaml         | 40 ++++++++++++++-----
+ 1 file changed, 31 insertions(+), 9 deletions(-)
+
+--- a/Documentation/devicetree/bindings/watchdog/starfive,jh7100-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/starfive,jh7100-wdt.yaml
+@@ -19,14 +19,16 @@ description:
+   isn't cleared, the watchdog will reset the system unless the watchdog
+   reset is disabled.
+ 
+-allOf:
+-  - $ref: watchdog.yaml#
+-
+ properties:
+   compatible:
+-    enum:
+-      - starfive,jh7100-wdt
+-      - starfive,jh7110-wdt
++    oneOf:
++      - enum:
++          - starfive,jh7100-wdt
++          - starfive,jh7110-wdt
++      - items:
++          - enum:
++              - starfive,jh8100-wdt
++          - const: starfive,jh7110-wdt
+ 
+   reg:
+     maxItems: 1
+@@ -45,9 +47,8 @@ properties:
+       - const: core
+ 
+   resets:
+-    items:
+-      - description: APB reset
+-      - description: Core reset
++    minItems: 1
++    maxItems: 2
+ 
+ required:
+   - compatible
+@@ -56,6 +57,27 @@ required:
+   - clock-names
+   - resets
+ 
++allOf:
++  - $ref: watchdog.yaml#
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - starfive,jh8100-wdt
++    then:
++      properties:
++        resets:
++          items:
++            - description: Core reset
++    else:
++      properties:
++        resets:
++          items:
++            - description: APB reset
++            - description: Core reset
++
+ unevaluatedProperties: false
+ 
+ examples:

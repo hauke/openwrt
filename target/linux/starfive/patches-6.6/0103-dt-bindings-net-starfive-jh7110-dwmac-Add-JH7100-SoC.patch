@@ -1,0 +1,164 @@
+From defa45a07a9dc486102683456d3c6d57154b2ca9 Mon Sep 17 00:00:00 2001
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Fri, 26 Jan 2024 21:21:25 +0200
+Subject: [PATCH 103/125] dt-bindings: net: starfive,jh7110-dwmac: Add JH7100
+ SoC compatible
+
+The Synopsys DesignWare MAC found on StarFive JH7100 SoC is mostly
+similar to the newer JH7110, but it requires only two interrupts and a
+single reset line, which is 'ahb' instead of the commonly used
+'stmmaceth'.
+
+Since the common binding 'snps,dwmac' allows selecting 'ahb' only in
+conjunction with 'stmmaceth', extend the logic to also permit exclusive
+usage of the 'ahb' reset name.  This ensures the following use cases are
+supported:
+
+  JH7110: reset-names = "stmmaceth", "ahb";
+  JH7100: reset-names = "ahb";
+  other:  reset-names = "stmmaceth";
+
+Also note the need to use a different dwmac fallback, as v5.20 applies
+to JH7110 only, while JH7100 relies on v3.7x.
+
+Additionally, drop the reset description items from top-level binding as
+they are already provided by the included snps,dwmac schema.
+
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ .../devicetree/bindings/net/snps,dwmac.yaml   | 11 +--
+ .../bindings/net/starfive,jh7110-dwmac.yaml   | 72 +++++++++++++------
+ 2 files changed, 57 insertions(+), 26 deletions(-)
+
+--- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+@@ -95,6 +95,7 @@ properties:
+         - snps,dwmac-5.20
+         - snps,dwxgmac
+         - snps,dwxgmac-2.10
++        - starfive,jh7100-dwmac
+         - starfive,jh7110-dwmac
+ 
+   reg:
+@@ -144,10 +145,12 @@ properties:
+       - description: AHB reset
+ 
+   reset-names:
+-    minItems: 1
+-    items:
+-      - const: stmmaceth
+-      - const: ahb
++    oneOf:
++      - items:
++          - enum: [stmmaceth, ahb]
++      - items:
++          - const: stmmaceth
++          - const: ahb
+ 
+   power-domains:
+     maxItems: 1
+--- a/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
+@@ -16,16 +16,20 @@ select:
+     compatible:
+       contains:
+         enum:
++          - starfive,jh7100-dwmac
+           - starfive,jh7110-dwmac
+   required:
+     - compatible
+ 
+ properties:
+   compatible:
+-    items:
+-      - enum:
+-          - starfive,jh7110-dwmac
+-      - const: snps,dwmac-5.20
++    oneOf:
++      - items:
++          - const: starfive,jh7100-dwmac
++          - const: snps,dwmac
++      - items:
++          - const: starfive,jh7110-dwmac
++          - const: snps,dwmac-5.20
+ 
+   reg:
+     maxItems: 1
+@@ -46,24 +50,6 @@ properties:
+       - const: tx
+       - const: gtx
+ 
+-  interrupts:
+-    minItems: 3
+-    maxItems: 3
+-
+-  interrupt-names:
+-    minItems: 3
+-    maxItems: 3
+-
+-  resets:
+-    items:
+-      - description: MAC Reset signal.
+-      - description: AHB Reset signal.
+-
+-  reset-names:
+-    items:
+-      - const: stmmaceth
+-      - const: ahb
+-
+   starfive,tx-use-rgmii-clk:
+     description:
+       Tx clock is provided by external rgmii clock.
+@@ -94,6 +80,48 @@ required:
+ allOf:
+   - $ref: snps,dwmac.yaml#
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: starfive,jh7100-dwmac
++    then:
++      properties:
++        interrupts:
++          minItems: 2
++          maxItems: 2
++
++        interrupt-names:
++          minItems: 2
++          maxItems: 2
++
++        resets:
++          maxItems: 1
++
++        reset-names:
++          const: ahb
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: starfive,jh7110-dwmac
++    then:
++      properties:
++        interrupts:
++          minItems: 3
++          maxItems: 3
++
++        interrupt-names:
++          minItems: 3
++          maxItems: 3
++
++        resets:
++          minItems: 2
++
++        reset-names:
++          minItems: 2
++
+ unevaluatedProperties: false
+ 
+ examples:

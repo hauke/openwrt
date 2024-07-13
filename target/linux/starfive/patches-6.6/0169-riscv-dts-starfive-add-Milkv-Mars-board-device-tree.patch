@@ -1,0 +1,78 @@
+From fddf5c971238d55918e1b72145765936fe266c71 Mon Sep 17 00:00:00 2001
+From: Jisheng Zhang <jszhang@kernel.org>
+Date: Mon, 29 Apr 2024 08:13:17 +0800
+Subject: [PATCH 169/177] riscv: dts: starfive: add Milkv Mars board device
+ tree
+
+The Milkv Mars is a development board based on the Starfive JH7110 SoC.
+The board features:
+
+- JH7110 SoC
+- 1/2/4/8 GiB LPDDR4 DRAM
+- AXP15060 PMIC
+- 40 pin GPIO header
+- 3x USB 3.0 host port
+- 1x USB 2.0 host port
+- 1x M.2 E-Key
+- 1x eMMC slot
+- 1x MicroSD slot
+- 1x QSPI Flash
+- 1x 1Gbps Ethernet port
+- 1x HDMI port
+- 1x 2-lane DSI and 1x 4-lane DSI
+- 1x 2-lane CSI
+
+Add the devicetree file describing the currently supported features,
+namely PMIC, UART, I2C, GPIO, SD card, QSPI Flash, eMMC and Ethernet.
+
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ arch/riscv/boot/dts/starfive/Makefile         |  1 +
+ .../boot/dts/starfive/jh7110-milkv-mars.dts   | 30 +++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+
+--- a/arch/riscv/boot/dts/starfive/Makefile
++++ b/arch/riscv/boot/dts/starfive/Makefile
+@@ -8,5 +8,6 @@ DTC_FLAGS_jh7110-starfive-visionfive-2-v
+ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-beaglev-starlight.dtb
+ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-visionfive-v1.dtb
+ 
++dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
+ dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.2a.dtb
+ dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.3b.dtb
+--- /dev/null
++++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: GPL-2.0 OR MIT
++/*
++ * Copyright (C) 2023 Jisheng Zhang <jszhang@kernel.org>
++ */
++
++/dts-v1/;
++#include "jh7110-common.dtsi"
++
++/ {
++	model = "Milk-V Mars";
++	compatible = "milkv,mars", "starfive,jh7110";
++};
++
++&gmac0 {
++	starfive,tx-use-rgmii-clk;
++	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
++	assigned-clock-parents = <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
++};
++
++
++&phy0 {
++	motorcomm,tx-clk-adj-enabled;
++	motorcomm,tx-clk-10-inverted;
++	motorcomm,tx-clk-100-inverted;
++	motorcomm,tx-clk-1000-inverted;
++	motorcomm,rx-clk-drv-microamp = <3970>;
++	motorcomm,rx-data-drv-microamp = <2910>;
++	rx-internal-delay-ps = <1500>;
++	tx-internal-delay-ps = <1500>;
++};

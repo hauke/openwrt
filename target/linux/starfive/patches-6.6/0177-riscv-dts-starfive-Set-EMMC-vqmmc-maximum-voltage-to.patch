@@ -1,0 +1,32 @@
+From a8dc6c17ab56fe204d406a91065596067f99ce61 Mon Sep 17 00:00:00 2001
+From: Shengyu Qu <wiagn233@outlook.com>
+Date: Wed, 12 Jun 2024 18:33:31 +0800
+Subject: [PATCH 177/177] riscv: dts: starfive: Set EMMC vqmmc maximum voltage
+ to 3.3V on JH7110 boards
+
+Currently, for JH7110 boards with EMMC slot, vqmmc voltage for EMMC is
+fixed to 1.8V, while the spec needs it to be 3.3V on low speed mode and
+should support switching to 1.8V when using higher speed mode. Since
+there are no other peripherals using the same voltage source of EMMC's
+vqmmc(ALDO4) on every board currently supported by mainline kernel,
+regulator-max-microvolt of ALDO4 should be set to 3.3V.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
+Fixes: 7dafcfa79cc9 ("riscv: dts: starfive: enable DCDC1&ALDO4 node in axp15060")
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+@@ -244,7 +244,7 @@
+ 				regulator-boot-on;
+ 				regulator-always-on;
+ 				regulator-min-microvolt = <1800000>;
+-				regulator-max-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
+ 				regulator-name = "emmc_vdd";
+ 			};
+ 		};

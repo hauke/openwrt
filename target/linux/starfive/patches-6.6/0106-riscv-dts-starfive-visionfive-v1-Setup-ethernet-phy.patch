@@ -1,0 +1,67 @@
+From 4af51c773047642294c96ecef9b97b911bd1d36e Mon Sep 17 00:00:00 2001
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Wed, 20 Dec 2023 23:17:41 +0200
+Subject: [PATCH 106/125] riscv: dts: starfive: visionfive-v1: Setup ethernet
+ phy
+
+The StarFive VisionFive V1 SBC uses a Motorcomm YT8521 PHY supporting
+RGMII-ID, but requires manual adjustment of the RX internal delay to
+work properly.
+
+The default RX delay provided by the driver is 1.95 ns, which proves to
+be too high. Applying a 50% reduction seems to mitigate the issue.
+
+Also note this adjustment is not necessary on BeagleV Starlight SBC,
+which uses a Microchip PHY.  Hence, there is no indication of a
+misbehaviour on the GMAC side, but most likely the issue stems from
+the Motorcomm PHY.
+
+While at it, drop the redundant gpio include, which is already provided
+by jh7100-common.dtsi.
+
+Co-developed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ .../jh7100-starfive-visionfive-v1.dts         | 22 ++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
+
+--- a/arch/riscv/boot/dts/starfive/jh7100-starfive-visionfive-v1.dts
++++ b/arch/riscv/boot/dts/starfive/jh7100-starfive-visionfive-v1.dts
+@@ -6,7 +6,6 @@
+ 
+ /dts-v1/;
+ #include "jh7100-common.dtsi"
+-#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "StarFive VisionFive V1";
+@@ -18,3 +17,24 @@
+ 		priority = <224>;
+ 	};
+ };
++
++&gmac {
++	phy-handle = <&phy>;
++};
++
++/*
++ * The board uses a Motorcomm YT8521 PHY supporting RGMII-ID, but requires
++ * manual adjustment of the RX internal delay to work properly.  The default
++ * RX delay provided by the driver (1.95ns) is too high, but applying a 50%
++ * reduction seems to mitigate the issue.
++ *
++ * It is worth noting the adjustment is not necessary on BeagleV Starlight SBC,
++ * which uses a Microchip PHY.  Hence, most likely the Motorcomm PHY is the one
++ * responsible for the misbehaviour, not the GMAC.
++ */
++&mdio {
++	phy: ethernet-phy@0 {
++		reg = <0>;
++		rx-internal-delay-ps = <900>;
++	};
++};

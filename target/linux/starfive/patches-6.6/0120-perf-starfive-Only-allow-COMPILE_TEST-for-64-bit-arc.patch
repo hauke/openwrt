@@ -1,0 +1,29 @@
+From a0b9ebbfa568f3af2aae72d0cf7df5678ee0b2e3 Mon Sep 17 00:00:00 2001
+From: Will Deacon <will@kernel.org>
+Date: Tue, 5 Mar 2024 10:56:49 +0000
+Subject: [PATCH 120/125] perf: starfive: Only allow COMPILE_TEST for 64-bit
+ architectures
+
+The kbuild robot exploded while wasting its time building the Starfive
+PMU driver for the 32-bit PA-RISC and Hexagon architectures.
+
+Adjust the Kconfig dependencies so that COMPILE_TEST is only applicable
+for 64-bit architectures (which implement writeq()).
+
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+---
+ drivers/perf/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/perf/Kconfig
++++ b/drivers/perf/Kconfig
+@@ -87,7 +87,7 @@ config RISCV_PMU_SBI
+ 	  filtering, counter configuration.
+ 
+ config STARFIVE_STARLINK_PMU
+-	depends on ARCH_STARFIVE || COMPILE_TEST
++	depends on ARCH_STARFIVE || (COMPILE_TEST && 64BIT)
+ 	bool "StarFive StarLink PMU"
+ 	help
+ 	   Provide support for StarLink Performance Monitor Unit.

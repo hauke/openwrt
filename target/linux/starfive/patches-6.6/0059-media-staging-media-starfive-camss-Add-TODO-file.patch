@@ -1,0 +1,22 @@
+From df514d07e23c8855c453b53856e4c828513f31dd Mon Sep 17 00:00:00 2001
+From: Jack Zhu <jack.zhu@starfivetech.com>
+Date: Wed, 25 Oct 2023 11:14:22 +0800
+Subject: [PATCH 59/89] media: staging: media: starfive: camss: Add TODO file
+
+Add a TODO.txt file to explain what needs to be done to get them
+out of staging.
+
+Signed-off-by: Jack Zhu <jack.zhu@starfivetech.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+---
+ drivers/staging/media/starfive/camss/TODO.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
+ create mode 100644 drivers/staging/media/starfive/camss/TODO.txt
+
+--- /dev/null
++++ b/drivers/staging/media/starfive/camss/TODO.txt
+@@ -0,0 +1,4 @@
++Unstaging requirements:
++- Add userspace support which demonstrates the ability to receive statistics and
++  adapt hardware modules configuration accordingly;
++- Add documentation for description of the statistics data structures;

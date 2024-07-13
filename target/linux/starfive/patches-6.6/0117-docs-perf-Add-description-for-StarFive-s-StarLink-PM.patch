@@ -1,0 +1,78 @@
+From 4e9e456f0a974a2f8417dd7e8bd9efa7e4ff408e Mon Sep 17 00:00:00 2001
+From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Date: Thu, 29 Feb 2024 15:27:19 +0800
+Subject: [PATCH 117/125] docs: perf: Add description for StarFive's StarLink
+ PMU
+
+StarFive StarLink PMU support monitoring L3 memory system PMU events.
+Add documentation to describe StarFive StarLink PMU support and it's
+usage.
+
+Signed-off-by: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Link: https://lore.kernel.org/r/20240229072720.3987876-4-jisheng.teoh@starfivetech.com
+Signed-off-by: Will Deacon <will@kernel.org>
+---
+ Documentation/admin-guide/perf/index.rst      |  1 +
+ .../perf/starfive_starlink_pmu.rst            | 46 +++++++++++++++++++
+ 2 files changed, 47 insertions(+)
+ create mode 100644 Documentation/admin-guide/perf/starfive_starlink_pmu.rst
+
+--- a/Documentation/admin-guide/perf/index.rst
++++ b/Documentation/admin-guide/perf/index.rst
+@@ -13,6 +13,7 @@ Performance monitor support
+    imx-ddr
+    qcom_l2_pmu
+    qcom_l3_pmu
++   starfive_starlink_pmu
+    arm-ccn
+    arm-cmn
+    xgene-pmu
+--- /dev/null
++++ b/Documentation/admin-guide/perf/starfive_starlink_pmu.rst
+@@ -0,0 +1,46 @@
++================================================
++StarFive StarLink Performance Monitor Unit (PMU)
++================================================
++
++StarFive StarLink Performance Monitor Unit (PMU) exists within the
++StarLink Coherent Network on Chip (CNoC) that connects multiple CPU
++clusters with an L3 memory system.
++
++The uncore PMU supports overflow interrupt, up to 16 programmable 64bit
++event counters, and an independent 64bit cycle counter.
++The PMU can only be accessed via Memory Mapped I/O and are common to the
++cores connected to the same PMU.
++
++Driver exposes supported PMU events in sysfs "events" directory under::
++
++  /sys/bus/event_source/devices/starfive_starlink_pmu/events/
++
++Driver exposes cpu used to handle PMU events in sysfs "cpumask" directory
++under::
++
++  /sys/bus/event_source/devices/starfive_starlink_pmu/cpumask/
++
++Driver describes the format of config (event ID) in sysfs "format" directory
++under::
++
++  /sys/bus/event_source/devices/starfive_starlink_pmu/format/
++
++Example of perf usage::
++
++	$ perf list
++
++	starfive_starlink_pmu/cycles/                      [Kernel PMU event]
++	starfive_starlink_pmu/read_hit/                    [Kernel PMU event]
++	starfive_starlink_pmu/read_miss/                   [Kernel PMU event]
++	starfive_starlink_pmu/read_request/                [Kernel PMU event]
++	starfive_starlink_pmu/release_request/             [Kernel PMU event]
++	starfive_starlink_pmu/write_hit/                   [Kernel PMU event]
++	starfive_starlink_pmu/write_miss/                  [Kernel PMU event]
++	starfive_starlink_pmu/write_request/               [Kernel PMU event]
++	starfive_starlink_pmu/writeback/                   [Kernel PMU event]
++
++
++	$ perf stat -a -e /starfive_starlink_pmu/cycles/ sleep 1
++
++Sampling is not supported. As a result, "perf record" is not supported.
++Attaching to a task is not supported, only system-wide counting is supported.

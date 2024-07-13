@@ -1,0 +1,41 @@
+From 857eb2d2fad0b3c24533a5e4e670987291449ae8 Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Mon, 18 Mar 2024 15:35:04 +0000
+Subject: [PATCH 125/125] perf: starfive: fix 64-bit only COMPILE_TEST
+ condition
+
+ARCH_STARFIVE is not restricted to 64-bit platforms, so while Will's
+addition of a 64-bit only condition satisfied the build robots doing
+COMPILE_TEST builds, Palmer ran into the same problems with writeq()
+being undefined during regular rv32 builds.
+
+Promote the dependency on 64-bit to its own `depends on` so that the
+driver can never be included in 32-bit builds.
+
+Reported-by: Palmer Dabbelt <palmer@rivosinc.com>
+Fixes: c2b24812f7bc ("perf: starfive: Add StarLink PMU support")
+Fixes: f0dbc6d0de38 ("perf: starfive: Only allow COMPILE_TEST for 64-bit architectures")
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Will Deacon <will@kernel.org>
+Reviewed-by: Palmer Dabbelt <palmer@rivosinc.com>
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Acked-by: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Acked-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Link: https://lore.kernel.org/r/20240318-emphatic-rally-f177a4fe1bdc@spud
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+---
+ drivers/perf/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/perf/Kconfig
++++ b/drivers/perf/Kconfig
+@@ -87,7 +87,8 @@ config RISCV_PMU_SBI
+ 	  filtering, counter configuration.
+ 
+ config STARFIVE_STARLINK_PMU
+-	depends on ARCH_STARFIVE || (COMPILE_TEST && 64BIT)
++	depends on ARCH_STARFIVE || COMPILE_TEST
++	depends on 64BIT
+ 	bool "StarFive StarLink PMU"
+ 	help
+ 	   Provide support for StarLink Performance Monitor Unit.

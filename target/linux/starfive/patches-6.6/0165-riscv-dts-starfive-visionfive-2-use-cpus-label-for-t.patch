@@ -1,0 +1,41 @@
+From 28c3a433a12061a6b5a259b474718e1586f6afa6 Mon Sep 17 00:00:00 2001
+From: Jisheng Zhang <jszhang@kernel.org>
+Date: Mon, 29 Apr 2024 08:13:13 +0800
+Subject: [PATCH 165/177] riscv: dts: starfive: visionfive 2: use cpus label
+ for timebase freq
+
+As pointed out by Krzysztof "Board should not bring new CPU nodes.
+Override by label instead."
+
+Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ .../boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi   | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+@@ -26,10 +26,6 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	cpus {
+-		timebase-frequency = <4000000>;
+-	};
+-
+ 	memory@40000000 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x40000000 0x1 0x0>;
+@@ -69,6 +65,10 @@
+ 	};
+ };
+ 
++&cpus {
++	timebase-frequency = <4000000>;
++};
++
+ &dvp_clk {
+ 	clock-frequency = <74250000>;
+ };

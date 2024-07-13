@@ -1,0 +1,104 @@
+From 78c20c24b7f2bb8401015b5d791e8389711d1386 Mon Sep 17 00:00:00 2001
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Date: Thu, 30 Nov 2023 16:19:32 +0100
+Subject: [PATCH 79/89] riscv: dts: starfive: Enable SDIO wifi on JH7100 boards
+
+Add pinctrl and MMC controller nodes for the Broadcom wifi controller
+on the BeagleV Starlight and StarFive VisionFive V1 boards.
+
+Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ .../boot/dts/starfive/jh7100-common.dtsi      | 60 +++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+
+--- a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
+@@ -13,6 +13,7 @@
+ / {
+ 	aliases {
+ 		mmc0 = &sdio0;
++		mmc1 = &sdio1;
+ 		serial0 = &uart3;
+ 	};
+ 
+@@ -64,6 +65,11 @@
+ 			     <0x00 0xfa000000 0x10 0x7a000000 0x00 0x01000000>,
+ 			     <0x00 0xfb000000 0x00 0xfb000000 0x07 0x85000000>;
+ 	};
++
++	wifi_pwrseq: wifi-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&gpio 37 GPIO_ACTIVE_LOW>;
++	};
+ };
+ 
+ &gpio {
+@@ -146,6 +152,41 @@
+ 		};
+ 	};
+ 
++	sdio1_pins: sdio1-0 {
++		clk-pins {
++			pinmux = <GPIOMUX(33, GPO_SDIO1_PAD_CCLK_OUT,
++				  GPO_ENABLE, GPI_NONE)>;
++			bias-disable;
++			input-disable;
++			input-schmitt-disable;
++		};
++		sdio-pins {
++			pinmux = <GPIOMUX(29,
++				  GPO_SDIO1_PAD_CCMD_OUT,
++				  GPO_SDIO1_PAD_CCMD_OEN,
++				  GPI_SDIO1_PAD_CCMD_IN)>,
++				 <GPIOMUX(36,
++				  GPO_SDIO1_PAD_CDATA_OUT_BIT0,
++				  GPO_SDIO1_PAD_CDATA_OEN_BIT0,
++				  GPI_SDIO1_PAD_CDATA_IN_BIT0)>,
++				 <GPIOMUX(30,
++				  GPO_SDIO1_PAD_CDATA_OUT_BIT1,
++				  GPO_SDIO1_PAD_CDATA_OEN_BIT1,
++				  GPI_SDIO1_PAD_CDATA_IN_BIT1)>,
++				 <GPIOMUX(34,
++				  GPO_SDIO1_PAD_CDATA_OUT_BIT2,
++				  GPO_SDIO1_PAD_CDATA_OEN_BIT2,
++				  GPI_SDIO1_PAD_CDATA_IN_BIT2)>,
++				 <GPIOMUX(31,
++				  GPO_SDIO1_PAD_CDATA_OUT_BIT3,
++				  GPO_SDIO1_PAD_CDATA_OEN_BIT3,
++				  GPI_SDIO1_PAD_CDATA_IN_BIT3)>;
++			bias-pull-up;
++			input-enable;
++			input-schmitt-enable;
++		};
++	};
++
+ 	uart3_pins: uart3-0 {
+ 		rx-pins {
+ 			pinmux = <GPIOMUX(13, GPO_LOW, GPO_DISABLE,
+@@ -225,6 +266,25 @@
+ 	status = "okay";
+ };
+ 
++&sdio1 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	bus-width = <4>;
++	cap-sd-highspeed;
++	cap-sdio-irq;
++	cap-power-off-card;
++	mmc-pwrseq = <&wifi_pwrseq>;
++	non-removable;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdio1_pins>;
++	status = "okay";
++
++	wifi@1 {
++		compatible = "brcm,bcm4329-fmac";
++		reg = <1>;
++	};
++};
++
+ &uart3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart3_pins>;

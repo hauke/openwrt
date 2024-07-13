@@ -1,0 +1,47 @@
+From 498ab179d11676f5539e6b55bf5874236a84955f Mon Sep 17 00:00:00 2001
+From: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Date: Mon, 29 Apr 2024 14:06:40 +0800
+Subject: [PATCH 175/177] crypto: starfive - Use fallback for unaligned dma
+ access
+
+Dma address mapping fails on unaligned scatterlist offset. Use sw
+fallback for these cases.
+
+Signed-off-by: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ drivers/crypto/starfive/jh7110-aes.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+--- a/drivers/crypto/starfive/jh7110-aes.c
++++ b/drivers/crypto/starfive/jh7110-aes.c
+@@ -314,7 +314,7 @@ static int starfive_aes_read_authtag(str
+ 					 cryp->total_in, cryp->authsize, 1);
+ 	} else {
+ 		if (crypto_memneq(cryp->tag_in, cryp->tag_out, cryp->authsize))
+-			return dev_err_probe(cryp->dev, -EBADMSG, "Failed tag verification\n");
++			return -EBADMSG;
+ 	}
+ 
+ 	return 0;
+@@ -753,14 +753,16 @@ static bool starfive_aes_check_unaligned
+ 	int i;
+ 
+ 	for_each_sg(src, tsg, sg_nents(src), i)
+-		if (!IS_ALIGNED(tsg->length, AES_BLOCK_SIZE) &&
+-		    !sg_is_last(tsg))
++		if (!IS_ALIGNED(tsg->offset, sizeof(u32)) ||
++		    (!IS_ALIGNED(tsg->length, AES_BLOCK_SIZE) &&
++		     !sg_is_last(tsg)))
+ 			return true;
+ 
+ 	if (src != dst)
+ 		for_each_sg(dst, tsg, sg_nents(dst), i)
+-			if (!IS_ALIGNED(tsg->length, AES_BLOCK_SIZE) &&
+-			    !sg_is_last(tsg))
++			if (!IS_ALIGNED(tsg->offset, sizeof(u32)) ||
++			    (!IS_ALIGNED(tsg->length, AES_BLOCK_SIZE) &&
++			     !sg_is_last(tsg)))
+ 				return true;
+ 
+ 	return false;

@@ -1,0 +1,26 @@
+From 81a23ad750e40b9395a451fde8cd480b87fd93e3 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 11 Sep 2023 23:50:19 +0000
+Subject: [PATCH 12/26] ASoC: starfive: convert not to use asoc_xxx()
+
+ASoC is now unified asoc_xxx() into snd_soc_xxx().
+This patch convert asoc_xxx() to snd_soc_xxx().
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Link: https://lore.kernel.org/r/877cowqngl.wl-kuninori.morimoto.gx@renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/starfive/jh7110_tdm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/sound/soc/starfive/jh7110_tdm.c
++++ b/sound/soc/starfive/jh7110_tdm.c
+@@ -325,7 +325,7 @@ static const struct snd_soc_component_dr
+ static int jh7110_tdm_startup(struct snd_pcm_substream *substream,
+ 			      struct snd_soc_dai *cpu_dai)
+ {
+-	struct snd_soc_pcm_runtime *rtd = asoc_substream_to_rtd(substream);
++	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
+ 	struct snd_soc_dai_link *dai_link = rtd->dai_link;
+ 
+ 	dai_link->trigger_stop = SND_SOC_TRIGGER_ORDER_LDC;

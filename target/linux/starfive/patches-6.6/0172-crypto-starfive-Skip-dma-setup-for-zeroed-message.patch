@@ -1,0 +1,32 @@
+From 37e94daf4b1854ecc636d2a5c2fbff750178f5b9 Mon Sep 17 00:00:00 2001
+From: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Date: Mon, 29 Apr 2024 14:06:37 +0800
+Subject: [PATCH 172/177] crypto: starfive - Skip dma setup for zeroed message
+
+Skip dma setup and mapping for AES driver if plaintext is empty.
+
+Signed-off-by: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ drivers/crypto/starfive/jh7110-aes.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/crypto/starfive/jh7110-aes.c
++++ b/drivers/crypto/starfive/jh7110-aes.c
+@@ -590,12 +590,16 @@ static int starfive_aes_do_one_req(struc
+ 	if (ret)
+ 		return ret;
+ 
++	if (!cryp->total_in)
++		goto finish_req;
++
+ 	starfive_aes_dma_init(cryp);
+ 
+ 	ret = starfive_aes_map_sg(cryp, rctx->in_sg, rctx->out_sg);
+ 	if (ret)
+ 		return ret;
+ 
++finish_req:
+ 	starfive_aes_finish_req(ctx);
+ 
+ 	return 0;

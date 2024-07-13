@@ -1,0 +1,53 @@
+From 57b9387d9d2be44eb915d6b9df5bb8eb23fa3cd8 Mon Sep 17 00:00:00 2001
+From: Jisheng Zhang <jszhang@kernel.org>
+Date: Sat, 16 Sep 2023 15:58:21 +0800
+Subject: [PATCH 11/26] net: stmmac: dwmac-starfive: use
+ devm_stmmac_probe_config_dt()
+
+Simplify the driver's probe() function by using the devres
+variant of stmmac_probe_config_dt().
+
+The remove_new() callback now needs to be switched to
+stmmac_pltfr_remove_no_dt().
+
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
+@@ -122,7 +122,7 @@ static int starfive_dwmac_probe(struct p
+ 		return dev_err_probe(&pdev->dev, err,
+ 				     "failed to get resources\n");
+ 
+-	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
++	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
+ 	if (IS_ERR(plat_dat))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(plat_dat),
+ 				     "dt configuration failed\n");
+@@ -160,13 +160,7 @@ static int starfive_dwmac_probe(struct p
+ 	if (err)
+ 		return err;
+ 
+-	err = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+-	if (err) {
+-		stmmac_remove_config_dt(pdev, plat_dat);
+-		return err;
+-	}
+-
+-	return 0;
++	return stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+ }
+ 
+ static const struct starfive_dwmac_data jh7100_data = {
+@@ -182,7 +176,7 @@ MODULE_DEVICE_TABLE(of, starfive_dwmac_m
+ 
+ static struct platform_driver starfive_dwmac_driver = {
+ 	.probe  = starfive_dwmac_probe,
+-	.remove_new = stmmac_pltfr_remove,
++	.remove_new = stmmac_pltfr_remove_no_dt,
+ 	.driver = {
+ 		.name = "starfive-dwmac",
+ 		.pm = &stmmac_pltfr_pm_ops,

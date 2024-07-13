@@ -1,0 +1,55 @@
+From 7262432bee564dd0406e4db445012c6ac4646232 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Date: Wed, 6 Mar 2024 11:38:57 +0100
+Subject: [PATCH 123/125] clk: starfive: jh7110-vout: Convert to platform
+ remove callback returning void
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
+
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
+
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Link: https://lore.kernel.org/r/90054b8b2e118bc04ec37e044d0ac518bb177cf4.1709721042.git.u.kleine-koenig@pengutronix.de
+Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/starfive/clk-starfive-jh7110-vout.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+--- a/drivers/clk/starfive/clk-starfive-jh7110-vout.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
+@@ -209,12 +209,10 @@ err_exit:
+ 	return ret;
+ }
+ 
+-static int jh7110_voutcrg_remove(struct platform_device *pdev)
++static void jh7110_voutcrg_remove(struct platform_device *pdev)
+ {
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id jh7110_voutcrg_match[] = {
+@@ -225,7 +223,7 @@ MODULE_DEVICE_TABLE(of, jh7110_voutcrg_m
+ 
+ static struct platform_driver jh7110_voutcrg_driver = {
+ 	.probe = jh7110_voutcrg_probe,
+-	.remove = jh7110_voutcrg_remove,
++	.remove_new = jh7110_voutcrg_remove,
+ 	.driver = {
+ 		.name = "clk-starfive-jh7110-vout",
+ 		.of_match_table = jh7110_voutcrg_match,

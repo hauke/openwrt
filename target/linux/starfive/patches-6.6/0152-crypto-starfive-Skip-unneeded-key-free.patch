@@ -1,0 +1,25 @@
+From 3c6af7b2d510de21f2fe1dbe93837ce8d00cc2fa Mon Sep 17 00:00:00 2001
+From: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Date: Tue, 5 Mar 2024 15:10:02 +0800
+Subject: [PATCH 152/177] crypto: starfive - Skip unneeded key free
+
+Skip unneeded kfree_sensitive if RSA module is using falback algo.
+
+Signed-off-by: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ drivers/crypto/starfive/jh7110-rsa.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/crypto/starfive/jh7110-rsa.c
++++ b/drivers/crypto/starfive/jh7110-rsa.c
+@@ -45,6 +45,9 @@ static inline int starfive_pka_wait_done
+ 
+ static void starfive_rsa_free_key(struct starfive_rsa_key *key)
+ {
++	if (!key->key_sz)
++		return;
++
+ 	kfree_sensitive(key->d);
+ 	kfree_sensitive(key->e);
+ 	kfree_sensitive(key->n);

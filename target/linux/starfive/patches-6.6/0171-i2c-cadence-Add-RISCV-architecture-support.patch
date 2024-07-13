@@ -1,0 +1,26 @@
+From e0831e335d0e535a11758925812837f28b864d80 Mon Sep 17 00:00:00 2001
+From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Date: Tue, 23 Apr 2024 10:48:06 +0800
+Subject: [PATCH 171/177] i2c: cadence: Add RISCV architecture support
+
+Add RISCV support to Cadence I2C Kconfig which is used in platform
+such as the StarFive JH8100.
+
+Signed-off-by: Eng Lee Teh <englee.teh@starfivetech.com>
+Signed-off-by: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
+---
+ drivers/i2c/busses/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -500,7 +500,7 @@ config I2C_BRCMSTB
+ 
+ config I2C_CADENCE
+ 	tristate "Cadence I2C Controller"
+-	depends on ARCH_ZYNQ || ARM64 || XTENSA || COMPILE_TEST
++	depends on ARCH_ZYNQ || ARM64 || XTENSA || RISCV || COMPILE_TEST
+ 	help
+ 	  Say yes here to select Cadence I2C Host Controller. This controller is
+ 	  e.g. used by Xilinx Zynq.

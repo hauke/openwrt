@@ -1,0 +1,157 @@
+From e30db8c307aab43c6e60140f44070c6ae927870f Mon Sep 17 00:00:00 2001
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+Date: Sun, 18 Feb 2024 19:27:41 -0800
+Subject: [PATCH 112/125] riscv: dts: starfive: jh7110: Add camera subsystem
+ nodes
+
+Add camera subsystem nodes for the StarFive JH7110 SoC. They contain the
+dphy-rx, csi2rx, camss nodes.
+
+Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ .../jh7110-starfive-visionfive-2.dtsi         | 49 ++++++++++++++
+ arch/riscv/boot/dts/starfive/jh7110.dtsi      | 67 +++++++++++++++++++
+ 2 files changed, 116 insertions(+)
+
+--- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+@@ -125,6 +125,55 @@
+ 	clock-frequency = <49152000>;
+ };
+ 
++&camss {
++	assigned-clocks = <&ispcrg JH7110_ISPCLK_DOM4_APB_FUNC>,
++			  <&ispcrg JH7110_ISPCLK_MIPI_RX0_PXL>;
++	assigned-clock-rates = <49500000>, <198000000>;
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++		};
++
++		port@1 {
++			reg = <1>;
++
++			camss_from_csi2rx: endpoint {
++				remote-endpoint = <&csi2rx_to_camss>;
++			};
++		};
++	};
++};
++
++&csi2rx {
++	assigned-clocks = <&ispcrg JH7110_ISPCLK_VIN_SYS>;
++	assigned-clock-rates = <297000000>;
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++
++			/* remote MIPI sensor endpoint */
++		};
++
++		port@1 {
++			reg = <1>;
++
++			csi2rx_to_camss: endpoint {
++				remote-endpoint = <&camss_from_csi2rx>;
++			};
++		};
++	};
++};
++
+ &gmac0 {
+ 	phy-handle = <&phy0>;
+ 	phy-mode = "rgmii-id";
+--- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+@@ -1113,6 +1113,32 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		csi2rx: csi@19800000 {
++			compatible = "starfive,jh7110-csi2rx", "cdns,csi2rx";
++			reg = <0x0 0x19800000 0x0 0x10000>;
++			clocks = <&ispcrg JH7110_ISPCLK_VIN_SYS>,
++				 <&ispcrg JH7110_ISPCLK_VIN_APB>,
++				 <&ispcrg JH7110_ISPCLK_VIN_PIXEL_IF0>,
++				 <&ispcrg JH7110_ISPCLK_VIN_PIXEL_IF1>,
++				 <&ispcrg JH7110_ISPCLK_VIN_PIXEL_IF2>,
++				 <&ispcrg JH7110_ISPCLK_VIN_PIXEL_IF3>;
++			clock-names = "sys_clk", "p_clk",
++				      "pixel_if0_clk", "pixel_if1_clk",
++				      "pixel_if2_clk", "pixel_if3_clk";
++			resets = <&ispcrg JH7110_ISPRST_VIN_SYS>,
++				 <&ispcrg JH7110_ISPRST_VIN_APB>,
++				 <&ispcrg JH7110_ISPRST_VIN_PIXEL_IF0>,
++				 <&ispcrg JH7110_ISPRST_VIN_PIXEL_IF1>,
++				 <&ispcrg JH7110_ISPRST_VIN_PIXEL_IF2>,
++				 <&ispcrg JH7110_ISPRST_VIN_PIXEL_IF3>;
++			reset-names = "sys", "reg_bank",
++				      "pixel_if0", "pixel_if1",
++				      "pixel_if2", "pixel_if3";
++			phys = <&csi_phy>;
++			phy-names = "dphy";
++			status = "disabled";
++		};
++
+ 		ispcrg: clock-controller@19810000 {
+ 			compatible = "starfive,jh7110-ispcrg";
+ 			reg = <0x0 0x19810000 0x0 0x10000>;
+@@ -1130,6 +1156,47 @@
+ 			power-domains = <&pwrc JH7110_PD_ISP>;
+ 		};
+ 
++		csi_phy: phy@19820000 {
++			compatible = "starfive,jh7110-dphy-rx";
++			reg = <0x0 0x19820000 0x0 0x10000>;
++			clocks = <&ispcrg JH7110_ISPCLK_M31DPHY_CFG_IN>,
++				 <&ispcrg JH7110_ISPCLK_M31DPHY_REF_IN>,
++				 <&ispcrg JH7110_ISPCLK_M31DPHY_TX_ESC_LAN0>;
++			clock-names = "cfg", "ref", "tx";
++			resets = <&ispcrg JH7110_ISPRST_M31DPHY_HW>,
++				 <&ispcrg JH7110_ISPRST_M31DPHY_B09_AON>;
++			power-domains = <&aon_syscon JH7110_AON_PD_DPHY_RX>;
++			#phy-cells = <0>;
++		};
++
++		camss: isp@19840000 {
++			compatible = "starfive,jh7110-camss";
++			reg = <0x0 0x19840000 0x0 0x10000>,
++			      <0x0 0x19870000 0x0 0x30000>;
++			reg-names = "syscon", "isp";
++			clocks = <&ispcrg JH7110_ISPCLK_DOM4_APB_FUNC>,
++				 <&ispcrg JH7110_ISPCLK_ISPV2_TOP_WRAPPER_C>,
++				 <&ispcrg JH7110_ISPCLK_DVP_INV>,
++				 <&ispcrg JH7110_ISPCLK_VIN_P_AXI_WR>,
++				 <&ispcrg JH7110_ISPCLK_MIPI_RX0_PXL>,
++				 <&syscrg JH7110_SYSCLK_ISP_TOP_CORE>,
++				 <&syscrg JH7110_SYSCLK_ISP_TOP_AXI>;
++			clock-names = "apb_func", "wrapper_clk_c", "dvp_inv",
++				      "axiwr", "mipi_rx0_pxl", "ispcore_2x",
++				      "isp_axi";
++			resets = <&ispcrg JH7110_ISPRST_ISPV2_TOP_WRAPPER_P>,
++				 <&ispcrg JH7110_ISPRST_ISPV2_TOP_WRAPPER_C>,
++				 <&ispcrg JH7110_ISPRST_VIN_P_AXI_RD>,
++				 <&ispcrg JH7110_ISPRST_VIN_P_AXI_WR>,
++				 <&syscrg JH7110_SYSRST_ISP_TOP>,
++				 <&syscrg JH7110_SYSRST_ISP_TOP_AXI>;
++			reset-names = "wrapper_p", "wrapper_c", "axird",
++				      "axiwr", "isp_top_n", "isp_top_axi";
++			power-domains = <&pwrc JH7110_PD_ISP>;
++			interrupts = <92>, <87>, <90>, <88>;
++			status = "disabled";
++		};
++
+ 		voutcrg: clock-controller@295c0000 {
+ 			compatible = "starfive,jh7110-voutcrg";
+ 			reg = <0x0 0x295c0000 0x0 0x10000>;
