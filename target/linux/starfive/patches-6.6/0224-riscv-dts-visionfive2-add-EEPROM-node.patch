@@ -1,0 +1,25 @@
+From d5b3a08906ccb3101e7cd81632f9db139d90d337 Mon Sep 17 00:00:00 2001
+From: Zoltan HERPAI <wigyori@uid0.hu>
+Date: Thu, 10 Aug 2023 23:23:15 +0200
+Subject: [PATCH 224/224] riscv: dts: visionfive2: add EEPROM node
+
+Signed-off-by: Zoltan HERPAI <wigyori@uid0.hu>
+---
+ arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+--- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+@@ -218,6 +218,12 @@
+ 	pinctrl-0 = <&i2c5_pins>;
+ 	status = "okay";
+ 
++	eeprom@50 {
++		compatible = "atmel,24c04";
++		reg = <0x50>;
++		pagesize = <16>;
++	};
++
+ 	axp15060: pmic@36 {
+ 		compatible = "x-powers,axp15060";
+ 		reg = <0x36>;

@@ -1,0 +1,60 @@
+From fceabfb0d5e99fc95ec7c683f8717772b1febd6e Mon Sep 17 00:00:00 2001
+From: Kevin Xie <kevin.xie@starfivetech.com>
+Date: Thu, 28 Mar 2024 17:18:33 +0800
+Subject: [PATCH 218/224] PCI: Add PCIE_RESET_CONFIG_DEVICE_WAIT_MS waiting
+ time value
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add the PCIE_RESET_CONFIG_DEVICE_WAIT_MS macro to define the minimum
+waiting time between exit from a conventional reset and sending the
+first configuration request to the device.
+
+As described in PCIe r6.0, sec 6.6.1 <Conventional Reset>, there are two
+different use cases of the value:
+
+   - "With a Downstream Port that does not support Link speeds greater
+     than 5.0 GT/s, software must wait a minimum of 100 ms following exit
+     from a Conventional Reset before sending a Configuration Request to
+     the device immediately below that Port."
+
+   - "With a Downstream Port that supports Link speeds greater than
+     5.0 GT/s, software must wait a minimum of 100 ms after Link training
+     completes before sending a Configuration Request to the device
+     immediately below that Port."
+
+[kwilczynski: commit log]
+Link: https://lore.kernel.org/linux-pci/20240328091835.14797-21-minda.chen@starfivetech.com
+Signed-off-by: Kevin Xie <kevin.xie@starfivetech.com>
+Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Mason Huo <mason.huo@starfivetech.com>
+---
+ drivers/pci/pci.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -19,6 +19,21 @@
+  */
+ #define PCIE_PME_TO_L2_TIMEOUT_US	10000
+ 
++/*
++ * PCIe r6.0, sec 6.6.1 <Conventional Reset>
++ *
++ * - "With a Downstream Port that does not support Link speeds greater
++ *    than 5.0 GT/s, software must wait a minimum of 100 ms following exit
++ *    from a Conventional Reset before sending a Configuration Request to
++ *    the device immediately below that Port."
++ *
++ * - "With a Downstream Port that supports Link speeds greater than
++ *    5.0 GT/s, software must wait a minimum of 100 ms after Link training
++ *    completes before sending a Configuration Request to the device
++ *    immediately below that Port."
++ */
++#define PCIE_RESET_CONFIG_DEVICE_WAIT_MS	100
++
+ extern const unsigned char pcie_link_speed[];
+ extern bool pci_early_dump;
+ 

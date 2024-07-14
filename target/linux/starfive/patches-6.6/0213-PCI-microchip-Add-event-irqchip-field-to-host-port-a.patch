@@ -1,0 +1,196 @@
+From 803873c75accb42220f507507555f471a275aa05 Mon Sep 17 00:00:00 2001
+From: Minda Chen <minda.chen@starfivetech.com>
+Date: Thu, 28 Mar 2024 17:18:28 +0800
+Subject: [PATCH 213/224] PCI: microchip: Add event irqchip field to host port
+ and add PLDA irqchip
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+As the PLDA DT binding doc (Documentation/devicetree/bindings/pci/
+plda,xpressrich3-axi-common.yaml) shows, PLDA PCIe contains an interrupt
+controller.
+
+Microchip PolarFire PCIe event IRQs include PLDA interrupts and PolarFire
+additional interrupts. The interrupt irqchip ops includes ack/mask/unmask
+interrupt ops, which will write correct registers.  Microchip PolarFire
+PCIe additional interrupts require to write PolarFire SoC self-defined
+registers. So Microchip PCIe event irqchip ops can not be re-used.
+
+Microchip PolarFire PCIe additional interrupts (defined in
+drivers/pci/controller/plda/pcie-microchip-host.c):
+
+  EVENT_PCIE_L2_EXIT
+  EVENT_PCIE_HOTRST_EXIT
+  EVENT_PCIE_DLUP_EXIT
+  EVENT_SEC_TX_RAM_SEC_ERR
+  EVENT_SEC_RX_RAM_SEC_ERR
+  ...
+
+To support PLDA its own event IRQ process, implements PLDA irqchip ops and
+add event irqchip field to struct pcie_plda_rp.
+
+[kwilczynski: commit log]
+Link: https://lore.kernel.org/linux-pci/20240328091835.14797-16-minda.chen@starfivetech.com
+Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
+Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ .../pci/controller/plda/pcie-microchip-host.c | 66 ++++++++++++++++++-
+ drivers/pci/controller/plda/pcie-plda.h       | 34 +++++-----
+ 2 files changed, 84 insertions(+), 16 deletions(-)
+
+--- a/drivers/pci/controller/plda/pcie-microchip-host.c
++++ b/drivers/pci/controller/plda/pcie-microchip-host.c
+@@ -770,6 +770,64 @@ static struct irq_chip mc_event_irq_chip
+ 	.irq_unmask = mc_unmask_event_irq,
+ };
+ 
++static u32 plda_hwirq_to_mask(int hwirq)
++{
++	u32 mask;
++
++	/* hwirq 23 - 0 are the same with register */
++	if (hwirq < EVENT_PM_MSI_INT_INTX)
++		mask = BIT(hwirq);
++	else if (hwirq == EVENT_PM_MSI_INT_INTX)
++		mask = PM_MSI_INT_INTX_MASK;
++	else
++		mask = BIT(hwirq + PCI_NUM_INTX - 1);
++
++	return mask;
++}
++
++static void plda_ack_event_irq(struct irq_data *data)
++{
++	struct plda_pcie_rp *port = irq_data_get_irq_chip_data(data);
++
++	writel_relaxed(plda_hwirq_to_mask(data->hwirq),
++		       port->bridge_addr + ISTATUS_LOCAL);
++}
++
++static void plda_mask_event_irq(struct irq_data *data)
++{
++	struct plda_pcie_rp *port = irq_data_get_irq_chip_data(data);
++	u32 mask, val;
++
++	mask = plda_hwirq_to_mask(data->hwirq);
++
++	raw_spin_lock(&port->lock);
++	val = readl_relaxed(port->bridge_addr + IMASK_LOCAL);
++	val &= ~mask;
++	writel_relaxed(val, port->bridge_addr + IMASK_LOCAL);
++	raw_spin_unlock(&port->lock);
++}
++
++static void plda_unmask_event_irq(struct irq_data *data)
++{
++	struct plda_pcie_rp *port = irq_data_get_irq_chip_data(data);
++	u32 mask, val;
++
++	mask = plda_hwirq_to_mask(data->hwirq);
++
++	raw_spin_lock(&port->lock);
++	val = readl_relaxed(port->bridge_addr + IMASK_LOCAL);
++	val |= mask;
++	writel_relaxed(val, port->bridge_addr + IMASK_LOCAL);
++	raw_spin_unlock(&port->lock);
++}
++
++static struct irq_chip plda_event_irq_chip = {
++	.name = "PLDA PCIe EVENT",
++	.irq_ack = plda_ack_event_irq,
++	.irq_mask = plda_mask_event_irq,
++	.irq_unmask = plda_unmask_event_irq,
++};
++
+ static const struct plda_event_ops plda_event_ops = {
+ 	.get_events = plda_get_events,
+ };
+@@ -777,7 +835,9 @@ static const struct plda_event_ops plda_
+ static int plda_pcie_event_map(struct irq_domain *domain, unsigned int irq,
+ 			       irq_hw_number_t hwirq)
+ {
+-	irq_set_chip_and_handler(irq, &mc_event_irq_chip, handle_level_irq);
++	struct plda_pcie_rp *port = (void *)domain->host_data;
++
++	irq_set_chip_and_handler(irq, port->event_irq_chip, handle_level_irq);
+ 	irq_set_chip_data(irq, domain->host_data);
+ 
+ 	return 0;
+@@ -962,6 +1022,9 @@ static int plda_init_interrupts(struct p
+ 	if (!port->event_ops)
+ 		port->event_ops = &plda_event_ops;
+ 
++	if (!port->event_irq_chip)
++		port->event_irq_chip = &plda_event_irq_chip;
++
+ 	ret = plda_pcie_init_irq_domains(port);
+ 	if (ret) {
+ 		dev_err(dev, "failed creating IRQ domains\n");
+@@ -1038,6 +1101,7 @@ static int mc_platform_init(struct pci_c
+ 		return ret;
+ 
+ 	port->plda.event_ops = &mc_event_ops;
++	port->plda.event_irq_chip = &mc_event_irq_chip;
+ 
+ 	/* Address translation is up; safe to enable interrupts */
+ 	ret = plda_init_interrupts(pdev, &port->plda, &mc_event);
+--- a/drivers/pci/controller/plda/pcie-plda.h
++++ b/drivers/pci/controller/plda/pcie-plda.h
+@@ -107,6 +107,8 @@ enum plda_int_event {
+ 
+ #define PLDA_NUM_DMA_EVENTS			16
+ 
++#define EVENT_PM_MSI_INT_INTX			(PLDA_NUM_DMA_EVENTS + PLDA_INTX)
++#define EVENT_PM_MSI_INT_MSI			(PLDA_NUM_DMA_EVENTS + PLDA_MSI)
+ #define PLDA_MAX_EVENT_NUM			(PLDA_NUM_DMA_EVENTS + PLDA_INT_EVENT_NUM)
+ 
+ /*
+@@ -116,21 +118,22 @@ enum plda_int_event {
+  * +--+--+--+-+------+-+-+-+-+-+-+-+-+-----------+-----------+
+  * |12|11|10|9| intx |7|6|5|4|3|2|1|0| DMA error | DMA end   |
+  * +--+--+--+-+------+-+-+-+-+-+-+-+-+-----------+-----------+
+- * bit 0-7  DMA interrupt end : reserved for vendor implement
+- * bit 8-15 DMA error : reserved for vendor implement
+- * 0:  AXI post error (PLDA_AXI_POST_ERR)
+- * 1:  AXI fetch error (PLDA_AXI_FETCH_ERR)
+- * 2:  AXI discard error (PLDA_AXI_DISCARD_ERR)
+- * 3:  AXI doorbell (PLDA_PCIE_DOORBELL)
+- * 4:  PCIe post error (PLDA_PCIE_POST_ERR)
+- * 5:  PCIe fetch error (PLDA_PCIE_FETCH_ERR)
+- * 6:  PCIe discard error (PLDA_PCIE_DISCARD_ERR)
+- * 7:  PCIe doorbell (PLDA_PCIE_DOORBELL)
+- * 8:  4 INTx interruts (PLDA_INTX)
+- * 9:  MSI interrupt (PLDA_MSI)
+- * 10: AER event (PLDA_AER_EVENT)
+- * 11: PM/LTR/Hotplug (PLDA_MISC_EVENTS)
+- * 12: System error (PLDA_SYS_ERR)
++ * event  bit
++ * 0-7   (0-7)   DMA interrupt end : reserved for vendor implement
++ * 8-15  (8-15)  DMA error : reserved for vendor implement
++ * 16    (16)    AXI post error (PLDA_AXI_POST_ERR)
++ * 17    (17)    AXI fetch error (PLDA_AXI_FETCH_ERR)
++ * 18    (18)    AXI discard error (PLDA_AXI_DISCARD_ERR)
++ * 19    (19)    AXI doorbell (PLDA_PCIE_DOORBELL)
++ * 20    (20)    PCIe post error (PLDA_PCIE_POST_ERR)
++ * 21    (21)    PCIe fetch error (PLDA_PCIE_FETCH_ERR)
++ * 22    (22)    PCIe discard error (PLDA_PCIE_DISCARD_ERR)
++ * 23    (23)    PCIe doorbell (PLDA_PCIE_DOORBELL)
++ * 24    (27-24) INTx interruts (PLDA_INTX)
++ * 25    (28):   MSI interrupt (PLDA_MSI)
++ * 26    (29):   AER event (PLDA_AER_EVENT)
++ * 27    (30):   PM/LTR/Hotplug (PLDA_MISC_EVENTS)
++ * 28    (31):   System error (PLDA_SYS_ERR)
+  */
+ 
+ struct plda_pcie_rp;
+@@ -155,6 +158,7 @@ struct plda_pcie_rp {
+ 	raw_spinlock_t lock;
+ 	struct plda_msi msi;
+ 	const struct plda_event_ops *event_ops;
++	const struct irq_chip *event_irq_chip;
+ 	void __iomem *bridge_addr;
+ 	int num_events;
+ };
