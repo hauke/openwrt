@@ -89,7 +89,7 @@ ifneq ($(DUMP),)
   # packages depends on needs to be set if they are missing in the .config.
   ifeq ($(shell grep "CONFIG_SECCOMP" $(TOPDIR)/.config 2>/dev/null),)
     ifeq ($(filter $(BOARD), uml),)
-    ifneq ($(filter $(ARCH), aarch64 arm armeb mips mipsel mips64 mips64el i386 powerpc x86_64),)
+    ifneq ($(filter $(ARCH), aarch64 arm armeb mips mipsel mips64 mips64el i386 powerpc riscv64 x86_64),)
       CONFIG_SECCOMP := y
     endif
     endif
