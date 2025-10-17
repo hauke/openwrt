@@ -8,7 +8,7 @@ PKG_RELEASE:=3
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://android.googlesource.com/platform/system/core
-PKG_MIRROR_HASH:=2ff96b4342cd05f475083207a4927635548c6693771c12a24cfa99f175fdb10a
+PKG_MIRROR_HASH:=8fd225f49937089989af8fffcb67cd9a084e2da5a793b1056ec5de1f4edd37bc
 
 PKG_MAINTAINER:=Henryk Heisig <hyniu@o2.pl>
 PKG_CPE_ID:=cpe:/a:google:android_debug_bridge

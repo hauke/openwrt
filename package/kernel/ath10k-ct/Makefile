@@ -7,10 +7,10 @@ PKG_LICENSE:=GPLv2
 PKG_LICENSE_FILES:=
 
 PKG_SOURCE_URL:=https://github.com/greearb/ath10k-ct.git
+PKG_MIRROR_HASH:=70dca85d6fabcdbbc710d81f15b016e5d635e6f25c9064e559e63c4050cdb8ca
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_DATE:=2024-07-30
 PKG_SOURCE_VERSION:=ac71b14dc93aef0af6f0f24808b0afb673eaa5f5
-PKG_MIRROR_HASH:=f7774fc7002bbea450f543927acd528fb1bb6742f0e9ef28a402df3796893d93
 
 # Build the 6.10 ath10k-ct driver version.
 # Probably this should match as closely as

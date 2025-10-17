@@ -11,8 +11,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/linux-audit/$(PKG_NAME).git
+PKG_MIRROR_HASH:=d3278133659b2d572cd242bb1a29c8e1bec9cb4cd9065189cfce27e256f5b7d4
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
-PKG_MIRROR_HASH:=60f479476d4f1b0beadbe3e516ea67490d38ca9b01db53e56f52b1731340d5bb
 
 PKG_MAINTAINER:=Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 PKG_LICENSE:=GPL-2.0-or-later LGPL-2.1-or-later

@@ -10,11 +10,11 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=ath11k-firmware
 PKG_SOURCE_DATE:=2024-10-14
 PKG_SOURCE_VERSION:=15f050122da5ef5bef2cc8c7c19dfb7f98060a49
-PKG_MIRROR_HASH:=e7a89d1570f32552ade539376181494724b5eafb31d00451ff2dcf5a2922a0cb
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://git.codelinaro.org/clo/ath-firmware/ath11k-firmware.git
+PKG_MIRROR_HASH:=16f6090f823cf6cd62e6eb6f82a34cfe6b8e85d6b6e8ebae75bb6e0abdd151a3
 
 PKG_LICENSE_FILES:=LICENSE.qca_firmware
 
