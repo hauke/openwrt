@@ -8,4 +8,4 @@ jobs:
     name: Validate and Tag Bug Report
     permissions:
       issues: write
-    uses: openwrt/actions-shared-workflows/.github/workflows/issue-labeller.yml@main
+    uses: hauke/actions-shared-workflows/.github/workflows/issue-labeller.yml@hauke-actions

@@ -10,7 +10,7 @@ permissions:
 jobs:
   build:
     name: Test Formalities
-    uses: openwrt/actions-shared-workflows/.github/workflows/formal.yml@main
+    uses: hauke/actions-shared-workflows/.github/workflows/formal.yml@hauke-actions
     # with:
     #   # Post formality check summaries to the PR.
     #   # Repo's permissions need to be updated for actions to modify PRs:
