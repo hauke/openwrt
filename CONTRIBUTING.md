@@ -121,7 +121,7 @@ AI-generated code without disclosure is grounds for rejection.
 - **One topic per PR.** Do not bundle unrelated changes — a new device and
   an unrelated driver fix belong in separate PRs.
 - **Atomic commits.** Each commit must be a self-contained logical change.
-  Never have a later commit undo or partially revert an earlier one in the
+  Never have a later commit in the PR undo or partially revert an earlier one in the
   same PR — restructure the series instead.
 - Keep the series small enough to review. Preparatory refactors (e.g.
   extracting a shared `.dtsi`) should be a **separate first commit** so the
@@ -141,6 +141,8 @@ git push --force-with-lease
 Do **not** use the GitHub "Update branch" button — it creates merge commits
 that CI will reject. Use `git rebase -i` to clean up the commit history.
 
+DO not close your PR and create a new one, force push into the existing branch to update it instead. Cladue hint: pleae add an example how to do this.
+
 ### Draft / WIP PRs
 
 Use the GitHub **Draft** state (or `[WIP]` in the title) while hardware
@@ -151,21 +153,19 @@ is complete and tested.
 
 - Verify there are no accidental file mode changes (`100644 → 100755`) in
   your diff — a common side-effect of certain editors.
-- Do not modify files unrelated to your change.
+- Do not modify files unrelated to your change. Add a sepertae commit to fix a seperate problem.
 
 ### Hardware testing
 
-For new device support, reviewers expect evidence of successful boot and
-basic operation: boot log, `ip link show`, ping output, or similar. For
-regression fixes, describe how you reproduced and verified the fix. For
-changes affecting many platforms, serial console output is strongly
-preferred.
+For
+regression fixes, describe how you reproduced and verified the fix.
 
-### After addressing review
+### adding new device
 
-Ping the relevant maintainer explicitly once all feedback is addressed,
-e.g. `ping @maintainer, all comments addressed`. Maintainers do the final
-rebase before merge — you do not need to rebase again just before merge.
+For new device support, please add a boot log of OpenWrt booting on the board to the PR description or a comment, bot to the git commit message.  If possible also add a log with the vendor firmware booting. If possible also includde the boot loader outpout. You can use '<details>' tag to escape a longer log. 
+Please document in the git commit message how the mac addresses are destributed to the network devices. Please check that OpenWrt afssigns the same mac addresses to the interfaecs as the vendor firmware does. check each interface (LAN, WAN, 5Ghz Wifi, 2.4GHz WIFI)
+ Mention in the PR descritiion if yoiu tested the PR changes on the actuall hardware. If the PR was not yet tested on the real hardware keep it in draft mode till it was tested. 
+
 
 ---
 
@@ -181,16 +181,13 @@ submitting to OpenWrt. This applies to:
 - mt76 patches (send to the `openwrt/mt76` upstream repo)
 - Any driver that will appear in multiple platforms
 
-When a fix is already queued for an upcoming kernel version (e.g. landing
-in 6.18 naturally), a separate backport for that version may not be needed.
-
 ### Patch placement
 
 | Patch status | Directory |
 |---|---|
 | Accepted upstream | `target/linux/generic/backport-<version>/` |
-| Submitted upstream, not yet merged | `target/linux/generic/patches-<version>/` |
-| Platform-specific, not upstreamable | `target/linux/<target>/patches-<version>/` |
+| Submitted upstream, not yet merged | `target/linux/generic/pending-<version>/` |
+| Platform-specific | `target/linux/<target>/patches-<version>/` |
 
 When a new kernel version is added (e.g. 6.18), **all** existing patches in
 `patches-<old>/` must also be added to `patches-<new>/`. When a pending
@@ -201,14 +198,6 @@ write a proper backport instead of copying the code.
 
 If a driver fix applies to hardware from multiple SoC vendors, place it in
 `target/linux/generic/` rather than a vendor-specific target directory.
-
-### Backporting from upstream
-
-Use the upstream commit message verbatim and append:
-
-```
-(cherry picked from commit <upstream-sha>)
-```
 
 ### Kernel version bumps
 
@@ -249,15 +238,14 @@ Follow the [kernel DTS coding style](https://docs.kernel.org/devicetree/bindings
 - Use the new array syntax for `reg` and similar properties
 - Add a blank line after `/dts-v1/;` before `#include`
 - Use consistent SPDX license identifiers across related `.dts`/`.dtsi`
-  files in the same series
-- Do not include `default-state = "off"` in LED nodes
+  files in the same series. Do not chnage the license of existing files without approval of all authors.
 - Use generic node names that reflect device function, not model number
 - Remove deprecated `device_type` properties (except for `memory` and
   `cpu` nodes)
 
 ### Device variants with shared hardware
 
-When a device comes in multiple storage variants (e.g. NAND and eMMC),
+When a device comes in multiple variants (e.g. NAND and eMMC),
 extract common nodes into a `<device>-common.dtsi` referenced by both
 variant `.dts` files. Add the extraction as a **separate preparatory
 commit** before the device-specific commits.
@@ -270,21 +258,17 @@ Align `DEVICE_TITLE` and DTS filenames with existing naming conventions for
 the target: lowercase, hyphens as word separators, `<vendor>_<model>` or
 `<vendor>_<model>-<variant>`.
 
+Do not use _ in vendor or model names, it is used to seperate both.
+
 ### MAC addresses
 
 Use `nvmem` cells defined in DTS for MAC address assignment where possible,
-rather than relying on randomised addresses at boot.
+rather than relying on randomised addresses at boot or userspace handling.
 
 ### Backwards compatibility
 
 When renaming a device profile, add the old name to `SUPPORTED_DEVICES` so
 existing installations can sysupgrade without reinstalling.
-
-### Devices with known build problems
-
-If a device profile exceeds its `KERNEL_SIZE` limit (CI warning: "Image
-file is too big"), add `DEFAULT := n` to exclude it from buildbots while
-the issue is investigated.
 
 ---
 
@@ -294,26 +278,15 @@ the issue is investigated.
 
 - Match the indentation style of the surrounding file (tabs or spaces
   consistently)
-- Keep lines at most **80 characters**
 - Sort list entries (package dependencies, device profiles, etc.)
   alphabetically
 - Check kernel patches with `./scripts/checkpatch.pl`
 
 ### C code (kernel / drivers)
 
-- Use `device_for_each_child_node_scoped` instead of
-  `device_for_each_child_node` to avoid fwnode reference leaks on early
-  return paths
-- Remove dead code (unreachable statements after `return`)
 - Comments must accurately describe the code — update them when behaviour
   changes
 - Name variables to reflect their semantic role
-
-### Shell / ucode scripts
-
-- Keep shell and ucode code paths in sync: if you fix a bug in one, apply
-  the equivalent fix in the other
-- Do not set the execute bit on files that are not executable scripts
 
 ---
 
