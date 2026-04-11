@@ -22,8 +22,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-        with:
-          fetch-depth: 1
 
       - name: PR Review
         uses: hauke/claude-code-action@4b02932d50b8a67602e46aaea77c8d2f00a6b55e # v1.0.93-fixed
