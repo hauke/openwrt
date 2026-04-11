@@ -35,3 +35,8 @@ jobs:
           claude_args: >-
             --allowedTools "mcp__github_inline_comment__create_inline_comment"
             --disallowedTools "Bash(git add:*),Bash(git commit:*),Bash(git rm:*),Bash(git push:*)"
+        env:
+          APPEND_SYSTEM_PROMPT: >-
+            Use inline comments (create_inline_comment) for issues tied to a
+            specific file and line. Use a top-level PR comment only for a
+            high-level summary. Keep comments short and to the point.
