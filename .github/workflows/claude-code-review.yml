@@ -40,3 +40,4 @@ jobs:
             Use inline comments (create_inline_comment) for issues tied to a
             specific file and line. Use a top-level PR comment only for a
             high-level summary. Keep comments short and to the point.
+            Follow the CONTRIBUTING.md found in the root of the reposetory.
