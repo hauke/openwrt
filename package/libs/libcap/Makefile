@@ -82,6 +82,7 @@ ifneq ($(CONFIG_PACKAGE_libcap-bin-capsh-shell),)
 TARGET_CFLAGS += -DSHELL='\"$(CONFIG_PACKAGE_libcap-bin-capsh-shell)\"'
 endif
 
+
 TARGET_CFLAGS += $(if $(CONFIG_USE_MUSL),-Dpthread_yield=sched_yield)
 
 define Build/InstallDev
