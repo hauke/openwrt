@@ -821,6 +821,16 @@ define Device/cudy_wr1300-v3
 endef
 TARGET_DEVICES += cudy_wr1300-v3
 
+define Device/cudy_wr1300s
+  $(Device/mt7621-default-16M)
+  DEVICE_VENDOR := Cudy
+  DEVICE_MODEL := WR1300S
+  DEVICE_DTS := mt7621_cudy_wr1300s
+  IMAGE_SIZE := 15744k
+  DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615e kmod-mt7615-firmware
+endef
+TARGET_DEVICES += cudy_wr1300s
+
 define Device/cudy_wr2100
   $(Device/dsa-migration)
   DEVICE_VENDOR := Cudy
