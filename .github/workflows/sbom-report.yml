@@ -122,7 +122,8 @@ jobs:
 
       - name: Skip versions — write empty placeholder
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.skip_versions == true }}
-        run: echo '{"outdated": [], "eol": []}' > sbom-work/versions.json
+        run: |
+          echo '{"outdated": [], "eol": []}' > sbom-work/versions.json
 
       - name: Render HTML report
         run: |
