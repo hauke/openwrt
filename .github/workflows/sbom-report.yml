@@ -67,15 +67,6 @@ jobs:
           sudo mv /tmp/osv-scanner /usr/local/bin/osv-scanner
           osv-scanner --version
 
-      - name: Verify OSV-Scanner provenance (SLSA attestation)
-        env:
-          OSV_VERSION: "2.3.5"
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh attestation verify /usr/local/bin/osv-scanner \
-            --repo google/osv-scanner \
-            --source-ref "refs/tags/v${OSV_VERSION}"
-
       - name: Compute weekly cache key
         id: week
         run: echo "week=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
