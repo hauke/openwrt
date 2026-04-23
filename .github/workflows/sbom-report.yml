@@ -79,17 +79,7 @@ jobs:
           restore-keys: |
             repology-cache-
 
-      - name: Restore NVD mirror cache
-        id: nvd-cache
-        uses: actions/cache@v5
-        with:
-          path: .cache/nvd/git
-          key: nvd-mirror-${{ steps.week.outputs.week }}
-          restore-keys: |
-            nvd-mirror-
-
       - name: Checkout NVD mirror
-        if: steps.nvd-cache.outputs.cache-hit != 'true'
         uses: actions/checkout@v6
         with:
           repository: fkie-cad/nvd-json-data-feeds
