@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """
-Merge Trivy, OSV-Scanner and version-check outputs into a static HTML
-report (index.html, cves.html, outdated.html, eol.html).
+Merge CVE and version-check outputs into a static HTML report
+(index.html, cves.html, outdated.html, eol.html).
+
+CVE input is the flat list produced by scan_cves.py plus optionally
+OSV-Scanner's JSON, merged by (CVE id, package name).
 """
 
 from __future__ import annotations
@@ -33,22 +36,25 @@ def cve_url(cve_id: str) -> str:
     return f"https://osv.dev/vulnerability/{cve_id}"
 
 
-def load_trivy(path: Path) -> list[dict]:
-    if not path.exists():
+def load_cves_json(path: Path) -> list[dict]:
+    """Load the flat list produced by scan_cves.py."""
+    if not path or not path.exists():
         return []
     data = json.loads(path.read_text())
+    if not isinstance(data, list):
+        return []
     out = []
-    for result in data.get("Results", []) or []:
-        for v in result.get("Vulnerabilities", []) or []:
-            out.append({
-                "id": v.get("VulnerabilityID", ""),
-                "severity": normalize_severity(v.get("Severity")),
-                "package": v.get("PkgName", ""),
-                "version": v.get("InstalledVersion", ""),
-                "fixed_version": v.get("FixedVersion", ""),
-                "title": v.get("Title", "") or v.get("Description", "")[:200],
-                "source": "trivy",
-            })
+    for v in data:
+        out.append({
+            "id": v.get("id", ""),
+            "severity": normalize_severity(v.get("severity")),
+            "package": v.get("package", ""),
+            "packages": v.get("packages", []),
+            "version": v.get("version", ""),
+            "fixed_version": v.get("fixed_version", ""),
+            "title": v.get("title", ""),
+            "source": v.get("source", "nvd"),
+        })
     return out
 
 
@@ -91,9 +97,9 @@ def load_osv(path: Path) -> list[dict]:
     return out
 
 
-def merge_cves(trivy: list[dict], osv: list[dict]) -> list[dict]:
+def merge_cves(*sources: list[dict]) -> list[dict]:
     by_key: dict[tuple, dict] = {}
-    for v in trivy + osv:
+    for v in [x for src in sources for x in src]:
         key = (v["id"], v["package"])
         if key in by_key:
             existing = by_key[key]
@@ -104,6 +110,8 @@ def merge_cves(trivy: list[dict], osv: list[dict]) -> list[dict]:
                 existing["severity"] = v["severity"]
             if not existing.get("fixed_version") and v.get("fixed_version"):
                 existing["fixed_version"] = v["fixed_version"]
+            if not existing.get("packages") and v.get("packages"):
+                existing["packages"] = v["packages"]
         else:
             v = dict(v)
             v["sources"] = [v["source"]]
@@ -117,8 +125,8 @@ def merge_cves(trivy: list[dict], osv: list[dict]) -> list[dict]:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--sbom", required=True, type=Path)
-    ap.add_argument("--trivy", type=Path)
-    ap.add_argument("--osv", type=Path)
+    ap.add_argument("--cves", type=Path, help="Flat CVE JSON from scan_cves.py")
+    ap.add_argument("--osv", type=Path, help="OSV-Scanner JSON output")
     ap.add_argument("--versions", required=True, type=Path)
     ap.add_argument("--templates", required=True, type=Path)
     ap.add_argument("--out", required=True, type=Path)
@@ -127,9 +135,9 @@ def main() -> int:
 
     sbom = json.loads(args.sbom.read_text())
     components = sbom.get("components", [])
-    trivy = load_trivy(args.trivy) if args.trivy else []
+    nvd = load_cves_json(args.cves) if args.cves else []
     osv = load_osv(args.osv) if args.osv else []
-    cves = merge_cves(trivy, osv)
+    cves = merge_cves(nvd, osv)
     versions = json.loads(args.versions.read_text())
 
     per_pkg = defaultdict(lambda: {"total": 0, "critical": 0, "high": 0})
