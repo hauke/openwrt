@@ -1,0 +1,148 @@
+name: SBOM report
+
+on:
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+    inputs:
+      sbom_source:
+        description: 'SBOM source'
+        type: choice
+        options: [metadata, snapshot]
+        default: metadata
+      skip_publish:
+        description: 'Skip publishing to Pages'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: Generate SBOM report
+    runs-on: ubuntu-24.04
+    outputs:
+      artifact: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install host prerequisites
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            build-essential ccache ecj fastjar file g++ gawk \
+            gettext git java-propose-classpath libelf-dev libncurses-dev \
+            libssl-dev python3 python3-dev python3-distutils \
+            python3-setuptools python3-pip rsync subversion swig time \
+            xsltproc zlib1g-dev unzip wget
+
+      - name: Install Python dependencies
+        run: python3 -m pip install --user jinja2
+
+      - name: Generate SBOM (metadata-only, all packages)
+        if: ${{ github.event_name == 'schedule' || inputs.sbom_source == 'metadata' }}
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+          make defconfig
+          make prepare-tmpinfo
+          mkdir -p sbom-work
+          ./scripts/package-metadata.pl allpkgcyclonedxsbom tmp/.packageinfo > sbom-work/sbom.json
+          echo "SBOM_SOURCE=openwrt all-packages metadata (${GITHUB_SHA::8})" >> "$GITHUB_ENV"
+          echo "Generated SBOM with $(jq '.components | length' sbom-work/sbom.json) components"
+
+      - name: Download snapshot SBOM
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.sbom_source == 'snapshot' }}
+        run: |
+          mkdir -p sbom-work
+          curl -sSfL -o sbom-work/sbom.json \
+            https://downloads.openwrt.org/snapshots/targets/armsr/armv8/openwrt-armsr-armv8.bom.cdx.json
+          echo "SBOM_SOURCE=openwrt snapshot armsr/armv8" >> "$GITHUB_ENV"
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Install Trivy
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | \
+            sudo sh -s -- -b /usr/local/bin
+
+      - name: Install OSV-Scanner
+        run: |
+          OSV_VERSION="1.9.1"
+          curl -sSfL -o /tmp/osv-scanner \
+            "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_linux_amd64"
+          chmod +x /tmp/osv-scanner
+          sudo mv /tmp/osv-scanner /usr/local/bin/osv-scanner
+
+      - name: Restore Repology cache
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: repology-cache-${{ github.run_id }}
+          restore-keys: |
+            repology-cache-
+
+      - name: Scan with Trivy
+        run: |
+          trivy sbom --format json --output sbom-work/trivy.json sbom-work/sbom.json || true
+          jq '.Results | length' sbom-work/trivy.json || true
+
+      - name: Scan with OSV-Scanner
+        run: |
+          osv-scanner --sbom=sbom-work/sbom.json --format=json --output=sbom-work/osv.json || true
+          jq '.results | length' sbom-work/osv.json || true
+
+      - name: Check versions (Repology + endoflife.date)
+        run: |
+          python3 .github/sbom-report/check_versions.py \
+            --sbom sbom-work/sbom.json \
+            --out sbom-work/versions.json \
+            --cache .cache/repology.json
+
+      - name: Render HTML report
+        run: |
+          python3 .github/sbom-report/render.py \
+            --sbom sbom-work/sbom.json \
+            --trivy sbom-work/trivy.json \
+            --osv sbom-work/osv.json \
+            --versions sbom-work/versions.json \
+            --templates .github/sbom-report/templates \
+            --out public \
+            --sbom-source "${SBOM_SOURCE:-unknown}"
+
+      - name: Upload report artifact
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-report
+          path: public/
+          retention-days: 30
+
+      - name: Upload Pages artifact
+        if: ${{ github.event_name == 'schedule' || inputs.skip_publish != true }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: generate
+    if: ${{ github.event_name == 'schedule' || inputs.skip_publish != true }}
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

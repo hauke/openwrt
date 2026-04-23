@@ -1,0 +1,23 @@
+{% extends "base.html.j2" %}
+{% block content %}
+<h2>CVEs</h2>
+<p>Merged results from Trivy and OSV-Scanner. Click a CVE ID to open its details.</p>
+<table class="report">
+<thead><tr>
+<th>CVE</th><th>Severity</th><th>Package</th><th>Version</th><th>Fixed in</th><th>Sources</th><th>Title</th>
+</tr></thead>
+<tbody>
+{% for v in cves %}
+<tr>
+<td><a href="{{ v.url }}" target="_blank" rel="noopener">{{ v.id }}</a></td>
+<td><span class="sev-{{ v.severity }}">{{ v.severity }}</span></td>
+<td>{{ v.package }}</td>
+<td>{{ v.version }}</td>
+<td>{{ v.fixed_version or "" }}</td>
+<td>{{ v.sources | join(", ") }}</td>
+<td>{{ v.title }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

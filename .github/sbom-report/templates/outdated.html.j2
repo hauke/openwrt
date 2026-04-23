@@ -1,0 +1,18 @@
+{% extends "base.html.j2" %}
+{% block content %}
+<h2>Outdated packages</h2>
+<p>Packages where a newer upstream version exists (per Repology).</p>
+<table class="report">
+<thead><tr><th>Package</th><th>OpenWrt version</th><th>Newest upstream</th><th>Seen in</th></tr></thead>
+<tbody>
+{% for row in outdated %}
+<tr>
+<td>{{ row.name }}</td>
+<td>{{ row.version }}</td>
+<td><strong>{{ row.newest_version }}</strong></td>
+<td>{{ row.sources | join(", ") }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
