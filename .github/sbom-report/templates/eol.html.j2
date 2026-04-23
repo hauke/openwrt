@@ -1,0 +1,19 @@
+{% extends "base.html.j2" %}
+{% block content %}
+<h2>End-of-life components</h2>
+<p>Components whose release cycle has reached EOL or has a known EOL date (per endoflife.date).</p>
+<table class="report">
+<thead><tr><th>Package</th><th>Version</th><th>Cycle</th><th>EOL</th><th>Latest in cycle</th></tr></thead>
+<tbody>
+{% for row in eol %}
+<tr>
+<td>{{ row.name }}</td>
+<td>{{ row.version }}</td>
+<td>{{ row.eol.cycle }}</td>
+<td>{{ row.eol.eol }}</td>
+<td>{{ row.eol.latest or "" }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

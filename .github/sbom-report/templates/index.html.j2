@@ -1,0 +1,27 @@
+{% extends "base.html.j2" %}
+{% block content %}
+<div class="summary">
+  <div class="card"><span class="n">{{ counts.components }}</span><span class="l">components</span></div>
+  <div class="card"><span class="n">{{ counts.cves }}</span><span class="l">CVEs</span></div>
+  <div class="card"><span class="n">{{ counts.critical }}</span><span class="l">critical</span></div>
+  <div class="card"><span class="n">{{ counts.high }}</span><span class="l">high</span></div>
+  <div class="card"><span class="n">{{ counts.outdated }}</span><span class="l">outdated</span></div>
+  <div class="card"><span class="n">{{ counts.eol }}</span><span class="l">EOL</span></div>
+</div>
+
+<h2>Top vulnerable packages</h2>
+<table class="report">
+<thead><tr><th>Package</th><th>Version</th><th>CVEs</th><th>Critical</th><th>High</th></tr></thead>
+<tbody>
+{% for row in top_vulnerable %}
+<tr>
+<td><a href="cves.html?q={{ row.name }}">{{ row.name }}</a></td>
+<td>{{ row.version }}</td>
+<td>{{ row.total }}</td>
+<td>{{ row.critical }}</td>
+<td>{{ row.high }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
