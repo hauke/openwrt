@@ -9,6 +9,10 @@ on:
         description: 'Skip publishing to Pages'
         type: boolean
         default: false
+      skip_versions:
+        description: 'Skip the Repology/endoflife.date version scan (slow)'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -109,11 +113,16 @@ jobs:
           fi
 
       - name: Check versions (Repology + endoflife.date)
+        if: ${{ github.event_name == 'schedule' || inputs.skip_versions != true }}
         run: |
           python3 .github/sbom-report/check_versions.py \
             --sbom sbom-work/sbom.cdx.json \
             --out sbom-work/versions.json \
             --cache .cache/repology.json
+
+      - name: Skip versions — write empty placeholder
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.skip_versions == true }}
+        run: echo '{"outdated": [], "eol": []}' > sbom-work/versions.json
 
       - name: Render HTML report
         run: |
