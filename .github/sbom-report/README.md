@@ -40,7 +40,7 @@ mkdir -p /tmp/sbom && cd /tmp/sbom
 
 # 1. SBOM
 "$OLDPWD"/scripts/package-metadata.pl allpkgcyclonedxsbom \
-  "$OLDPWD"/tmp/.packageinfo > sbom.json
+  "$OLDPWD"/tmp/.packageinfo > sbom.cdx.json
 
 # 2. NVD mirror (first run: ~5 min, ~1 GB on disk)
 mkdir -p nvd
@@ -48,21 +48,21 @@ git clone --depth=1 https://github.com/fkie-cad/nvd-json-data-feeds.git nvd/git
 
 # 3. Match CVEs
 python3 "$OLDPWD"/.github/sbom-report/scan_cves.py \
-  --sbom sbom.json --nvd-dir nvd \
+  --sbom sbom.cdx.json --nvd-dir nvd \
   --out-cves cves.json --out-sbom sbom-enriched.json \
   --only-with-cpe
 
 # 4. (Optional) OSV-Scanner — skip if not installed
-osv-scanner --sbom=sbom.json --format=json --output=osv.json \
+osv-scanner -L sbom.cdx.json --format=json --output-file=osv.json \
   || echo '{"results":[]}' > osv.json
 
 # 5. Versions (add --limit 20 for a quick test)
 python3 "$OLDPWD"/.github/sbom-report/check_versions.py \
-  --sbom sbom.json --out versions.json --cache cache.json --limit 20
+  --sbom sbom.cdx.json --out versions.json --cache cache.json --limit 20
 
 # 6. Render
 python3 "$OLDPWD"/.github/sbom-report/render.py \
-  --sbom sbom.json --cves cves.json --osv osv.json \
+  --sbom sbom.cdx.json --cves cves.json --osv osv.json \
   --versions versions.json \
   --templates "$OLDPWD"/.github/sbom-report/templates \
   --out public --sbom-source "local dry run"
