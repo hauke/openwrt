@@ -740,6 +740,60 @@ sub gen_image_cyclonedxsbom() {
 	print dump_cyclonedxsbom_json(@components);
 }
 
+sub gen_allpkg_cyclonedxsbom() {
+	my $pkginfo = shift @ARGV;
+	my @components;
+
+	parse_package_metadata($pkginfo) or exit 1;
+
+	$package{"kernel"} = {
+		license => "GPL-2.0",
+		cpe_id  => "cpe:/o:linux:linux_kernel",
+		name    => "kernel",
+		category  => "operating-system",
+	};
+
+	foreach my $name (sort {uc($a) cmp uc($b)} keys %package) {
+		my $pkg = $package{$name};
+		next if !$pkg;
+		next if $name ne $pkg->{name};
+
+		my @licenses;
+		my @license = split(/\s+/, $pkg->{license} // "");
+		foreach my $lic (@license) {
+			push @licenses, (
+				{ "license" => { "name" => $lic } }
+			);
+		}
+
+		my $type;
+		if ($pkg->{category}) {
+			my %cat_type = (
+				"operating-system" => "operating-system",
+				"Firmware"         => "firmware",
+				"Libraries"        => "library"
+			);
+			$type = $cat_type{$pkg->{category}} // "application";
+		}
+
+		my $version = $pkg->{version};
+		$version =~ s/-r\d+$// if $version;
+		if ($name =~ /^(kernel|kmod-)/ and $version and $version =~ /^(\d+\.\d+\.\d+)/) {
+			$version = $1;
+		}
+
+		push @components, {
+			name => $pkg->{name},
+			@licenses > 0 ? (licenses => [ @licenses ]) : (),
+			$pkg->{cpe_id} && $version ? (cpe => $pkg->{cpe_id}.":".$version) : (),
+			$type ? (type => $type) : (),
+			$version ? (version => $version) : (),
+		};
+	}
+
+	print dump_cyclonedxsbom_json(@components);
+}
+
 sub gen_package_cyclonedxsbom() {
 	my $pkgmanifest = shift @ARGV;
 	my @components;
@@ -805,6 +859,7 @@ sub parse_command() {
 		/^pkgmanifestjson$/ and return gen_package_manifest_json();
 		/^imgcyclonedxsbom$/ and return gen_image_cyclonedxsbom();
 		/^pkgcyclonedxsbom$/ and return gen_package_cyclonedxsbom();
+		/^allpkgcyclonedxsbom$/ and return gen_allpkg_cyclonedxsbom();
 		/^license$/ and return gen_package_license(0);
 		/^licensefull$/ and return gen_package_license(1);
 		/^usergroup$/ and return gen_usergroup_list();
@@ -820,6 +875,7 @@ Available Commands:
 	$0 pkgmanifestjson [file]			Package manifests in JSON format
 	$0 imgcyclonedxsbom <file> [manifest]	Image package manifest in CycloneDX SBOM JSON format
 	$0 pkgcyclonedxsbom <file>			Package manifest in CycloneDX SBOM JSON format
+	$0 allpkgcyclonedxsbom <file>			All known packages (from .packageinfo) in CycloneDX SBOM JSON format
 	$0 license [file] 				Package license information
 	$0 licensefull [file] 			Package license information (full list)
 	$0 usergroup [file]				Package usergroup allocation list
