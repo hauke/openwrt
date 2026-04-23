@@ -793,12 +793,33 @@ sub gen_allpkg_cyclonedxsbom() {
 
 	parse_package_metadata($pkginfo) or exit 1;
 
-	$package{"kernel"} = {
-		license => "GPL-2.0",
-		cpe_id  => "cpe:/o:linux:linux_kernel",
-		name    => "kernel",
-		category  => "operating-system",
-	};
+	# OpenWrt supports building against several kernel trees in parallel
+	# (one file per minor version under target/linux/generic/kernel-X.Y,
+	# each containing a `LINUX_VERSION-X.Y = .Z` line that gives the
+	# patch level). kmod PKG_VERSION fields in tmp/.packageinfo reference
+	# these as an unresolved "<LINUX_VERSION>-r" placeholder, so we can't
+	# derive the real version from there. Read the kernel files directly
+	# and emit one "kernel" component per supported tree.
+	my @kernel_versions;
+	if (opendir(my $dh, "target/linux/generic")) {
+		foreach my $f (sort readdir $dh) {
+			next unless $f =~ /^kernel-(\d+\.\d+)$/;
+			my $major = $1;
+			open(my $fh, "<", "target/linux/generic/$f") or next;
+			while (<$fh>) {
+				if (/^LINUX_VERSION-\Q$major\E\s*=\s*\.(\S+)/) {
+					push @kernel_versions, "$major.$1";
+					last;
+				}
+			}
+			close $fh;
+		}
+		closedir $dh;
+	}
+
+	# Drop any kernel entry parsed out of .packageinfo; we emit synthetic
+	# kernel components below instead.
+	delete $package{"kernel"};
 
 	foreach my $name (sort {uc($a) cmp uc($b)} keys %package) {
 		my $pkg = $package{$name};
@@ -825,6 +846,10 @@ sub gen_allpkg_cyclonedxsbom() {
 
 		my $version = $pkg->{version};
 		$version =~ s/-r\d+$// if $version;
+		# Drop PKG_VERSION strings that still contain OpenWrt metadata
+		# placeholders (e.g. "<LINUX_VERSION>-r") which weren't resolved
+		# when tmp/.packageinfo was written.
+		$version = undef if $version and $version =~ /[<>]/;
 		if ($name =~ /^(kernel|kmod-)/ and $version and $version =~ /^(\d+\.\d+\.\d+)/) {
 			$version = $1;
 		}
@@ -835,6 +860,16 @@ sub gen_allpkg_cyclonedxsbom() {
 			$pkg->{cpe_id} && $version ? (cpe => $pkg->{cpe_id}.":".$version) : (),
 			$type ? (type => $type) : (),
 			$version ? (version => $version) : (),
+		};
+	}
+
+	foreach my $kv (@kernel_versions) {
+		push @components, {
+			name     => "kernel",
+			version  => $kv,
+			type     => "operating-system",
+			cpe      => "cpe:/o:linux:linux_kernel:$kv",
+			licenses => [ { "license" => { "name" => "GPL-2.0" } } ],
 		};
 	}
 
