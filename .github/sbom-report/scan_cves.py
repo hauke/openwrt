@@ -170,10 +170,15 @@ def main() -> int:
 
     findings = list(findings_by_key.values())
     for f in findings:
-        # Prefer a stable primary package name (shortest, alphabetically
-        # first) so the report has a consistent "package" column.
-        if f["packages"]:
-            f["packages"].sort(key=lambda n: (len(n), n))
+        if not f["packages"]:
+            continue
+        f["packages"] = sorted(set(f["packages"]), key=lambda n: (len(n), n))
+        # The kernel package inherits its CPE into every kmod-*. When a
+        # CVE matches all of them, attribute the finding to "kernel"
+        # rather than to an arbitrary kmod.
+        if "kernel" in f["packages"]:
+            f["package"] = "kernel"
+        else:
             f["package"] = f["packages"][0]
 
     findings.sort(key=lambda f: (SEVERITY_ORDER.get(f["severity"], 9),
