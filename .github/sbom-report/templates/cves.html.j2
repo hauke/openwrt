@@ -11,7 +11,12 @@
 <tr>
 <td><a href="{{ v.url }}" target="_blank" rel="noopener">{{ v.id }}</a></td>
 <td><span class="sev-{{ v.severity }}">{{ v.severity }}</span></td>
-<td>{{ v.package }}</td>
+<td>
+  {{ v.package }}{% if v.packages and v.packages|length > 1 %}
+  <details style="display:inline"><summary>+{{ v.packages|length - 1 }} more</summary>
+  <small>{{ v.packages | join(", ") }}</small></details>
+  {% endif %}
+</td>
 <td>{{ v.version }}</td>
 <td>{{ v.fixed_version or "" }}</td>
 <td>{{ v.sources | join(", ") }}</td>

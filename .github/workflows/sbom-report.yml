@@ -68,11 +68,6 @@ jobs:
       - name: Install jq
         run: sudo apt-get install -y jq
 
-      - name: Install Trivy
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | \
-            sudo sh -s -- -b /usr/local/bin
-
       - name: Install OSV-Scanner
         run: |
           OSV_VERSION="1.9.1"
@@ -84,17 +79,43 @@ jobs:
       - name: Restore Repology cache
         uses: actions/cache@v4
         with:
-          path: .cache
+          path: .cache/repology.json
           key: repology-cache-${{ github.run_id }}
           restore-keys: |
             repology-cache-
 
-      - name: Scan with Trivy
-        run: |
-          trivy sbom --format json --output sbom-work/trivy.json sbom-work/sbom.json || true
-          jq '.Results | length' sbom-work/trivy.json || true
+      - name: Restore NVD mirror cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/nvd
+          key: nvd-mirror-${{ github.run_id }}
+          restore-keys: |
+            nvd-mirror-
 
-      - name: Scan with OSV-Scanner
+      - name: Clone or update NVD mirror
+        run: |
+          mkdir -p .cache/nvd
+          if [ -d .cache/nvd/git/.git ]; then
+            git -C .cache/nvd/git pull --depth=1 --rebase
+          else
+            rm -rf .cache/nvd/git
+            git clone --depth=1 \
+              https://github.com/fkie-cad/nvd-json-data-feeds.git \
+              .cache/nvd/git
+          fi
+          echo "NVD mirror size: $(du -sh .cache/nvd/git | cut -f1)"
+
+      - name: Scan SBOM against NVD
+        run: |
+          python3 .github/sbom-report/scan_cves.py \
+            --sbom sbom-work/sbom.json \
+            --nvd-dir .cache/nvd \
+            --out-cves sbom-work/cves.json \
+            --out-sbom sbom-work/sbom-enriched.json \
+            --only-with-cpe
+
+      - name: Scan with OSV-Scanner (secondary)
+        continue-on-error: true
         run: |
           osv-scanner --sbom=sbom-work/sbom.json --format=json --output=sbom-work/osv.json || true
           jq '.results | length' sbom-work/osv.json || true
@@ -110,12 +131,13 @@ jobs:
         run: |
           python3 .github/sbom-report/render.py \
             --sbom sbom-work/sbom.json \
-            --trivy sbom-work/trivy.json \
+            --cves sbom-work/cves.json \
             --osv sbom-work/osv.json \
             --versions sbom-work/versions.json \
             --templates .github/sbom-report/templates \
             --out public \
             --sbom-source "${SBOM_SOURCE:-unknown}"
+          cp sbom-work/sbom-enriched.json public/sbom.cdx.json
 
       - name: Upload report artifact
         id: upload
