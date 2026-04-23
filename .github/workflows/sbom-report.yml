@@ -47,10 +47,10 @@ jobs:
           make prepare-tmpinfo
           mkdir -p sbom-work
           ./scripts/package-metadata.pl allpkgcyclonedxsbom tmp/.packageinfo \
-            > sbom-work/sbom.json
+            > sbom-work/sbom.cdx.json
           echo "SBOM_SOURCE=openwrt all-packages metadata (${GITHUB_SHA::8})" \
             >> "$GITHUB_ENV"
-          python3 -c "import json; d=json.load(open('sbom-work/sbom.json')); print('Generated SBOM with', len(d['components']), 'components')"
+          python3 -c "import json; d=json.load(open('sbom-work/sbom.cdx.json')); print('Generated SBOM with', len(d['components']), 'components')"
 
       # OSV-Scanner is pinned by SHA256. Update OSV_VERSION and OSV_SHA256
       # together; the expected hash is published at
@@ -93,7 +93,7 @@ jobs:
       - name: Scan SBOM against NVD
         run: |
           python3 .github/sbom-report/scan_cves.py \
-            --sbom sbom-work/sbom.json \
+            --sbom sbom-work/sbom.cdx.json \
             --nvd-dir .cache/nvd \
             --out-cves sbom-work/cves.json \
             --out-sbom sbom-work/sbom-enriched.json \
@@ -102,8 +102,8 @@ jobs:
       - name: Scan with OSV-Scanner (secondary, best-effort)
         continue-on-error: true
         run: |
-          osv-scanner --sbom=sbom-work/sbom.json --format=json \
-            --output=sbom-work/osv.json || true
+          osv-scanner -L sbom-work/sbom.cdx.json --format=json \
+            --output-file=sbom-work/osv.json || true
           if [ -s sbom-work/osv.json ]; then
             jq '.results | length' sbom-work/osv.json
           fi
@@ -111,14 +111,14 @@ jobs:
       - name: Check versions (Repology + endoflife.date)
         run: |
           python3 .github/sbom-report/check_versions.py \
-            --sbom sbom-work/sbom.json \
+            --sbom sbom-work/sbom.cdx.json \
             --out sbom-work/versions.json \
             --cache .cache/repology.json
 
       - name: Render HTML report
         run: |
           python3 .github/sbom-report/render.py \
-            --sbom sbom-work/sbom.json \
+            --sbom sbom-work/sbom.cdx.json \
             --cves sbom-work/cves.json \
             --osv sbom-work/osv.json \
             --versions sbom-work/versions.json \
