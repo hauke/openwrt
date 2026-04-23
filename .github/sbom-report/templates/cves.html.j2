@@ -2,6 +2,7 @@
 {% block content %}
 <h2>CVEs</h2>
 <p>Merged results from NVD (CPE matching) and OSV-Scanner. Click a CVE ID to open its details.</p>
+<p id="cves-filter-banner" hidden></p>
 <table class="report">
 <thead><tr>
 <th>CVE</th><th>Severity</th><th>Package</th><th>Version</th><th>Fixed in</th><th>Sources</th><th>Title</th>
@@ -25,4 +26,23 @@
 {% endfor %}
 </tbody>
 </table>
+<script>
+(function () {
+  var q = (new URLSearchParams(location.search).get("q") || "").toLowerCase();
+  if (!q) return;
+  var banner = document.getElementById("cves-filter-banner");
+  var safe = document.createElement("code");
+  safe.textContent = q;
+  banner.replaceChildren("Filtered to ", safe, ". ");
+  var clear = document.createElement("a");
+  clear.href = "cves.html";
+  clear.textContent = "Clear filter";
+  banner.appendChild(clear);
+  banner.hidden = false;
+  document.querySelectorAll("table.report tbody tr").forEach(function (row) {
+    var text = (row.cells[2] ? row.cells[2].textContent : "").toLowerCase();
+    if (text.indexOf(q) === -1) row.hidden = true;
+  });
+})();
+</script>
 {% endblock %}
