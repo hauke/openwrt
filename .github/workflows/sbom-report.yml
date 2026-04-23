@@ -5,11 +5,6 @@ on:
     - cron: '17 4 * * 1'
   workflow_dispatch:
     inputs:
-      sbom_source:
-        description: 'SBOM source'
-        type: choice
-        options: [metadata, snapshot]
-        default: metadata
       skip_publish:
         description: 'Skip publishing to Pages'
         type: boolean
@@ -29,8 +24,8 @@ jobs:
     outputs:
       artifact: ${{ steps.upload.outputs.artifact-id }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout OpenWrt
+        uses: actions/checkout@v6
 
       - name: Install host prerequisites
         run: |
@@ -38,72 +33,81 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             build-essential ccache ecj fastjar file g++ gawk \
             gettext git java-propose-classpath libelf-dev libncurses-dev \
-            libssl-dev python3 python3-dev python3-distutils \
-            python3-setuptools python3-pip rsync subversion swig time \
-            xsltproc zlib1g-dev unzip wget
+            libssl-dev python3 python3-dev python3-setuptools python3-pip \
+            rsync subversion swig time xsltproc zlib1g-dev unzip wget jq
 
       - name: Install Python dependencies
         run: python3 -m pip install --user jinja2
 
-      - name: Generate SBOM (metadata-only, all packages)
-        if: ${{ github.event_name == 'schedule' || inputs.sbom_source == 'metadata' }}
+      - name: Generate SBOM (all packages, metadata only)
         run: |
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           make defconfig
           make prepare-tmpinfo
           mkdir -p sbom-work
-          ./scripts/package-metadata.pl allpkgcyclonedxsbom tmp/.packageinfo > sbom-work/sbom.json
-          echo "SBOM_SOURCE=openwrt all-packages metadata (${GITHUB_SHA::8})" >> "$GITHUB_ENV"
-          echo "Generated SBOM with $(jq '.components | length' sbom-work/sbom.json) components"
+          ./scripts/package-metadata.pl allpkgcyclonedxsbom tmp/.packageinfo \
+            > sbom-work/sbom.json
+          echo "SBOM_SOURCE=openwrt all-packages metadata (${GITHUB_SHA::8})" \
+            >> "$GITHUB_ENV"
+          python3 -c 'import json,sys; d=json.load(open("sbom-work/sbom.json")); print(f"Generated SBOM with {len(d[\"components\"])} components")'
 
-      - name: Download snapshot SBOM
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.sbom_source == 'snapshot' }}
-        run: |
-          mkdir -p sbom-work
-          curl -sSfL -o sbom-work/sbom.json \
-            https://downloads.openwrt.org/snapshots/targets/armsr/armv8/openwrt-armsr-armv8.bom.cdx.json
-          echo "SBOM_SOURCE=openwrt snapshot armsr/armv8" >> "$GITHUB_ENV"
-
-      - name: Install jq
-        run: sudo apt-get install -y jq
-
+      # OSV-Scanner is pinned by SHA256. Update OSV_VERSION and OSV_SHA256
+      # together; the expected hash is published at
+      #   https://github.com/google/osv-scanner/releases/download/v${VER}/osv-scanner_SHA256SUMS
       - name: Install OSV-Scanner
+        env:
+          OSV_VERSION: "2.3.5"
+          OSV_SHA256: "bb30c580afe5e757d3e959f4afd08a4795ea505ef84c46962b9a738aa573b41b"
         run: |
-          OSV_VERSION="1.9.1"
           curl -sSfL -o /tmp/osv-scanner \
             "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_linux_amd64"
+          echo "${OSV_SHA256}  /tmp/osv-scanner" | sha256sum -c -
           chmod +x /tmp/osv-scanner
           sudo mv /tmp/osv-scanner /usr/local/bin/osv-scanner
+          osv-scanner --version
+
+      - name: Verify OSV-Scanner provenance (SLSA attestation)
+        env:
+          OSV_VERSION: "2.3.5"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh attestation verify /usr/local/bin/osv-scanner \
+            --repo google/osv-scanner \
+            --source-ref "refs/tags/v${OSV_VERSION}"
+
+      - name: Compute weekly cache key
+        id: week
+        run: echo "week=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
 
       - name: Restore Repology cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .cache/repology.json
-          key: repology-cache-${{ github.run_id }}
+          key: repology-cache-${{ steps.week.outputs.week }}
           restore-keys: |
             repology-cache-
 
       - name: Restore NVD mirror cache
-        uses: actions/cache@v4
+        id: nvd-cache
+        uses: actions/cache@v5
         with:
-          path: .cache/nvd
-          key: nvd-mirror-${{ github.run_id }}
+          path: .cache/nvd/git
+          key: nvd-mirror-${{ steps.week.outputs.week }}
           restore-keys: |
             nvd-mirror-
 
-      - name: Clone or update NVD mirror
-        run: |
-          mkdir -p .cache/nvd
-          if [ -d .cache/nvd/git/.git ]; then
-            git -C .cache/nvd/git pull --depth=1 --rebase
-          else
-            rm -rf .cache/nvd/git
-            git clone --depth=1 \
-              https://github.com/fkie-cad/nvd-json-data-feeds.git \
-              .cache/nvd/git
-          fi
-          echo "NVD mirror size: $(du -sh .cache/nvd/git | cut -f1)"
+      - name: Checkout NVD mirror
+        if: steps.nvd-cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v6
+        with:
+          repository: fkie-cad/nvd-json-data-feeds
+          path: .cache/nvd/git
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: NVD mirror status
+        run: du -sh .cache/nvd/git
 
       - name: Scan SBOM against NVD
         run: |
@@ -114,11 +118,14 @@ jobs:
             --out-sbom sbom-work/sbom-enriched.json \
             --only-with-cpe
 
-      - name: Scan with OSV-Scanner (secondary)
+      - name: Scan with OSV-Scanner (secondary, best-effort)
         continue-on-error: true
         run: |
-          osv-scanner --sbom=sbom-work/sbom.json --format=json --output=sbom-work/osv.json || true
-          jq '.results | length' sbom-work/osv.json || true
+          osv-scanner --sbom=sbom-work/sbom.json --format=json \
+            --output=sbom-work/osv.json || true
+          if [ -s sbom-work/osv.json ]; then
+            jq '.results | length' sbom-work/osv.json
+          fi
 
       - name: Check versions (Repology + endoflife.date)
         run: |
@@ -141,7 +148,7 @@ jobs:
 
       - name: Upload report artifact
         id: upload
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sbom-report
           path: public/
@@ -149,7 +156,7 @@ jobs:
 
       - name: Upload Pages artifact
         if: ${{ github.event_name == 'schedule' || inputs.skip_publish != true }}
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: public/
 
@@ -167,4 +174,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

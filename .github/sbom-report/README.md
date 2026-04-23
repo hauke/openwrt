@@ -14,10 +14,9 @@ Without this, the `deploy` job will fail on the first run.
 ## Triggers
 
 - **Weekly cron**: Mondays at 04:17 UTC.
-- **Manual (`workflow_dispatch`)**: useful for smoke tests. Two inputs:
-  - `sbom_source`: `metadata` (all packages, ~3500 components, ~3 min) or
-    `snapshot` (fetch the published image SBOM for `armsr/armv8`, ~200 components, seconds).
-  - `skip_publish`: generate and upload artifact only; don't deploy to Pages.
+- **Manual (`workflow_dispatch`)**: one input, `skip_publish`, which builds
+  the artifact without deploying to Pages. Useful for smoke tests when
+  iterating on this workflow.
 
 ## Pipeline
 
