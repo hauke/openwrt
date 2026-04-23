@@ -50,7 +50,7 @@ jobs:
             > sbom-work/sbom.json
           echo "SBOM_SOURCE=openwrt all-packages metadata (${GITHUB_SHA::8})" \
             >> "$GITHUB_ENV"
-          python3 -c 'import json,sys; d=json.load(open("sbom-work/sbom.json")); print(f"Generated SBOM with {len(d[\"components\"])} components")'
+          python3 -c "import json; d=json.load(open('sbom-work/sbom.json')); print('Generated SBOM with', len(d['components']), 'components')"
 
       # OSV-Scanner is pinned by SHA256. Update OSV_VERSION and OSV_SHA256
       # together; the expected hash is published at
