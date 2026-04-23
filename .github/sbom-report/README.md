@@ -14,9 +14,12 @@ Without this, the `deploy` job will fail on the first run.
 ## Triggers
 
 - **Weekly cron**: Mondays at 04:17 UTC.
-- **Manual (`workflow_dispatch`)**: one input, `skip_publish`, which builds
-  the artifact without deploying to Pages. Useful for smoke tests when
-  iterating on this workflow.
+- **Manual (`workflow_dispatch`)** for smoke tests. Two inputs:
+  - `skip_publish`: build the artifact without deploying to Pages.
+  - `skip_versions`: skip the Repology + endoflife.date scan. It's
+    the slowest step of the pipeline (Repology is rate-limited to
+    ~1 req/sec), so turning it off makes iteration on the rest of
+    the workflow much faster.
 
 ## Pipeline
 
