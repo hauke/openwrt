@@ -184,12 +184,12 @@ jobs:
         if: ${{ github.event_name == 'schedule' || inputs.skip_publish != true }}
         run: |
           SLUG="${{ steps.slug.outputs.slug }}"
-          rm -rf "site/${SLUG}"
-          mkdir -p "site/${SLUG}"
-          cp -r public/. "site/${SLUG}/"
+          rm -rf "site/sbom/${SLUG}"
+          mkdir -p "site/sbom/${SLUG}"
+          cp -r public/. "site/sbom/${SLUG}/"
           python3 - <<'PY'
           import os, html
-          base = 'site'
+          base = 'site/sbom'
           entries = sorted(
               e for e in os.listdir(base)
               if os.path.isdir(os.path.join(base, e)) and not e.startswith('.')
