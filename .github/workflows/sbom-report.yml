@@ -29,6 +29,8 @@ jobs:
   generate:
     name: Generate SBOM report
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     outputs:
       artifact: ${{ steps.upload.outputs.artifact-id }}
     steps:
@@ -153,11 +155,69 @@ jobs:
           path: public/
           retention-days: 30
 
+      - name: Determine ref slug
+        if: ${{ github.event_name == 'schedule' || inputs.skip_publish != true }}
+        id: slug
+        run: |
+          SLUG="${{ inputs.ref || github.ref_name }}"
+          SLUG="${SLUG//\//-}"
+          echo "slug=$SLUG" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch existing Pages state
+        if: ${{ github.event_name == 'schedule' || inputs.skip_publish != true }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir site
+          cd site
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          if git fetch --depth=1 origin gh-pages 2>/dev/null; then
+            git checkout -b gh-pages FETCH_HEAD
+          else
+            git checkout --orphan gh-pages
+          fi
+
+      - name: Merge new report into Pages state
+        if: ${{ github.event_name == 'schedule' || inputs.skip_publish != true }}
+        run: |
+          SLUG="${{ steps.slug.outputs.slug }}"
+          rm -rf "site/${SLUG}"
+          mkdir -p "site/${SLUG}"
+          cp -r public/. "site/${SLUG}/"
+          python3 - <<'PY'
+          import os, html
+          base = 'site'
+          entries = sorted(
+              e for e in os.listdir(base)
+              if os.path.isdir(os.path.join(base, e)) and not e.startswith('.')
+          )
+          with open(os.path.join(base, 'index.html'), 'w') as f:
+              f.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
+                      '<title>OpenWrt SBOM Reports</title></head><body>'
+                      '<h1>OpenWrt SBOM Reports</h1><ul>')
+              for e in entries:
+                  f.write(f'<li><a href="{html.escape(e)}/">{html.escape(e)}</a></li>')
+              f.write('</ul></body></html>')
+          PY
+
+      - name: Commit Pages state to gh-pages
+        if: ${{ github.event_name == 'schedule' || inputs.skip_publish != true }}
+        working-directory: site
+        run: |
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "SBOM report: update ${{ steps.slug.outputs.slug }}"
+            git push origin HEAD:gh-pages
+          fi
+
       - name: Upload Pages artifact
         if: ${{ github.event_name == 'schedule' || inputs.skip_publish != true }}
         uses: actions/upload-pages-artifact@v5
         with:
-          path: public/
+          path: site/
 
   deploy:
     name: Deploy to GitHub Pages
