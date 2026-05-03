@@ -5,6 +5,10 @@ on:
     - cron: '17 4 * * 1'
   workflow_dispatch:
     inputs:
+      ref:
+        description: 'Branch, tag or SHA to scan (e.g. openwrt-25.12). Leave empty to use the branch this workflow was launched from.'
+        type: string
+        default: ''
       skip_publish:
         description: 'Skip publishing to Pages'
         type: boolean
@@ -30,6 +34,8 @@ jobs:
     steps:
       - name: Checkout OpenWrt
         uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Install host prerequisites
         run: |
@@ -52,7 +58,9 @@ jobs:
           mkdir -p sbom-work
           ./scripts/package-metadata.pl allpkgcyclonedxsbom tmp/.packageinfo \
             > sbom-work/sbom.cdx.json
-          echo "SBOM_SOURCE=openwrt all-packages metadata (${GITHUB_SHA::8})" \
+          SBOM_REF="${{ inputs.ref || github.ref_name }}"
+          SBOM_SHA="$(git rev-parse --short=8 HEAD)"
+          echo "SBOM_SOURCE=openwrt all-packages metadata (${SBOM_REF} @ ${SBOM_SHA})" \
             >> "$GITHUB_ENV"
           python3 -c "import json; d=json.load(open('sbom-work/sbom.cdx.json')); print('Generated SBOM with', len(d['components']), 'components')"
 
