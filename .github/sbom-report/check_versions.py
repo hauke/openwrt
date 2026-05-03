@@ -35,8 +35,12 @@ def http_get_json(url: str, timeout: int = 30):
     except HTTPError as e:
         if e.code == 404:
             return None
+        if e.code in (403, 408, 429) or 500 <= e.code < 600:
+            print(f"warn: HTTP {e.code} from {url}", file=sys.stderr)
+            return None
         raise
-    except URLError:
+    except URLError as e:
+        print(f"warn: network error for {url}: {e}", file=sys.stderr)
         return None
 
 
