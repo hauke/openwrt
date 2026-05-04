@@ -5,7 +5,7 @@
     "critical": 27,
     "high": 203,
     "outdated": 0,
-    "eol": 0
+    "eol": 4
   },
   "cves": [
     {
@@ -12112,7 +12112,51 @@
     }
   ],
   "versions": {
+    "eol": [
+      {
+        "eol": {
+          "cycle": "22",
+          "eol": "2027-04-30",
+          "latest": "22.22.2",
+          "support": "2025-10-21"
+        },
+        "name": "node",
+        "version": "22.22.2"
+      },
+      {
+        "eol": {
+          "cycle": "3.14",
+          "eol": "2030-10-31",
+          "latest": "3.14.4",
+          "support": "2027-10-01"
+        },
+        "name": "python3",
+        "version": "3.14.4"
+      },
+      {
+        "eol": {
+          "cycle": "6.12",
+          "eol": "2028-12-31",
+          "latest": "6.12.85",
+          "support": null
+        },
+        "name": "kernel",
+        "version": "6.12.85"
+      },
+      {
+        "eol": {
+          "cycle": "6.18",
+          "eol": "2028-12-31",
+          "latest": "6.18.26",
+          "support": null
+        },
+        "name": "kernel",
+        "version": "6.18.26"
+      }
+    ],
+    "generated": 1777879898,
+    "new_lookups": 392,
     "outdated": [],
-    "eol": []
+    "total_components": 12422
   }
 }
