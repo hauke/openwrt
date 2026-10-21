@@ -130,7 +130,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 -	netif_tx_disable(dev);
 +	netif_tx_disable(netdev);
  	airoha_set_vip_for_gdm_port(port, false);
--	for (i = 0; i < dev->num_tx_queues; i++)
+-	for (i = 0; i < ARRAY_SIZE(qdma->q_tx); i++)
 -		netdev_tx_reset_subqueue(dev, i);
 +	for (i = 0; i < netdev->num_tx_queues; i++)
 +		netdev_tx_reset_subqueue(netdev, i);
