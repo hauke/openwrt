@@ -23,7 +23,7 @@ Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 
 --- a/drivers/net/ethernet/airoha/airoha_eth.c
 +++ b/drivers/net/ethernet/airoha/airoha_eth.c
-@@ -2974,19 +2974,26 @@ static int airoha_alloc_gdm_port(struct
+@@ -2967,19 +2967,26 @@ static int airoha_alloc_gdm_port(struct
  	port->id = id;
  	eth->ports[p] = port;
  
@@ -60,7 +60,7 @@ Signed-off-by: Paolo Abeni <pabeni@redhat.com>
  }
  
  static int airoha_probe(struct platform_device *pdev)
-@@ -3077,6 +3084,10 @@ static int airoha_probe(struct platform_
+@@ -3070,6 +3077,10 @@ static int airoha_probe(struct platform_
  		}
  	}
  
@@ -71,7 +71,7 @@ Signed-off-by: Paolo Abeni <pabeni@redhat.com>
  	return 0;
  
  error_napi_stop:
-@@ -3090,10 +3101,12 @@ error_hw_cleanup:
+@@ -3083,10 +3094,12 @@ error_hw_cleanup:
  	for (i = 0; i < ARRAY_SIZE(eth->ports); i++) {
  		struct airoha_gdm_port *port = eth->ports[i];
  

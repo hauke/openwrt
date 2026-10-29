@@ -1,7 +1,7 @@
 From 6117098309452c641af4458a0f7c02888b026fb6 Mon Sep 17 00:00:00 2001
 From: Lorenzo Bianconi <lorenzo@kernel.org>
 Date: Sat, 20 Jun 2026 17:04:51 +0200
-Subject: [PATCH 30/50] net: airoha: fix BQL underflow in shared QDMA TX ring
+Subject: [PATCH] net: airoha: fix BQL underflow in shared QDMA TX ring
 
 When multiple netdevs share a QDMA TX ring and one device is stopped,
 netdev_tx_reset_subqueue() zeroes that device's BQL counters while its
