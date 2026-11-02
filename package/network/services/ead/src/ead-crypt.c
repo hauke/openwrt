@@ -45,17 +45,19 @@ static uint32_t W[80]; /* work space for sha1 */
 #define EAD_ENC_PAD	64
 
 void
-ead_set_key(unsigned char *skey)
+ead_set_key(unsigned char *skey, bool server)
 {
 	uint32_t *ivp = (uint32_t *)skey;
 
 	memset(aes_enc_ctx, 0, sizeof(aes_enc_ctx));
 	memset(aes_dec_ctx, 0, sizeof(aes_dec_ctx));
 
-	/* first 32 bytes of skey are used as aes key for
-	 * encryption and decryption */
-	rijndaelKeySetupEnc(aes_enc_ctx, skey);
-	rijndaelKeySetupDec(aes_dec_ctx, skey);
+	/* Use separate AES-128 keys for each direction so that a response
+	 * cannot be reflected back as a command. The first 16 bytes are
+	 * the client-to-server key, the next 16 the server-to-client key.
+	 * Both peers must use this key layout. */
+	rijndaelKeySetupEnc(aes_enc_ctx, skey + (server ? 16 : 0));
+	rijndaelKeySetupDec(aes_dec_ctx, skey + (server ? 0 : 16));
 
 	/* the following bytes are used as initialization vector for messages
 	 * (highest byte cleared to avoid overflow) */
@@ -66,6 +68,7 @@ ead_set_key(unsigned char *skey)
 	/* the last bytes are used to feed the random iv increment */
 	ivp++;
 	ivofs_vec = *ivp;
+	ivofs_idx = 0;
 }
 
 
@@ -161,16 +164,17 @@ ead_decrypt_message(struct ead_msg *msg)
 		return 0;
 	}
 
-	if (!ead_check_rx_iv(ntohl(enc->iv))) {
-		DEBUG(2, "RX IV mismatch (0x%08x <> 0x%08x)\n", ead_rx_iv, ntohl(enc->iv));
-		return 0;
-	}
-
 	for (i = 0; i < 5; i++)
 		hash_old[i] = ntohl(enc->hash[i]);
 	ead_hash_message(enc, hash_new, enclen);
 	if (memcmp(hash_old, hash_new, sizeof(hash_old)) != 0) {
 		DEBUG(2, "SHA1 mismatch (0x%08x != 0x%08x), len=%d\n", hash_old[0], hash_new[0], enclen);
+		return 0;
+	}
+
+	/* Do not let packets with an invalid hash advance the receive IV. */
+	if (!ead_check_rx_iv(ntohl(enc->iv))) {
+		DEBUG(2, "RX IV mismatch (0x%08x <> 0x%08x)\n", ead_rx_iv, ntohl(enc->iv));
 		return 0;
 	}
 

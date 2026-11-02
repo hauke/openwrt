@@ -85,7 +85,6 @@ static u16_t nid = 0xffff; /* node id */
 static char username[32] = "";
 static int state = EAD_TYPE_SET_USERNAME;
 static const char *passwd_file = PASSWD_FILE;
-static const char password[MAXPARAMLEN];
 static bool child_pending = false;
 
 static unsigned char abuf[MAXPARAMLEN + 1];
@@ -171,6 +170,7 @@ static bool
 prepare_password(void)
 {
 	static char lbuf[1024];
+	char password[MAXPARAMLEN];
 	unsigned char dig[SHA_DIGESTSIZE];
 	BigInteger x, v, n, g;
 	SHA1_CTX ctxt;
@@ -215,7 +215,7 @@ prepare_password(void)
 		if (s2 - str >= MAXPARAMLEN)
 			continue;
 
-		strncpy((char *)password, str, MAXPARAMLEN);
+		memcpy(password, str, s2 - str + 1);
 		fclose(f);
 		goto hash_password;
 	}
@@ -226,11 +226,8 @@ prepare_password(void)
 
 hash_password:
 	tce = gettcid(tpe.index);
-	do {
-		t_random(tpe.password.data, SALTLEN);
-	} while (memcmp(saltbuf, (char *)dig, sizeof(saltbuf)) == 0);
-	if (saltbuf[0] == 0)
-		saltbuf[0] = 0xff;
+	tpe.salt.len = SALTLEN;
+	t_random(tpe.salt.data, tpe.salt.len);
 
 	n = BigIntegerFromBytes(tce->modulus.data, tce->modulus.len);
 	g = BigIntegerFromBytes(tce->generator.data, tce->generator.len);
@@ -362,7 +359,7 @@ set_state(int nstate)
 		if (!skey)
 			goto error;
 
-		ead_set_key(skey);
+		ead_set_key(skey, true);
 		break;
 	}
 done:

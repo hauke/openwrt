@@ -14,7 +14,9 @@
 #ifndef __EAD_CRYPT_H
 #define __EAD_CRYPT_H
 
-extern void ead_set_key(unsigned char *skey);
+#include <stdbool.h>
+
+extern void ead_set_key(unsigned char *skey, bool server);
 extern void ead_encrypt_message(struct ead_msg *msg, unsigned int len);
 extern int ead_decrypt_message(struct ead_msg *msg);
 

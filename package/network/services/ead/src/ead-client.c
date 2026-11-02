@@ -290,7 +290,7 @@ send_auth(void)
 	if (!skey)
 		return 0;
 
-	ead_set_key(skey);
+	ead_set_key(skey, false);
 	msg->type = htonl(EAD_TYPE_SEND_AUTH);
 	msg->len = htonl(sizeof(struct ead_msg_auth));
 	memcpy(auth->data, t_clientresponse(tc), sizeof(auth->data));
