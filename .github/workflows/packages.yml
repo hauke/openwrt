@@ -1,4 +1,4 @@
-name: Build all core packages
+name: Build all core packages with GCC 15
 
 on:
   pull_request:
@@ -29,15 +29,49 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  determine-targets:
+    name: Determine all targets and subtargets
+    runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.targets.outputs.targets }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Generate target matrix
+        id: targets
+        shell: bash
+        run: |
+          targets="$(perl ./scripts/dump-target-info.pl targets | awk '{ print $1 }' | \
+            jq -Rsc 'split("\n") | map(select(length > 0) | split("/") | {target: .[0], subtarget: .[1]})')"
+          jq -e 'length > 0 and length <= 256' <<< "$targets"
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+
   build-packages:
-    name: Build all core packages for selected target
+    name: Build ${{ matrix.target }}/${{ matrix.subtarget }} with GCC 15
+    needs: determine-targets
     permissions:
       contents: read
       packages: read
       actions: write
-    secrets:
-      ccache_s3_endpoint: ${{ secrets.CCACHE_S3_ENDPOINT }}
-      ccache_s3_bucket: ${{ secrets.CCACHE_S3_BUCKET }}
-      ccache_s3_access_key: ${{ secrets.CCACHE_S3_ACCESS_KEY }}
-      ccache_s3_secret_key: ${{ secrets.CCACHE_S3_SECRET_KEY }}
-    uses: openwrt/actions-shared-workflows/.github/workflows/packages.yml@main
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.determine-targets.outputs.targets) }}
+    uses: openwrt/actions-shared-workflows/.github/workflows/reusable_build.yml@main
+    with:
+      container_name: tools
+      target: ${{ matrix.target }}
+      subtarget: ${{ matrix.subtarget }}
+      # Build the toolchain from this branch, which defaults to GCC 15.
+      build_toolchain: true
+      include_feeds: false
+      build_kernel: true
+      build_all_kmods: true
+      build_all_modules: true
+      build_all_boards: true
+      build_full: true
+      # Keep all builders available for compilation and avoid filling the cache
+      # with a separate toolchain and package cache for every subtarget.
+      check: false
+      use_ccache_cache: false
